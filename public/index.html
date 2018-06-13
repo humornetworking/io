@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>IOIO</title>
+
+  <link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script> 
+  <script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script> 
+
+  <script type="text/javascript" src="http://visjs.org/dist/vis.js"></script>
+  <script type="text/javascript" src="js//html2canvas.min.js"></script>
+   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/async/2.6.1/async.min.js"></script>
+
+  <script type="text/javascript" src="js/app.js"></script>
+  <script type="text/javascript" src="js/util.js"></script>
+  
+  <link href="http://visjs.org/dist/vis-network.min.css" rel="stylesheet" type="text/css" />
+  <link href="css/style.css" rel="stylesheet" type="text/css" />
+ 
+  <link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.9/summernote.css" rel="stylesheet">
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.9/summernote.js"></script>
+  
+ 
+  
+  </head>
+<body>
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-sm">
+     
+		 <div class="book-page">
+
+					<div class="container h-100">
+					  <div class="row h-100 justify-content-center align-items-center">
+					<img src="http://ioio.cl/ioio.png" title="ASCII :: the code" alt="ASCII :: the code"> 
+					<br>
+
+					<!-- Button trigger modal -->
+
+					<button type="button" class="btn btn-primary" data-toggle="modal" onclick="App.openWrite()">
+					Escribir un mensaje
+					</button>
+
+
+<!-- 					<button type="button" class="btn btn-primary" onclick="App.checkLogin();">
+					LOGIN</button> -->
+
+					  </div>
+					</div>
+
+					<div class="container h-100">
+					  <div class="row h-100 justify-content-center align-items-center">
+
+					  <div class="list-group" id="message-list">
+
+					</div>
+
+					<div style="display: none;">
+					  <div id="new-message" class="list-group-item list-group-item-action flex-column align-items-start">
+						<div class="d-flex w-100 justify-content-between">
+
+							<h5 class="mb-1 message" onclick="App.goChapter('5b083fc52cb83d3d1c3ec303')"></h5>
+						</div>
+						<p class="mb-1 author"></p>
+						<small class="text-muted date"></small>
+					  </div>
+					</div> 
+					  
+
+					  </div>
+					</div>
+
+	</div>
+
+	<!-- CHAPTER PAGE -->
+	<div class="chapter-page" style="display: none;">
+
+					<div class="container h-100">
+					  <div class="row h-100 justify-content-center align-items-center">
+					  <!-- <button type="button" id="save-chapter" class="btn btn-primary" onclick="App.openChapter()" >Write Chapter</button> -->
+
+						<div id="mynetwork"></div>
+
+
+				  
+
+					<div id="edge-popUp">
+					  <span id="edge-operation">edge</span> <br>
+					  <table style="margin:auto;">
+						<tr>
+						  <td>label</td><td><input id="edge-label" value="new value" /></td>
+						</tr></table>
+					  <input type="button" value="save" id="edge-saveButton" />
+					  <input type="button" value="cancel" id="edge-cancelButton" />
+					</div>
+					  
+
+					</div>
+
+					  </div>
+	</div>
+
+
+
+					
+	</div>
+	
+	
+	<!-- UPLOAD CREATE CHAPTER -->
+	
+<div class="modal fade" id="uploadChapter" tabindex="-1" role="dialog" aria-labelledby="uploadChapter" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+
+      <div class="modal-body">
+        
+					<div id="test" style="width: 490px;">
+						<div id="thetext"></div>
+					</div>
+		
+      </div>
+      
+    </div>
+  </div>
+</div>
+	
+
+	<!-- UPLOAD CREATE ROOT -->
+	
+		<div class="modal fade" id="uploadRoot" tabindex="-1" role="dialog" aria-labelledby="uploadRoot" aria-hidden="true">
+		  <div class="modal-dialog" role="document">
+			<div class="modal-content">
+
+			  <div class="modal-body">
+				
+							<div id="test-root" style="width: 490px;">
+								<div id="thetext-root"></div>
+							</div>
+				
+			  </div>
+			  
+			</div>
+		  </div>
+		</div>
+	
+	<!-- MODAL WRITE MESSAGE -->
+		
+	  <div class="modal fade" id="newStory" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<h5 class="modal-title" id="exampleModalLabel">Nueva Historia</h5>
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span>
+			</button>
+		  </div>
+
+		  <div class="modal-body">
+
+		   <textarea id="summernote-root" name="editordata"></textarea>
+			
+
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			<button type="button" id="save-chapter" class="btn btn-primary" onclick="App.write()" >Save changes</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+
+
+	<!-- WRITE CHAPTER -->
+	  <div class="modal fade" id="newChapter" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<h5 class="modal-title" id="exampleModalLabel">Nuevo Capítulo</h5>
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span>
+			</button>
+		  </div>
+
+		  <div class="modal-body">
+				
+				<textarea id="summernote" name="editordata"></textarea>
+
+		  </div>
+		  <div class="modal-footer">
+
+					  
+			<button type="button" id="node-cancelButton" class="btn btn-secondary" >Close</button>
+			<button type="button" id="node-saveButton" class="btn btn-primary" >Save changes</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+	 
+	 
+	 
+	 <!-- MODAL LOGIN -->
+		
+	 <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+	 
+
+	 
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+		  
+				<ul class="nav nav-tabs nav-justified">
+					<li class="nav-item">
+						<a class="nav-link active" data-toggle="tab" href="#singin" role="tab">Login</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" data-toggle="tab" href="#singup" role="tab">Register</a>
+					</li>
+
+				</ul>
+		  
+			<!-- <h5 class="modal-title" id="exampleModalLabel">Login</h5> -->
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span>
+			</button>
+		  </div>
+
+		  <div class="modal-body">
+		  
+		  <div class="tab-pane fade in show active" id="singin" role="tabpanel">
+		  
+			  <h5 class="modal-title" id="exampleModalLabel">Sign In</h5>
+				<form>
+				  <div class="form-group">
+					<label for="exampleInputNick">E-mail</label>
+					<input type="text" class="form-control" id="exampleInputNick" placeholder="Enter Nick Name" maxlength="7">
+				  </div>
+				  
+				  <div class="form-group">
+					<label for="exampleInputNick">Password</label>
+					<input type="password" class="form-control" id="exampleInputNick" placeholder="Enter Nick Name" maxlength="7">
+				  </div>
+				  
+							  <div class="form-group">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button type="button" id="save-book" class="btn btn-primary">Login</button>
+				</div>
+				  <!-- <button type="submit" class="btn btn-primary">Submit</button> -->
+				</form>
+			
+			</div>
+			
+			<div class="tab-pane fade" id="singup" role="tabpanel">
+		  
+			  <h5 class="modal-title" id="exampleModalLabel">Sign Up</h5>
+				<form>
+				
+				 <div class="form-group">
+					<label for="exampleFormControlTextarea1">NickName</label>
+						<input type="text" class="form-control" id="rnickname" maxlength="7">
+				  </div>
+				
+				  <div class="form-group">
+					<label for="exampleInputNick">E-mail</label>
+					<input type="text" class="form-control" id="remail" placeholder="Enter Nick Name" maxlength="7">
+				  </div>
+				  
+				  <div class="form-group">
+					<label for="exampleInputNick">Password</label>
+					<input type="password" class="form-control" id="rpass" placeholder="Enter Nick Name" maxlength="7">
+				  </div>
+
+				  
+				  <div class="form-group">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button type="button" id="save-book" class="btn btn-primary" onclick="App.register();" >Login</button>
+				</div>
+
+				  <!-- <button type="submit" class="btn btn-primary">Submit</button> -->
+				</form>
+			
+			</div>
+			
+
+		  </div>
+		  <div class="modal-footer">
+	<!--         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			<button type="button" id="save-book" class="btn btn-primary">Login</button> -->
+		  </div>
+		</div>
+	  </div>
+	</div>
+	 
+	 
+    </div>
+  </div>
+</div>
+
+
+
+</body>
+<script>
+	$( document ).ready(function() {
+		App.refreshList();
+		
+	/*$('#summernote').summernote({
+      height: 300,                 // set editor height
+      width: "90%",                 // set editor height
+      minHeight: null,             // set minimum height of editor
+      maxHeight: null,             // set maximum height of editor
+      dialogsInBody: true
+      }
+	); */
+	  
+	  $('#summernote').summernote({
+        placeholder: '',
+        tabsize: 2,
+        height: 100
+      });
+	  
+	 $('#summernote-root').summernote({
+        placeholder: '',
+        tabsize: 2,
+        height: 100
+      });
+	  
+	  
+	});
+</script>
+
+</html>
