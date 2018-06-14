@@ -58620,6 +58620,7 @@ var ManipulationSystem = function () {
         this.guiEnabled = true;
 
         this._createWrappers();
+		this.editMode = true //IOIO
         if (this.editMode === false) {
           this._createEditButton();
         } else {

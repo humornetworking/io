@@ -80,7 +80,7 @@
 	  
 	  //My Code
 	  
-	  $(".vis-button.vis-edit.vis-edit-mode").css("border-radius", "0px");
+/* 	  $(".vis-button.vis-edit.vis-edit-mode").css("border-radius", "0px");
 	  $(".vis-button.vis-edit.vis-edit-mode").css("margin-left", "350px");
 
 	  
@@ -88,10 +88,17 @@
 		$(".vis-button.vis-add").css("margin-left","200px");
 		$(".vis-label")[0].innerHTML = "Add Story"
 		$(".vis-label")[1].innerHTML = "Add Connection"
-	  });
+	  }); */
 	  
 
-	  $(".vis-label")[0].innerHTML = "Colaborate"
+	  $(".vis-label")[0].innerHTML = "Add Story"
+	  $(".vis-label")[1].innerHTML = "Connect"
+	  $(".vis-manipulation").css("height", "68px");
+	  $(".vis-add").css("height", "54px");
+	  $(".vis-connect").css("height", "54px");
+
+	  //$('.vis-button.vis-edit.vis-edit-mode').trigger( "pointerdown" );
+	  //$('.vis-button.vis-edit.vis-edit-mode').trigger( "pointerdown" );
     }
 
     function editNode(data, cancelAction, callback) {
