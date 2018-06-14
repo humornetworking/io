@@ -8,8 +8,7 @@
     "npm": "5.6.0"
   },
   "scripts": {
-    "start": "node index.js",
-    "postinstall": "npm install"
+    "start": "node index.js"
   },
   "author": "",
   "license": "ISC",
