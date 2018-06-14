@@ -33,7 +33,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use(express.static(__dirname + '/public'));
-var port = 80; 
+var port = process.env.PORT || 8080
 app.listen(port);
 console.log('Magic happens ');
 
