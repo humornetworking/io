@@ -23,17 +23,7 @@
 
       // create a network
       var container = document.getElementById('mynetwork');
-      var options = {
-		 layout: {
-		  hierarchical: {
-			enabled: true,
-			nodeSpacing: 425,
-			blockShifting: false,
-			edgeMinimization: false,
-			sortMethod: "directed"
-		  }
-		 }
-		 ,   
+      var options = {  
         nodes: {
           borderWidth:4,
           size:30,
