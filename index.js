@@ -90,7 +90,7 @@ app.get('/get-chapters/:id', function(req, res){
 			
 			var nNodes = [];
 			for (var i = 0; i < messages.length; i++) {
-				nNodes.push({ 'id': messages[i]._id, 'image' : 'http://localhost/img/'+ messages[i].image, shape: 'image'})
+				nNodes.push({ 'id': messages[i]._id, 'image' : 'https://mywayio.herokuapp.com/img/'+ messages[i].image, shape: 'image'})
 			}
 			
 			
@@ -367,7 +367,7 @@ function getAuthor(author) {
 				function(callback) {
 					
 					
-						 MongoClient.connect("mongodb://localhost:27017/", function(err, db) {
+						 MongoClient.connect(url, function(err, db) {
 							  if (err) throw err;
 							  var dbo = db.db("explguru");
 							  dbo.collection("user").find({'author': author}).toArray(function(err, messages) {

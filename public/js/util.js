@@ -149,7 +149,7 @@
 		  
 					  texto = data.label
 					  clearNodePopUp();
-					  data["image"] = 'http://localhost/tmp/'+ idTmp
+					  data["image"] = 'https://mywayio.herokuapp.com/tmp/'+ idTmp
 					  data["shape"] = 'image'
 					  data["label"] = ''
 					  callback(data);
