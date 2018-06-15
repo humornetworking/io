@@ -132,6 +132,7 @@
 		
 	  data.label = document.getElementById('summernote').value;
 	  
+				  $('#newChapter').modal('show')
 	  			  $('#uploadChapter').modal('show')
 				  $( "#thetext" ).replaceWith( "<div id='thetext'>"+ data.label +"</div>");
 				  //$( "#thetext" ).replaceWith( data.label );

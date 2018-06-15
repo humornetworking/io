@@ -123,6 +123,7 @@ window.App = {
 			
 				  var label = document.getElementById('summernote-root').value;
 				  
+				  $('#newStory').modal('toggle');
 				  $('#uploadRoot').modal('show')
 				  $( "#thetext-root" ).replaceWith( "<div id='thetext-root'></div>");
 				  $( "#thetext-root" ).replaceWith( label );
@@ -152,7 +153,7 @@ window.App = {
 										
 										$('#uploadRoot').modal('toggle');
 										$( "#thetext-root" ).replaceWith( "<div id='thetext-root'></div>");
-										$('#newStory').modal('toggle');
+										
 										
 										App.refreshList();
 									}
