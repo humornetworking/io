@@ -50,6 +50,7 @@ window.App = {
 		
 			$("#summernote-root").summernote("reset");
 			$('#newStory').modal('show')
+			$('.note-image-btn').prop("disabled", false);
 			/*
 			if(this.checkToken()) {
 				$("#summernote-root").summernote("reset");
@@ -219,6 +220,7 @@ window.App = {
 			if(this.checkToken()) {
 				$("#summernote").summernote("reset");
 				$('#newChapter').modal('show')
+				$('.note-image-btn').prop("disabled", false);
 
 			} else {
 				$('#loginModal').modal('show')

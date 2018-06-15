@@ -107,6 +107,7 @@
       document.getElementById('node-cancelButton').onclick = cancelAction.bind(this, callback);
 	  
 	  $('#newChapter').modal('show')
+	  $('.note-image-btn').prop("disabled", false);
       //document.getElementById('node-popUp').style.display = 'block';
     }
 
