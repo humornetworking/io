@@ -108,6 +108,10 @@
 	  
 	  $('#newChapter').modal('show')
 	  $('.note-image-btn').prop("disabled", false);
+	  $('.note-image-btn').blur(function() {
+			$('.note-image-btn').prop("disabled", false);
+	  });
+		
       //document.getElementById('node-popUp').style.display = 'block';
     }
 
