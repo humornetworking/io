@@ -30,7 +30,7 @@ window.App = {
 						type: 'POST',
 						data: JSON.stringify(data),
 				        contentType: 'application/json',
-                        url: 'https://mywayio.herokuapp.com/register',						
+                        url: 'http://localhost:8080/register',						
                         success: function(data) {
                             $('#loginModal').modal('toggle');
                     		
@@ -72,7 +72,7 @@ window.App = {
 										type: 'POST',
 										data: JSON.stringify(data),
 										contentType: 'application/json',
-										url: 'https://mywayio.herokuapp.com/write-tmp',
+										url: 'http://localhost:8080/write-tmp',
 										async: false,
 										success: function(dat) { callback(dat) }
 									})
@@ -91,7 +91,7 @@ window.App = {
 										type: 'POST',
 										data: JSON.stringify(data),
 										contentType: 'application/json',
-										url: 'https://mywayio.herokuapp.com/write-tmp',
+										url: 'http://localhost:8080/write-tmp',
 										async: false,
 										success: function(data) { return data }
 									})
@@ -106,7 +106,7 @@ window.App = {
 										data: JSON.stringify(data),
 										async: false,
 										contentType: 'application/json',
-										url: 'https://mywayio.herokuapp.com/write-tmp',
+										url: 'http://localhost:8080/write-tmp',
 										success: function(data) { 
 											return data.id; 
 										}
@@ -144,7 +144,7 @@ window.App = {
 									type: 'POST',
 									data: JSON.stringify(data),
 									contentType: 'application/json',
-									url: 'https://mywayio.herokuapp.com/write-root',
+									url: 'http://localhost:8080/write-root',
 									/* 	
 									beforeSend: function (xhr) {   //Include the bearer token in header
 											xhr.setRequestHeader("Authorization", 'Bearer '+ iotoken);
@@ -171,14 +171,14 @@ window.App = {
 		
 		$.ajax({
 			type: 'GET',
-		  url: "https://mywayio.herokuapp.com/get-books",
+		  url: "http://localhost:8080/get-books",
 		  context: document.body
 		}).done(function(data) {
 		  
 		    $( "#message-list" ).empty();
 			data.forEach(function(msg) {
 				var newMessage = $( "#new-message" ).clone();
-				newMessage.find(".message").replaceWith( "<div class=\"mb-1 message\" onclick=\"App.goChapter(\'"+ msg._id +"\')\"><img src=\"https://mywayio.herokuapp.com/img/"+ msg.image +"\"></div>");
+				newMessage.find(".message").replaceWith( "<div style=\"cursor: pointer\" class=\"mb-1 message\" onclick=\"App.goChapter(\'"+ msg._id +"\')\"><img src=\"http://localhost:8080/img/"+ msg.image +"\"></div>");
 
 				newMessage.find(".author").text(msg.author);
 				newMessage.find(".date").text(msg.txid);
@@ -196,7 +196,7 @@ window.App = {
 			
 		$.ajax({
 		  type: 'GET',
-		  url: "https://mywayio.herokuapp.com/get-chapters/"+ idBook,
+		  url: "http://localhost:8080/get-chapters/"+ idBook,
 		  async: false
 		}).done(function(data) {
 		  
@@ -252,7 +252,7 @@ window.App = {
 						type: 'POST',
 						data: JSON.stringify(data),
 				        contentType: 'application/json',
-                        url: 'https://mywayio.herokuapp.com/write-chapter',
+                        url: 'http://localhost:8080/write-chapter',
 						/* 	
 						beforeSend: function (xhr) {   //Include the bearer token in header
 								xhr.setRequestHeader("Authorization", 'Bearer '+ iotoken);

@@ -24,6 +24,7 @@
       // create a network
       var container = document.getElementById('mynetwork');
       var options = {  
+	 
         nodes: {
           borderWidth:4,
           size:30,
@@ -33,8 +34,12 @@
           },
           font:{color:'#eeeeee'},
           shapeProperties: {
-            useBorderWithImage:true
-          }
+            useBorderWithImage:false
+          },
+			"scaling": {
+			  "min": 46,
+			  "max": 83
+			}
         },
         edges: {
              "color": {
@@ -78,24 +83,34 @@
 	  
       network = new vis.Network(container, story, options);
 	  
-	  //My Code
-	  
-/* 	  $(".vis-button.vis-edit.vis-edit-mode").css("border-radius", "0px");
-	  $(".vis-button.vis-edit.vis-edit-mode").css("margin-left", "350px");
+	  network.on("beforeDrawing", function (ctx) {
+		var nodeId = rootBook;
+		var nodePosition = network.getPositions([nodeId]);
+		ctx.strokeStyle = '#A6D5F7';
+		ctx.fillStyle = '#294475';
+		ctx.circle(nodePosition[nodeId].x, nodePosition[nodeId].y,50);
+		ctx.fill();
+		ctx.stroke();
+	  });
 
+	network.once('stabilized', function() {
+		var scaleOption = { scale : 1.5 };
+		network.moveTo(scaleOption);
+	})
 	  
-	  $('.vis-button.vis-edit.vis-edit-mode').on('pointerdown', function (e) {
-		$(".vis-button.vis-add").css("margin-left","200px");
-		$(".vis-label")[0].innerHTML = "Add Story"
-		$(".vis-label")[1].innerHTML = "Add Connection"
-	  }); */
+	network.focus(rootBook)
 	  
 
-	  $(".vis-label")[0].innerHTML = "Add Story"
-	  $(".vis-label")[1].innerHTML = "Connect"
-	  $(".vis-manipulation").css("height", "68px");
-	  $(".vis-add").css("height", "54px");
-	  $(".vis-connect").css("height", "54px");
+	  $(".vis-label")[0].innerHTML = "<span style='font-size: 45px;' class='glyphicon glyphicon-pencil' aria-hidden='true'>&nbsp;Write</span>"
+	  $(".vis-label")[1].innerHTML = "<span style='font-size: 45px;' class='glyphicon glyphicon-link' aria-hidden='true'>&nbsp;Connect</span>"
+	  $(".vis-manipulation").css("height", "100px");
+	  $(".vis-add").css("height", "70px");
+	  $(".vis-add").css("width", "45%");
+	  $(".vis-connect").css("height", "70px");
+	  $(".vis-connect").css("width", "45%");
+	  $(".vis-separator-line").css("height", "100px");
+	  
+	  
 
 	  //$('.vis-button.vis-edit.vis-edit-mode').trigger( "pointerdown" );
 	  //$('.vis-button.vis-edit.vis-edit-mode').trigger( "pointerdown" );
@@ -132,7 +147,7 @@
 		
 	  data.label = document.getElementById('summernote').value;
 	  
-				  $('#newChapter').modal('show')
+				  $('#newChapter').modal('hide')
 	  			  $('#uploadChapter').modal('show')
 				  $( "#thetext" ).replaceWith( "<div id='thetext'>"+ data.label +"</div>");
 				  //$( "#thetext" ).replaceWith( data.label );
@@ -152,7 +167,7 @@
 		  
 					  texto = data.label
 					  clearNodePopUp();
-					  data["image"] = 'https://mywayio.herokuapp.com/tmp/'+ idTmp
+					  data["image"] = 'http://localhost:8080/tmp/'+ idTmp
 					  data["shape"] = 'image'
 					  data["label"] = ''
 					  callback(data);

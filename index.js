@@ -11,8 +11,8 @@ var MongoClient = require('mongodb').MongoClient;
 var ObjectId = require('mongodb').ObjectID;
 
 //MongoDB
-//var url = "mongodb://localhost:27017/";
-var url = "mongodb://andres:unodos3@ds047612.mongolab.com:47612/explguru"
+var url = "mongodb://localhost:27017/";
+//var url = "mongodb://andres:unodos3@ds047612.mongolab.com:47612/explguru"
 
 //MailGun
 var mailgun = require("mailgun-js")({apiKey: 'key-219426aefec7c90432a505766e1888bf', domain: 'sandbox2576ebf851d144449cdb3023f5b14267.mailgun.org'});
@@ -90,7 +90,7 @@ app.get('/get-chapters/:id', function(req, res){
 			
 			var nNodes = [];
 			for (var i = 0; i < messages.length; i++) {
-				nNodes.push({ 'id': messages[i]._id, 'image' : 'https://mywayio.herokuapp.com/img/'+ messages[i].image, shape: 'image'})
+				nNodes.push({ 'id': messages[i]._id, 'image' : 'http://localhost:8080/img/'+ messages[i].image, shape: 'image'})
 			}
 			
 			
