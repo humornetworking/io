@@ -165,6 +165,8 @@ window.App = {
 		
 	},
 	goChapter: function (idBook) {
+			
+			$("#spinner").show()
 			$('.book-page').hide()
 			$('.chapter-page').show()
 			
@@ -185,6 +187,7 @@ window.App = {
 			  };
 			  
 			  window.initGraph(idBook,data);
+			  $("#spinner").hide()
 			  
 
 		})
