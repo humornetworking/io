@@ -58369,8 +58369,13 @@ var ManipulationSystem = function () {
         this.manipulationDOM = {};
         this._createBackButton(locale);
         this._createSeperator();
-        this._createDescription(locale['addDescription'] || this.options.locales['en']['addDescription']);
+        //this._createDescription(locale['addDescription'] || this.options.locales['en']['addDescription']); IOIO
 
+	  $(".vis-label")[0].innerHTML = "<span style='font-size: 30px;' class='glyphicon glyphicon-hand-down' aria-hidden='true'>&nbsp;Click en un punto de la pantalla</span>"
+	  $(".vis-manipulation").css("height", "100px");
+	  $(".vis-none").css("height", "70px");
+	  $(".vis-none").css("width", "45%");
+		
         // bind the close button
         this._bindHammerToDiv(this.closeDiv, this.toggleEditMode.bind(this));
       }
@@ -58446,8 +58451,13 @@ var ManipulationSystem = function () {
         this.manipulationDOM = {};
         this._createBackButton(locale);
         this._createSeperator();
-        this._createDescription(locale['edgeDescription'] || this.options.locales['en']['edgeDescription']);
-
+        //this._createDescription(locale['edgeDescription'] || this.options.locales['en']['edgeDescription']);
+	  $(".vis-label")[0].innerHTML = "<span style='font-size: 30px;' class='glyphicon glyphicon-resize-full' aria-hidden='true'>&nbsp;Connect 2 Stories</span>"
+	  $(".vis-manipulation").css("height", "100px");
+	  $(".vis-none").css("height", "70px");
+	  $(".vis-none").css("width", "45%");
+		
+		
         // bind the close button
         this._bindHammerToDiv(this.closeDiv, this.toggleEditMode.bind(this));
       }

@@ -59,30 +59,32 @@ window.App = {
 				$('#loginModal').modal('show')
 			}*/
     },
-	writeTmp : function(dataURL){
+	writeTmp : function(dataURL, texto){
 		
 		
-		var data = {};
-		var id = ""
+		var data = {}
+		var result = {}
 		data.image = dataURL
+		data.texto = texto
+		data.root = rootBook
 		
-						async.seq(
+					async.seq(
 						function(callback) {
 									$.ajax({
 										type: 'POST',
 										data: JSON.stringify(data),
 										contentType: 'application/json',
-										url: 'http://localhost:8080/write-tmp',
+										url: 'http://localhost:8080/write-chap',
 										async: false,
 										success: function(dat) { callback(dat) }
 									})
 							
 						}
 					)(function( dat, err) {
-						id = dat.id;
+						result = dat.data;
 					});
 		
-		return id;
+		return result;
 		
 /* 		var id = "";
 		$.when(function ajax1() {
@@ -91,7 +93,7 @@ window.App = {
 										type: 'POST',
 										data: JSON.stringify(data),
 										contentType: 'application/json',
-										url: 'http://localhost:8080/write-tmp',
+										url: 'http://localhost:8080/write-chap',
 										async: false,
 										success: function(data) { return data }
 									})
@@ -106,7 +108,7 @@ window.App = {
 										data: JSON.stringify(data),
 										async: false,
 										contentType: 'application/json',
-										url: 'http://localhost:8080/write-tmp',
+										url: 'http://localhost:8080/write-chap',
 										success: function(data) { 
 											return data.id; 
 										}
@@ -252,7 +254,7 @@ window.App = {
 						type: 'POST',
 						data: JSON.stringify(data),
 				        contentType: 'application/json',
-                        url: 'http://localhost:8080/write-chapter',
+                        url: 'http://localhost:8080/write-link',
 						/* 	
 						beforeSend: function (xhr) {   //Include the bearer token in header
 								xhr.setRequestHeader("Authorization", 'Bearer '+ iotoken);

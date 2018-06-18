@@ -182,26 +182,73 @@ app.post('/register', function(req, res){
 	res.send({"token" :"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3IiOiJhbmRycyJ9.1cSuE-00MnvUjfooBV0dE77zPZu_GfRkJf1JBXWMowQ"})
 });
 
-app.post('/write-tmp', function(req, res){
+app.post('/write-chap', function(req, res){
 	
 	
 	var obj = {};
 	var author = "Andrs"//user.author;
-	//var bigAuthor = getAuthor(author);
-	
+	var txt = req.body.texto.substring(0, 100);
+	var root = req.body.root
 	var image = req.body.image
-	
 	
 	var img = decodeBase64Image(image)
 	var buf = new Buffer(img.data, 'base64')
 	var imgName = Math.floor((Math.random() * 1000000000000000) + 1) +".png"
-	fs.writeFile('public/tmp/'+imgName, buf, function(err) { console.log(err) });
 	
-	res.send({"id" : imgName})
+	
+	fs.writeFile('public/img/'+imgName, buf, function(err) { console.log(err) });
+	
+	
+
+	
+	
+	 			MongoClient.connect(url, function(err, db) {
+				var dbo = db.db("explguru");
+					
+					async.seq(
+
+
+						function(callback) {
+							
+								var newMessage = {'txid': '123','author' : author, 'txt' : txt, 'image' : imgName, 'timestamp' : Date.now(), 'root' : 0};
+								dbo.collection("message").insertOne(newMessage, function(err, res) {
+											if (err) throw err;					
+											//pointto = res.insertedId.toString()
+											newMessage["id"] = res.insertedId.toString()
+											callback(null,newMessage);
+											
+								});
+
+						},
+						function(newMessage,callback) {
+							
+										var row = {'root': root,'to' : '', 'from' : newMessage.id, 'metadata' :  {"coordinates" : {
+																															"x" : 0,
+																															"y" : 0
+																														}
+																												 }};
+
+										  dbo.collection("matrix").insertOne(row, function(err, res) {
+											if (err) throw err;					
+											db.close();
+											
+											callback(newMessage, null);
+										  });
+							
+						}
+					)(function(newMessage, err) {
+						res.send({"data" : newMessage})
+					});
+	
+				});
+	
+	
+	
+	
 });	
 
 
-app.post('/write-chapter', function(req, res){
+app.post('/write-link', function(req, res){
 	
 	
 	var obj = {};
@@ -225,27 +272,16 @@ app.post('/write-chapter', function(req, res){
 	
 	
 	    var txid = "321";
-		if(chain == "ETH"){
+
 			
-		}
-			
-				var newMessage = {'txid': txid,'author' : author, 'txt' : txt, 'image' : imgName, 'timestamp' : ahora, 'root' : 0};
 				var that = this
  				MongoClient.connect(url, function(err, db) {
 				var dbo = db.db("explguru");
 					async.seq(
+
 						function(callback) {
-										var newMessage = {'txid': txid,'author' : author, 'txt' : txt, 'image' : imgName, 'timestamp' : ahora, 'root' : 0};
-										  dbo.collection("message").insertOne(newMessage, function(err, res) {
-											if (err) throw err;					
-											pointto = res.insertedId.toString()
-											callback(null, pointto);
-										  });
 							
-						},
-						function(pointto, callback) {
-							
-										var row = {'root': root,'to' : pointto, 'from' : from, 'metadata' :  {"coordinates" : {
+										var row = {'root': root,'to' : to, 'from' : from, 'metadata' :  {"coordinates" : {
 																															"x" : 0,
 																															"y" : 0
 																														}

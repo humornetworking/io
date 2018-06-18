@@ -34,7 +34,7 @@
           },
           font:{color:'#eeeeee'},
           shapeProperties: {
-            useBorderWithImage:false
+            useBorderWithImage:true
           },
 			"scaling": {
 			  "min": 46,
@@ -99,6 +99,28 @@
 	})
 	  
 	network.focus(rootBook)
+	
+ 	network.on( 'click', function(properties) {
+		setTimeout(function(){ 
+
+			  $(".vis-label")[0].innerHTML = "<span style='font-size: 45px;' class='glyphicon glyphicon-pencil' aria-hidden='true'>&nbsp;Write</span>"
+			  $(".vis-label")[1].innerHTML = "<span style='font-size: 45px;' class='glyphicon glyphicon-link' aria-hidden='true'>&nbsp;Connect</span>"
+			  $('.vis-edit').hide()
+			  $('.vis-delete').hide()
+			  $(".vis-manipulation").css("height", "100px");
+			  $(".vis-add").css("height", "70px");
+			  $(".vis-add").css("width", "45%");
+			  $(".vis-connect").css("height", "70px");
+			  $(".vis-connect").css("width", "45%");
+			  $(".vis-separator-line").css("height", "100px");
+
+		}, 100);
+	}); 
+
+ 	network.on( 'selectNode', function(properties) {
+		return;
+	});	
+	
 	  
 
 	  $(".vis-label")[0].innerHTML = "<span style='font-size: 45px;' class='glyphicon glyphicon-pencil' aria-hidden='true'>&nbsp;Write</span>"
@@ -152,6 +174,21 @@
 				  $( "#thetext" ).replaceWith( "<div id='thetext'>"+ data.label +"</div>");
 				  //$( "#thetext" ).replaceWith( data.label );
 	  
+	  	setTimeout(function(){ 
+
+			  $(".vis-label")[0].innerHTML = "<span style='font-size: 45px;' class='glyphicon glyphicon-pencil' aria-hidden='true'>&nbsp;Write</span>"
+			  $(".vis-label")[1].innerHTML = "<span style='font-size: 45px;' class='glyphicon glyphicon-link' aria-hidden='true'>&nbsp;Connect</span>"
+			  $('.vis-edit').hide()
+			  $('.vis-delete').hide()
+			  $(".vis-manipulation").css("height", "100px");
+			  $(".vis-add").css("height", "70px");
+			  $(".vis-add").css("width", "45%");
+			  $(".vis-connect").css("height", "70px");
+			  $(".vis-connect").css("width", "45%");
+			  $(".vis-separator-line").css("height", "100px");
+
+		}, 1000);
+	  
 
 	  var el = document.getElementById("test");
 	  
@@ -163,13 +200,14 @@
 					$('#uploadChapter').modal('toggle');
 					  $( "#thetext" ).replaceWith( "<div id='thetext'></div>");
 					
-					  idTmp	= App.writeTmp(dataImage) //Evento asyncronico, Manejarlo
+					  book	= App.writeTmp(dataImage, data.label) //Evento asyncronico, Manejarlo
 		  
 					  texto = data.label
 					  clearNodePopUp();
-					  data["image"] = 'http://localhost:8080/tmp/'+ idTmp
+					  data["image"] = 'http://localhost:8080/img/'+ book.image
 					  data["shape"] = 'image'
 					  data["label"] = ''
+					  data["id"] = book.id
 					  callback(data);
 					
 					
@@ -200,16 +238,9 @@
 
     function saveEdgeData(data, callback) {
 	
-	var from = ""
-	var to = ""
-	if(data.from.includes("-")) {
-		from = "";
-		to = data.to
-	} else {
-		to = "";
-		from = data.from
-	}
-	  
+	var from = data.from
+	var to = data.to
+
       if (typeof data.to === 'object')
         data.to = data.to.id
       if (typeof data.from === 'object')
@@ -221,6 +252,22 @@
 	  
 	  //Mine First to do this
 	  App.writeChapter("",from,to,dataImage)
+	  
+	  setTimeout(function(){ 
+
+			  $(".vis-label")[0].innerHTML = "<span style='font-size: 45px;' class='glyphicon glyphicon-pencil' aria-hidden='true'>&nbsp;Write</span>"
+			  $(".vis-label")[1].innerHTML = "<span style='font-size: 45px;' class='glyphicon glyphicon-link' aria-hidden='true'>&nbsp;Connect</span>"
+			  $('.vis-edit').hide()
+			  $('.vis-delete').hide()
+			  $(".vis-manipulation").css("height", "100px");
+			  $(".vis-add").css("height", "70px");
+			  $(".vis-add").css("width", "45%");
+			  $(".vis-connect").css("height", "70px");
+			  $(".vis-connect").css("width", "45%");
+			  $(".vis-separator-line").css("height", "100px");
+
+		}, 500);
+	  
 	  
 	  data["arrows"] = {middle:{scaleFactor:0.5},to:true}
       callback(data);
