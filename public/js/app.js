@@ -30,7 +30,7 @@ window.App = {
 						type: 'POST',
 						data: JSON.stringify(data),
 				        contentType: 'application/json',
-                        url: 'http://localhost:8080/register',						
+                        url: URLSERVER +'/register',						
                         success: function(data) {
                             $('#loginModal').modal('toggle');
                     		
@@ -74,7 +74,7 @@ window.App = {
 										type: 'POST',
 										data: JSON.stringify(data),
 										contentType: 'application/json',
-										url: 'http://localhost:8080/write-chap',
+										url: URLSERVER +'/write-chap',
 										async: false,
 										success: function(dat) { callback(dat) }
 									})
@@ -85,34 +85,6 @@ window.App = {
 					});
 		
 		return result;
-		
-/* 		var id = "";
-		$.when(function ajax1() {
-
-			return 	$.ajax({
-										type: 'POST',
-										data: JSON.stringify(data),
-										contentType: 'application/json',
-										url: 'http://localhost:8080/write-chap',
-										async: false,
-										success: function(data) { return data }
-									})
-		}).done(function(data){
-			
-			return data.id;
-			
-		}); */
-		
-/* 		$.ajax({
-										type: 'POST',
-										data: JSON.stringify(data),
-										async: false,
-										contentType: 'application/json',
-										url: 'http://localhost:8080/write-chap',
-										success: function(data) { 
-											return data.id; 
-										}
-									}) */
 
 		
 	},
@@ -146,7 +118,7 @@ window.App = {
 									type: 'POST',
 									data: JSON.stringify(data),
 									contentType: 'application/json',
-									url: 'http://localhost:8080/write-root',
+									url: URLSERVER +'/write-root',
 									/* 	
 									beforeSend: function (xhr) {   //Include the bearer token in header
 											xhr.setRequestHeader("Authorization", 'Bearer '+ iotoken);
@@ -254,7 +226,7 @@ window.App = {
 						type: 'POST',
 						data: JSON.stringify(data),
 				        contentType: 'application/json',
-                        url: 'http://localhost:8080/write-link',
+                        url: URLSERVER +'/write-link',
 						/* 	
 						beforeSend: function (xhr) {   //Include the bearer token in header
 								xhr.setRequestHeader("Authorization", 'Bearer '+ iotoken);

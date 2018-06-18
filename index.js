@@ -5,7 +5,7 @@ var async = require('async');
 var jwt = require('jsonwebtoken'); //lavidabellaentodassusformas
 var WebSocketServer = require('ws').Server;
 var fs = require("fs")
-
+var URLSERVER = "http://localhost:8080"
 
 var MongoClient = require('mongodb').MongoClient;
 var ObjectId = require('mongodb').ObjectID;
@@ -90,7 +90,7 @@ app.get('/get-chapters/:id', function(req, res){
 			
 			var nNodes = [];
 			for (var i = 0; i < messages.length; i++) {
-				nNodes.push({ 'id': messages[i]._id, 'image' : 'http://localhost:8080/img/'+ messages[i].image, shape: 'image'})
+				nNodes.push({ 'id': messages[i]._id, 'image' : URLSERVER +'/img/'+ messages[i].image, shape: 'image'})
 			}
 			
 			

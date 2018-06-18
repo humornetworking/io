@@ -35,7 +35,7 @@
 
 					<div class="container h-100">
 					  <div class="row h-100 justify-content-center align-items-center">
-					<img src="img/ioio.png" title="ASCII :: the code" alt="ASCII :: the code"> 
+					<!-- <img src="img/ioio.png" title="ASCII :: the code" alt="ASCII :: the code">  -->
 					<br>
 
 					<!-- Button trigger modal -->
@@ -303,14 +303,8 @@
 	$( document ).ready(function() {
 		App.refreshList();
 		
-	/*$('#summernote').summernote({
-      height: 300,                 // set editor height
-      width: "90%",                 // set editor height
-      minHeight: null,             // set minimum height of editor
-      maxHeight: null,             // set maximum height of editor
-      dialogsInBody: true
-      }
-	); */
+	//var URLSERVER = "http://104.251.213.18:8080"
+	var URLSERVER = "http://localhost:8080"
 	  
 	  $('#summernote').summernote({
         placeholder: '',
@@ -324,6 +318,10 @@
         height: 100
       });
 	  
+	  if (window.location.href.includes("book=")) {
+		url = window.location.href.split("book=")
+		App.goChapter(url[1])
+	  }
 	  
 	});
 </script>

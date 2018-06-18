@@ -204,7 +204,7 @@
 		  
 					  texto = data.label
 					  clearNodePopUp();
-					  data["image"] = 'http://localhost:8080/img/'+ book.image
+					  data["image"] = URLSERVER +'/img/'+ book.image
 					  data["shape"] = 'image'
 					  data["label"] = ''
 					  data["id"] = book.id
