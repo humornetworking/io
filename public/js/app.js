@@ -152,7 +152,7 @@ window.App = {
 		    $( "#message-list" ).empty();
 			data.forEach(function(msg) {
 				var newMessage = $( "#new-message" ).clone();
-				newMessage.find(".message").replaceWith( "<div style=\"cursor: pointer\" class=\"mb-1 message\" onclick=\"App.goChapter(\'"+ msg._id +"\')\"><img src=\URLSERVER +"/img/"+ msg.image +"\"></div>");
+				newMessage.find(".message").replaceWith( "<div style=\"cursor: pointer\" class=\"mb-1 message\" onclick=\"App.goChapter(\'"+ msg._id +"\')\"><img src=\""+ URLSERVER +"/img/"+ msg.image +"\"></div>");
 
 				newMessage.find(".author").text(msg.author);
 				newMessage.find(".date").text(msg.txid);
