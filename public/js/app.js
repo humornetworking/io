@@ -145,14 +145,14 @@ window.App = {
 		
 		$.ajax({
 			type: 'GET',
-		  url: "http://localhost:8080/get-books",
+		  url: URLSERVER +"/get-books",
 		  context: document.body
 		}).done(function(data) {
 		  
 		    $( "#message-list" ).empty();
 			data.forEach(function(msg) {
 				var newMessage = $( "#new-message" ).clone();
-				newMessage.find(".message").replaceWith( "<div style=\"cursor: pointer\" class=\"mb-1 message\" onclick=\"App.goChapter(\'"+ msg._id +"\')\"><img src=\"http://localhost:8080/img/"+ msg.image +"\"></div>");
+				newMessage.find(".message").replaceWith( "<div style=\"cursor: pointer\" class=\"mb-1 message\" onclick=\"App.goChapter(\'"+ msg._id +"\')\"><img src=\URLSERVER +"/img/"+ msg.image +"\"></div>");
 
 				newMessage.find(".author").text(msg.author);
 				newMessage.find(".date").text(msg.txid);
@@ -170,7 +170,7 @@ window.App = {
 			
 		$.ajax({
 		  type: 'GET',
-		  url: "http://localhost:8080/get-chapters/"+ idBook,
+		  url: URLSERVER +"/get-chapters/"+ idBook,
 		  async: false
 		}).done(function(data) {
 		  
