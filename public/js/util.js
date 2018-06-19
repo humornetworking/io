@@ -123,14 +123,14 @@
 	
 	  
 
-/* 	  $(".vis-label")[0].innerHTML = "<span style='font-size: 45px;' class='glyphicon glyphicon-pencil' aria-hidden='true'>&nbsp;Write</span>"
+	  $(".vis-label")[0].innerHTML = "<span style='font-size: 45px;' class='glyphicon glyphicon-pencil' aria-hidden='true'>&nbsp;Write</span>"
 	  $(".vis-label")[1].innerHTML = "<span style='font-size: 45px;' class='glyphicon glyphicon-link' aria-hidden='true'>&nbsp;Connect</span>"
 	  $(".vis-manipulation").css("height", "100px");
 	  $(".vis-add").css("height", "70px");
 	  $(".vis-add").css("width", "45%");
 	  $(".vis-connect").css("height", "70px");
 	  $(".vis-connect").css("width", "45%");
-	  $(".vis-separator-line").css("height", "100px"); */
+	  $(".vis-separator-line").css("height", "100px");
 	  
 	  
 
@@ -174,7 +174,7 @@
 				  $( "#thetext" ).replaceWith( "<div id='thetext'>"+ data.label +"</div>");
 				  //$( "#thetext" ).replaceWith( data.label );
 	  
-/* 	  	setTimeout(function(){ 
+	  	setTimeout(function(){ 
 
 			  $(".vis-label")[0].innerHTML = "<span style='font-size: 45px;' class='glyphicon glyphicon-pencil' aria-hidden='true'>&nbsp;Write</span>"
 			  $(".vis-label")[1].innerHTML = "<span style='font-size: 45px;' class='glyphicon glyphicon-link' aria-hidden='true'>&nbsp;Connect</span>"
@@ -187,7 +187,7 @@
 			  $(".vis-connect").css("width", "45%");
 			  $(".vis-separator-line").css("height", "100px");
 
-		}, 1000); */
+		}, 1000);
 	  
 
 	  var el = document.getElementById("test");
@@ -253,7 +253,7 @@
 	  //Mine First to do this
 	  App.writeChapter("",from,to,dataImage)
 	  
-/* 	  setTimeout(function(){ 
+	  setTimeout(function(){ 
 
 			  $(".vis-label")[0].innerHTML = "<span style='font-size: 45px;' class='glyphicon glyphicon-pencil' aria-hidden='true'>&nbsp;Write</span>"
 			  $(".vis-label")[1].innerHTML = "<span style='font-size: 45px;' class='glyphicon glyphicon-link' aria-hidden='true'>&nbsp;Connect</span>"
@@ -266,7 +266,7 @@
 			  $(".vis-connect").css("width", "45%");
 			  $(".vis-separator-line").css("height", "100px");
 
-		}, 500); */
+		}, 500);
 	  
 	  
 	  data["arrows"] = {middle:{scaleFactor:0.5},to:true}
