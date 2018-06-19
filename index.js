@@ -261,13 +261,7 @@ app.post('/write-link', function(req, res){
 	var root = req.body.root
 	var from = req.body.from
 	var to = req.body.to
-	var image = req.body.image
-	
-	
-	var img = decodeBase64Image(image)
-	var buf = new Buffer(img.data, 'base64')
-	var imgName = Math.floor((Math.random() * 1000000000000000) + 1) +".png"
-	fs.writeFile('public/img/'+imgName, buf, function(err) { console.log(err) });
+
 	
 	var ahora = Date.now()	
 	
