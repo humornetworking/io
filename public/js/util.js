@@ -174,20 +174,7 @@
 				  $( "#thetext" ).replaceWith( "<div id='thetext'>"+ data.label +"</div>");
 				  //$( "#thetext" ).replaceWith( data.label );
 	  
-	  	setTimeout(function(){ 
 
-			  $(".vis-label")[0].innerHTML = "<span style='font-size: 45px;' class='glyphicon glyphicon-pencil' aria-hidden='true'>&nbsp;Write</span>"
-			  $(".vis-label")[1].innerHTML = "<span style='font-size: 45px;' class='glyphicon glyphicon-link' aria-hidden='true'>&nbsp;Connect</span>"
-			  $('.vis-edit').hide()
-			  $('.vis-delete').hide()
-			  $(".vis-manipulation").css("height", "100px");
-			  $(".vis-add").css("height", "70px");
-			  $(".vis-add").css("width", "45%");
-			  $(".vis-connect").css("height", "70px");
-			  $(".vis-connect").css("width", "45%");
-			  $(".vis-separator-line").css("height", "100px");
-
-		}, 1000);
 	  
 
 	  var el = document.getElementById("test");
@@ -208,7 +195,39 @@
 					  data["shape"] = 'image'
 					  data["label"] = ''
 					  data["id"] = book.id
-					  callback(data);
+					 
+					 $('head').append('<meta name="viewport" content="initial-scale=1.0, width=device-width"  id="scale1" />');
+
+					 
+					try {
+					var scale = 'scale(1)';
+					 document.body.style.webkitTransform = scale      // Chrome, Opera, Safari
+					 document.body.style.msTransform =   scale       // IE 9
+					 document.body.style.transform = scale; 
+					 
+					 
+					}
+					catch(err) {
+					   console.log(err)
+					}
+					
+					
+				   setTimeout(function(){ 
+
+						  $(".vis-label")[0].innerHTML = "<span style='font-size: 45px;' class='glyphicon glyphicon-pencil' aria-hidden='true'>&nbsp;Write</span>"
+						  $(".vis-label")[1].innerHTML = "<span style='font-size: 45px;' class='glyphicon glyphicon-link' aria-hidden='true'>&nbsp;Connect</span>"
+						  $('.vis-edit').hide()
+						  $('.vis-delete').hide()
+						  $(".vis-manipulation").css("height", "100px");
+						  $(".vis-add").css("height", "70px");
+						  $(".vis-add").css("width", "45%");
+						  $(".vis-connect").css("height", "70px");
+						  $(".vis-connect").css("width", "45%");
+						  $(".vis-separator-line").css("height", "100px");
+
+					}, 1000);
+										  
+					callback(data);
 					
 					
 		  });

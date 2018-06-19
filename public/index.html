@@ -312,16 +312,39 @@ var URLSERVER = "http://104.251.213.18:8080"
 	
 	  
 	  $('#summernote').summernote({
-        placeholder: '',
-        tabsize: 2,
-        height: 100
+		height: 300,
+		 fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
+	    toolbar: [
+			['style', ['style']],
+			['fontsize', ['fontsize']],
+			['font', ['bold', 'italic', 'underline', 'clear']],
+			['fontname', ['fontname']],
+			['color', ['color']],
+			['para', ['ul', 'ol', 'paragraph']],
+			['insert', ['picture']]
+		  ]
       });
 	  
-	 $('#summernote-root').summernote({
+	/* $('#summernote-root').summernote({
         placeholder: '',
         tabsize: 2,
         height: 100
+      });*/
+	  
+	  	 $('#summernote-root').summernote({
+		 height: 300,
+		 fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
+	    toolbar: [
+			['style', ['style']],
+			['fontsize', ['fontsize']],
+			['font', ['bold', 'italic', 'underline', 'clear']],
+			['fontname', ['fontname']],
+			['color', ['color']],
+			['para', ['ul', 'ol', 'paragraph']],
+			['insert', ['picture']]
+		  ]
       });
+	  
 	  
 	  if (window.location.href.includes("book=")) {
 		url = window.location.href.split("book=")
