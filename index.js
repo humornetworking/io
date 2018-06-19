@@ -5,8 +5,8 @@ var async = require('async');
 var jwt = require('jsonwebtoken'); //lavidabellaentodassusformas
 var WebSocketServer = require('ws').Server;
 var fs = require("fs")
-//var URLSERVER = "http://localhost:8080"
-var URLSERVER = "http://104.251.213.18:8080"
+var URLSERVER = "http://localhost:8080"
+//var URLSERVER = "http://104.251.213.18:8080"
 
 var MongoClient = require('mongodb').MongoClient;
 var ObjectId = require('mongodb').ObjectID;
