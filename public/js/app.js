@@ -236,7 +236,7 @@ window.App = {
 							} */					
                         success: function(data) {
                             
-									App.goChapter(rootBook)
+									//App.goChapter(rootBook)
 							
                         }
                     }).done(function(data) {
