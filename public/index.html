@@ -22,6 +22,9 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.9/summernote.css" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.9/summernote.js"></script>
   
+   <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet"> 
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+  
  
   
   </head>
@@ -37,14 +40,20 @@
 
 					<div class="container h-100">
 					  <div class="row h-100 justify-content-center align-items-center">
-					<!-- <img src="img/ioio.png" title="ASCII :: the code" alt="ASCII :: the code">  -->
+					 <!-- <img src="img/ioio.png" title="ASCII :: the code" alt="ASCII :: the code">   -->
+					 
 					<br>
 
 					<!-- Button trigger modal -->
 
-					<button type="button" class="btn btn-primary" data-toggle="modal" onclick="App.openWrite()">
-					Escribir un mensaje
-					</button>
+					
+					<div class="col-md-4 text-center"> 
+    						<button type="button" class="btn" data-toggle="modal" onclick="App.openWrite()">
+											<span class="glyphicon glyphicon-pencil"></span> 
+											Write
+							</button>
+					</div>
+
 
 
 <!-- 					<button type="button" class="btn btn-primary" onclick="App.checkLogin();">
@@ -82,10 +91,26 @@
 
 					<div class="container h-100"> 
 					  <div class="row h-100 justify-content-center align-items-center">
-					  <!-- <button type="button" id="save-chapter" class="btn btn-primary" onclick="App.openChapter()" >Write Chapter</button> -->
 						
-						<button type="button" class="btn btn-primary" onclick="newChapter()">Write</button>
-						<button type="button" class="btn btn-primary" onclick="newCon()">Connect</button>
+					
+						<div class="row">
+							<div class="col-xs-5 col-md-3 col-lg-1 vcenter">
+								<button type="button" class="btn" style="width:100%" onclick="newChapter()">
+								<span class="glyphicon glyphicon-pencil"></span> 
+									Write
+								</button>
+							</div>
+							&nbsp;&nbsp;&nbsp;
+							<div class="col-xs-5 col-md-7 col-lg-9 vcenter">
+							
+							   <button type="button" class="btn" style="width:100%" onclick="newCon()">
+							   <span class="glyphicon glyphicon-link"></span> 
+									Connect
+								</button>
+							</div>
+						</div>
+						<br>
+						
 						<div id="mynetwork"></div>
 				  
 
@@ -114,12 +139,13 @@
 	<!-- UPLOAD CREATE CHAPTER -->
 	
 <div class="modal fade" id="uploadChapter" tabindex="-1" role="dialog" aria-labelledby="uploadChapter" aria-hidden="true">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog modal-full" role="document">
     <div class="modal-content">
 
       <div class="modal-body">
-        
+					<div class="loader" ></div>
 					<div id="test" style="height: 250px;width: 250px;">
+					    
 						<div id="thetext"></div>
 					</div>
 		
@@ -133,11 +159,11 @@
 	<!-- UPLOAD CREATE ROOT -->
 	
 		<div class="modal fade" id="uploadRoot" tabindex="-1" role="dialog" aria-labelledby="uploadRoot" aria-hidden="true">
-		  <div class="modal-dialog" role="document">
+		  <div class="modal-dialog modal-full" role="document">
 			<div class="modal-content">
 
 			  <div class="modal-body">
-				
+							<div class="loader" ></div>
 							<div id="test-root" style="height: 250px;width: 250px;">
 								<div id="thetext-root"></div>
 							</div>
@@ -153,23 +179,23 @@
 	  <div class="modal fade" id="newStory" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	  <div class="modal-dialog" role="document">
 		<div class="modal-content">
-		  <div class="modal-header">
+<!-- 		  <div class="modal-header">
 			<h5 class="modal-title" id="exampleModalLabel">Nueva Historia</h5>
 			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 			  <span aria-hidden="true">&times;</span>
 			</button>
-		  </div>
+		  </div> -->
 
 		  <div class="modal-body">
 
 		   <textarea id="summernote-root" name="editordata"></textarea>
-			
+			<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="$('#newStory').modal('hide')">Close</button>
+			<button type="button" id="save-chapter" class="btn btn-primary" onclick="App.write()" >Save changes</button>
 
 		  </div>
-		  <div class="modal-footer">
-			<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-			<button type="button" id="save-chapter" class="btn btn-primary" onclick="App.write()" >Save changes</button>
-		  </div>
+<!-- 		  <div class="modal-footer">
+
+		  </div> -->
 		</div>
 	  </div>
 	</div>
@@ -179,25 +205,23 @@
 	  <div class="modal fade" id="newChapter" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	  <div class="modal-dialog" role="document">
 		<div class="modal-content">
-		  <div class="modal-header">
+<!-- 		  <div class="modal-header">
 			<h5 class="modal-title" id="exampleModalLabel">Nuevo Capítulo</h5>
 			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 			  <span aria-hidden="true">&times;</span>
 			</button>
-		  </div>
+		  </div> -->
 
 		  <div class="modal-body">
 				
-				<textarea id="summernote" name="editordata"></textarea>
-
-		  </div>
-		  <div class="modal-footer">
-
-					  
-			<button type="button" id="node-cancelButton" class="btn btn-secondary" >Close</button>
+			<textarea id="summernote" name="editordata"></textarea>
+			<button type="button" id="node-cancelButton" class="btn btn-secondary" onclick="$('#newChapter').modal('hide')" >Close</button>
 			<button type="button" id="node-saveButton" class="btn btn-primary" onclick="addNode()">Save</button>
-			<!-- <button type="button" id="node-saveButton" class="btn btn-primary" >Save changes</button> -->
 		  </div>
+<!-- 		  <div class="modal-footer">
+
+			
+		  </div> -->
 		</div>
 	  </div>
 	</div>
@@ -232,7 +256,7 @@
 
 		  <div class="modal-body">
 		  
-		  <div class="tab-pane fade in show active" id="singin" role="tabpanel">
+<!-- 		  <div class="tab-pane fade in show active" id="singin" role="tabpanel">
 		  
 			  <h5 class="modal-title" id="exampleModalLabel">Sign In</h5>
 				<form>
@@ -246,14 +270,13 @@
 					<input type="password" class="form-control" id="exampleInputNick" placeholder="Enter Nick Name" maxlength="7">
 				  </div>
 				  
-							  <div class="form-group">
+			<div class="form-group">
 					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 					<button type="button" id="save-book" class="btn btn-primary">Login</button>
 				</div>
-				  <!-- <button type="submit" class="btn btn-primary">Submit</button> -->
 				</form>
 			
-			</div>
+			</div> -->
 			
 			<div class="tab-pane fade" id="singup" role="tabpanel">
 		  
@@ -316,7 +339,7 @@ var URLSERVER = "http://104.251.213.18:8080"
 	
 	  
 	  $('#summernote').summernote({
-		height: 300,
+		height: 100,
 		 fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
 	    toolbar: [
 			['style', ['style']],
@@ -336,7 +359,7 @@ var URLSERVER = "http://104.251.213.18:8080"
       });*/
 	  
 	  	 $('#summernote-root').summernote({
-		 height: 300,
+		 height: 100,
 		 fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
 	    toolbar: [
 			['style', ['style']],

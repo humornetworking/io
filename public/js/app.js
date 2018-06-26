@@ -99,8 +99,8 @@ window.App = {
 				  
 				  $('#newStory').modal('toggle');
 				  $('#uploadRoot').modal('show')
-				  $( "#thetext-root" ).replaceWith( "<div id='thetext-root'></div>");
-				  $( "#thetext-root" ).replaceWith( label );
+				  $( "#thetext-root" ).replaceWith( "<div id='thetext-root'>"+ label +"</div>");
+
 				  
 				  var el = document.getElementById("test-root");
 				  

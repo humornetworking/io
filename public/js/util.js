@@ -6,7 +6,8 @@
 	var texto = ""
 	var rootBook =""
 	var dataImage = ""
-
+    var actualPointer = {}
+	var addChapter = false
 
 
     function destroy() {
@@ -23,62 +24,7 @@
 
       // create a network
       var container = document.getElementById('mynetwork');
-/*       var options = {  
-	 
-        nodes: {
-          borderWidth:4,
-          size:30,
-	      color: {
-            border: '#406897',
-            background: '#6AAFFF'
-          },
-          font:{color:'#eeeeee'},
-          shapeProperties: {
-            useBorderWithImage:true
-          },
-			"scaling": {
-			  "min": 46,
-			  "max": 83
-			}
-        },
-        edges: {
-             "color": {
-			  "color": "rgba(85,58,132,1)",
-			  "inherit": false
-			}
-        },
-    
-        manipulation: {
-          addNode: function (data, callback) {
-            // filling in the popup DOM elements
-			$('#summernote').summernote("reset")
-            //document.getElementById('node-operation').innerHTML = "Add Story";
-            editNode(data, clearNodePopUp, callback);
-          },
-          editNode: function (data, callback) {
-            // filling in the popup DOM elements
-            document.getElementById('node-operation').innerHTML = "Edit Story";
-            editNode(data, cancelNodeEdit, callback);
-          },
-          addEdge: function (data, callback) {
-            if (data.from == data.to) {
-              var r = confirm("Do you want to connect the node to itself?");
-              if (r != true) {
-                callback(null);
-                return;
-              }
-            }
-            document.getElementById('edge-operation').innerHTML = "Conectar";
-            editEdgeWithoutDrag(data, callback);
-          },
-          editEdge: {
-            editWithoutDrag: function(data, callback) {
-              document.getElementById('edge-operation').innerHTML = "Editar Conexion";
-              editEdgeWithoutDrag(data,callback);
-            }
-          }
-        }
-      }; */
+
 	  
 	  var dsoptions = {
 		  nodes: {
@@ -181,44 +127,20 @@
 		
 	})
 	  
+	network.on("click", function (params) {
+        params.event = "[original event]";
+		actualPointer = params.pointer
+        console.log('click event, getNodeAt returns: ' + this.getNodeAt(params.pointer.DOM));
+		
+		if (addChapter) {
+			$('#newChapter').modal('show')
+			addChapter = false;
+		}
+    });  
+	  
 	network.focus(rootBook)
 	
-/* 	network.on( 'click', function(properties) {
- 		setTimeout(function(){ 
 
-			  $(".vis-label")[0].innerHTML = "<span style='font-size: 45px;' class='glyphicon glyphicon-pencil' aria-hidden='true'>&nbsp;Write</span>"
-			  $(".vis-label")[1].innerHTML = "<span style='font-size: 45px;' class='glyphicon glyphicon-link' aria-hidden='true'>&nbsp;Connect</span>"
-			  $('.vis-edit').hide()
-			  $('.vis-delete').hide()
-			  $(".vis-manipulation").css("height", "100px");
-			  $(".vis-add").css("height", "70px");
-			  $(".vis-add").css("width", "45%");
-			  $(".vis-connect").css("height", "70px");
-			  $(".vis-connect").css("width", "45%");
-			  $(".vis-separator-line").css("height", "100px");
-
-		}, 100); 
-	}); 
-
- 	network.on( 'selectNode', function(properties) {
-		return;
-	});	*/
-	
-	  
-
-/* 	  $(".vis-label")[0].innerHTML = "<span style='font-size: 45px;' class='glyphicon glyphicon-pencil' aria-hidden='true'>&nbsp;Write</span>"
-	  $(".vis-label")[1].innerHTML = "<span style='font-size: 45px;' class='glyphicon glyphicon-link' aria-hidden='true'>&nbsp;Connect</span>"
-	  $(".vis-manipulation").css("height", "100px");
-	  $(".vis-add").css("height", "70px");
-	  $(".vis-add").css("width", "45%");
-	  $(".vis-connect").css("height", "70px");
-	  $(".vis-connect").css("width", "45%");
-	  $(".vis-separator-line").css("height", "100px"); */
-	  
-	  
-
-	  //$('.vis-button.vis-edit.vis-edit-mode').trigger( "pointerdown" );
-	  //$('.vis-button.vis-edit.vis-edit-mode').trigger( "pointerdown" );
     }
 
     function editNode(data, cancelAction, callback) {
@@ -255,22 +177,7 @@
 				  $('#newChapter').modal('hide')
 	  			  $('#uploadChapter').modal('show')
 				  $( "#thetext" ).replaceWith( "<div id='thetext'>"+ data.label +"</div>");
-				  //$( "#thetext" ).replaceWith( data.label );
-	  
-/* 				   setTimeout(function(){ 
 
-						  $(".vis-label")[0].innerHTML = "<span style='font-size: 45px;' class='glyphicon glyphicon-pencil' aria-hidden='true'>&nbsp;Write</span>"
-						  $(".vis-label")[1].innerHTML = "<span style='font-size: 45px;' class='glyphicon glyphicon-link' aria-hidden='true'>&nbsp;Connect</span>"
-						  $('.vis-edit').hide()
-						  $('.vis-delete').hide()
-						  $(".vis-manipulation").css("height", "100px");
-						  $(".vis-add").css("height", "70px");
-						  $(".vis-add").css("width", "45%");
-						  $(".vis-connect").css("height", "70px");
-						  $(".vis-connect").css("width", "45%");
-						  $(".vis-separator-line").css("height", "100px");
-
-					}, 1000); */
 	  
 
 	  var el = document.getElementById("test");
@@ -291,6 +198,8 @@
 					  data["shape"] = 'image'
 					  data["label"] = ''
 					  data["id"] = book.id
+
+					
 					 
 					$('#viewport').attr('content', 'width=device-width, initial-scale=0.9');
 					try {
@@ -343,25 +252,11 @@
       data.label = '';//document.getElementById('edge-label').value;
       clearEdgePopUp();
 	  
-	  //App.writeChapter(texto,from,to)
 	  
 	  //Mine First to do this
 	  App.writeChapter("",from,to,dataImage)
 	  
-/* 	  setTimeout(function(){ 
 
-			  $(".vis-label")[0].innerHTML = "<span style='font-size: 45px;' class='glyphicon glyphicon-pencil' aria-hidden='true'>&nbsp;Write</span>"
-			  $(".vis-label")[1].innerHTML = "<span style='font-size: 45px;' class='glyphicon glyphicon-link' aria-hidden='true'>&nbsp;Connect</span>"
-			  $('.vis-edit').hide()
-			  $('.vis-delete').hide()
-			  $(".vis-manipulation").css("height", "100px");
-			  $(".vis-add").css("height", "70px");
-			  $(".vis-add").css("width", "45%");
-			  $(".vis-connect").css("height", "70px");
-			  $(".vis-connect").css("width", "45%");
-			  $(".vis-separator-line").css("height", "100px");
-
-		}, 500); */
 	  
 	  
 	  data["arrows"] = {middle:{scaleFactor:0.5},to:true}
@@ -401,6 +296,8 @@
 					  data["shape"] = 'image'
 					  data["label"] = ''
 					  data["id"] = book.id
+					  data["x"] = actualPointer.canvas.x
+					  data["y"] = actualPointer.canvas.y
 					  
 					  nodes.add(data);
                       //network.addEdgeMode();
@@ -448,12 +345,13 @@
 	
 	
 		function newChapter() {
-			$('#newChapter').modal('show')
+			toastr.info('Haga click en algún punto de la pantalla para escribir')
+			addChapter = true;
 			
 		}
 		
 		function newCon() {
-			
+			toastr.info('Selecciona una historia y conectala con otra')
 			network.addEdgeMode();
 			
 		}
