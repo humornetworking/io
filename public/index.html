@@ -29,10 +29,14 @@
   
   </head>
 <body>
-
 <div id="spinner" style="display:none; float:center"></div>
 
 <div class="container-fluid">
+<div class="row">
+	<div class="col-md-4 text-center"> 
+		<a href="http://104.251.213.18:8080"><img src="img/ioio.png" title="IOIO :: Colaborative Storytelling"></a>
+	</div>
+</div>
   <div class="row">
     <div class="col-sm">
      
@@ -40,7 +44,7 @@
 
 					<div class="container h-100">
 					  <div class="row h-100 justify-content-center align-items-center">
-					 <!-- <img src="img/ioio.png" title="ASCII :: the code" alt="ASCII :: the code">   -->
+					 <!--    -->
 					 
 					<br>
 
@@ -48,12 +52,13 @@
 
 					
 					<div class="col-md-4 text-center"> 
-    						<button type="button" class="btn" data-toggle="modal" onclick="App.openWrite()">
+    						<button type="button" style="width:65%" class="btn" data-toggle="modal" onclick="App.openWrite()">
 											<span class="glyphicon glyphicon-pencil"></span> 
 											Write
 							</button>
+							
 					</div>
-
+					<br>
 
 
 <!-- 					<button type="button" class="btn btn-primary" onclick="App.checkLogin();">
@@ -93,7 +98,21 @@
 					  <div class="row h-100 justify-content-center align-items-center">
 						
 					
-						<div class="row">
+					<div class="row">
+					<div class="col-md-4 text-center"> 
+								<button type="button" class="btn" style="width:45%" onclick="newChapter()">
+								<span class="glyphicon glyphicon-pencil"></span> 
+									Write
+								</button>
+								
+								<button type="button" class="btn" style="width:45%" onclick="newCon()">
+							   <span class="glyphicon glyphicon-link"></span> 
+									Connect
+								</button>
+					</div>
+					</div>
+					
+<!-- 						<div class="row">
 							<div class="col-xs-5 col-md-3 col-lg-1 vcenter">
 								<button type="button" class="btn" style="width:100%" onclick="newChapter()">
 								<span class="glyphicon glyphicon-pencil"></span> 
@@ -109,7 +128,7 @@
 								</button>
 							</div>
 						</div>
-						<br>
+						<br> -->
 						
 						<div id="mynetwork"></div>
 				  

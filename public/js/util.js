@@ -27,7 +27,11 @@
 
 	  
 	  var dsoptions = {
+		  physics: {
+			  enabled: false
+			},
 		  nodes: {
+		  shape: 'image',
           borderWidth:4,
           size:30,
 	      color: {
@@ -37,11 +41,8 @@
           font:{color:'#eeeeee'},
           shapeProperties: {
             useBorderWithImage:true
-          },
-			"scaling": {
-			  "min": 46,
-			  "max": 83
-			}
+          }
+		  
         },
         edges: {
              "color": {
@@ -78,6 +79,46 @@
                   //network.addEdgeMode();
               }
           }};
+		  /*
+		  var dsoptions = {
+        nodes: {
+			shape: 'box',
+          borderWidth:4,
+          size:30,
+	      color: {
+            border: '#406897',
+            background: '#6AAFFF'
+          },
+          font:{color:'#eeeeee'},
+          shapeProperties: {
+            useBorderWithImage:true
+          }
+        },
+        edges: {
+          color: 'lightgray'
+        }
+      };*/
+	  /*
+	  var dsoptions = {
+    edges: {
+      font: {
+        size: 12
+      },
+      widthConstraint: {
+        maximum: 90
+      }
+    },
+    nodes: {
+      shape: 'box',
+      margin: 10,
+      widthConstraint: {
+        maximum: 200
+      }
+    },
+    physics: {
+      enabled: false
+    }
+  };*/
 	  
 	  nodes = new vis.DataSet(story.nodes);
 	  
@@ -85,8 +126,49 @@
               nodes: nodes,
               edges: story.edges
           };
+		  
+		  /***/
+		  
+		  
+		    var nodes1 = [
+    {id: 1, label: 'El Mundo Infinito', x :-250, y : -600},
+    {id: 2, label: 'La la', x :-400, y : -200},
+    {id: 3, label: 'Pepe Cash', x :-500, y : -50},
+    {id: 4, label: 'Vida bella',x :-150, y : -150},
+    {id: 5, label: 'retgh77pf4ZD65hbBEHXJytNDzhK8LsynX', x :-100, y : -0}
+  ];
+
+  var edges1 = [
+    {from: 1, 
+	 to: 2, 
+	 label: '6', 
+	 arrows:{middle:{scaleFactor:0.5},from:true},
+	 smooth: {type: 'curvedCW', roundness: 0.2}
+	 },
+    {from: 1, to: 3, label: '9',arrows:{middle:{scaleFactor:0.5},from:true},smooth: {type: 'curvedCW', roundness: 0.2}},
+    {from: 2, to: 4, label: '20',arrows:{middle:{scaleFactor:0.5},from:true},smooth: {type: 'curvedCW', roundness: 0.2}},
+    {from: 2, to: 5, label: '1',arrows:{middle:{scaleFactor:0.5},from:true},smooth: {type: 'curvedCW', roundness: 0.2}},
+	{from: 4, to: 5, label: '4',arrows:{middle:{scaleFactor:0.5},from:true},smooth: {type: 'curvedCW', roundness: 0.2}},
+	{from: 4, to: 5, label: '9',arrows:{middle:{scaleFactor:0.5},from:true},smooth: {type: 'curvedCW', roundness: 0.4}}
+  ];
+  
+  	  var data1 = {
+              nodes: nodes1,
+              edges: edges1
+          };
+		  
+		  
+		  /****/
 	  
       network = new vis.Network(container, data, dsoptions);
+	  
+	  
+network.moveTo({
+    position: {x: -250, y: -200},
+    offset: {x: 0, y: 0},
+    scale: 1,
+})
+	  
       network.disableEditMode()
 	  
 	  network.on("beforeDrawing", function (ctx) {
@@ -99,7 +181,7 @@
 		ctx.stroke();
 	  });
 	  
-
+/*
 	  network.on("afterDrawing", function (ctx) {
 	      document.body.scrollTop = 0; // For Safari
 		  document.documentElement.scrollTop = 0;
@@ -118,19 +200,19 @@
 			
 		  
 	  });	  
-	  
+	  */
 
 
-	network.once('stabilized', function() {
+/* 	network.once('stabilized', function() {
 		var scaleOption = { scale : 1.5 };
 		network.moveTo(scaleOption);
 		
-	})
+	}) */
 	  
 	network.on("click", function (params) {
         params.event = "[original event]";
 		actualPointer = params.pointer
-        console.log('click event, getNodeAt returns: ' + this.getNodeAt(params.pointer.DOM));
+        //console.log('click event, getNodeAt returns: ' + this.getNodeAt(params.pointer.DOM));
 		
 		if (addChapter) {
 			$('#newChapter').modal('show')
@@ -138,9 +220,13 @@
 		}
     });  
 	  
-	network.focus(rootBook)
-	
+	/*
+ 	var op = {
+        scale: 1,
+        offset: {x:0,y:0}
+      };
 
+      network.focus(rootBook, op); */
     }
 
     function editNode(data, cancelAction, callback) {
@@ -288,7 +374,7 @@
 					$('#uploadChapter').modal('toggle');
 					  $( "#thetext" ).replaceWith( "<div id='thetext'></div>");
 					
-					  book	= App.writeTmp(dataImage, data.label) //Evento asyncronico, Manejarlo
+					  book	= App.writeTmp(dataImage, data.label, actualPointer.canvas.x, actualPointer.canvas.y) //Evento asyncronico, Manejarlo
 		  
 					  texto = data.label
 					  clearNodePopUp();

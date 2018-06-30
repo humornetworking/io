@@ -59,7 +59,7 @@ window.App = {
 				$('#loginModal').modal('show')
 			}*/
     },
-	writeTmp : function(dataURL, texto){
+	writeTmp : function(dataURL, texto, x,y){
 		
 		
 		var data = {}
@@ -67,7 +67,8 @@ window.App = {
 		data.image = dataURL
 		data.texto = texto
 		data.root = rootBook
-		
+		data.x = x
+		data.y = y
 					async.seq(
 						function(callback) {
 									$.ajax({
@@ -154,8 +155,8 @@ window.App = {
 				var newMessage = $( "#new-message" ).clone();
 				newMessage.find(".message").replaceWith( "<div style=\"cursor: pointer\" class=\"mb-1 message\" onclick=\"App.goChapter(\'"+ msg._id +"\')\"><img src=\""+ URLSERVER +"/img/"+ msg.image +"\"></div>");
 
-				newMessage.find(".author").text(msg.author);
-				newMessage.find(".date").text(msg.txid);
+				//newMessage.find(".author").text(msg.author);
+				newMessage.find(".date").text(new Date(msg.timestamp*1000));
 				
 				$( "#message-list" ).append( newMessage );
 			  

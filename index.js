@@ -91,7 +91,15 @@ app.get('/get-chapters/:id', function(req, res){
 			
 			var nNodes = [];
 			for (var i = 0; i < messages.length; i++) {
-				nNodes.push({ 'id': messages[i]._id, 'image' : URLSERVER +'/img/'+ messages[i].image, shape: 'image'})
+				//nNodes.push({ 'id': messages[i]._id, 'image' : URLSERVER +'/img/'+ messages[i].image, 'shape': 'image'})
+				
+				if (messages[i]._id == idBook) {
+					nNodes.push({ 'id': messages[i]._id, 'image' : URLSERVER +'/img/'+ messages[i].image, 'x' :-250, 'y' : -600})
+				} else {
+					nNodes.push({ 'id': messages[i]._id, 'image' : URLSERVER +'/img/'+ messages[i].image, 'x' : messages[i].x, 'y':messages[i].y})
+				}
+				
+				
 			}
 			
 			
@@ -191,6 +199,8 @@ app.post('/write-chap', function(req, res){
 	var txt = req.body.texto.substring(0, 100);
 	var root = req.body.root
 	var image = req.body.image
+	var x = req.body.x
+	var y = req.body.y
 	
 	var img = decodeBase64Image(image)
 	var buf = new Buffer(img.data, 'base64')
@@ -211,7 +221,7 @@ app.post('/write-chap', function(req, res){
 
 						function(callback) {
 							
-								var newMessage = {'txid': '123','author' : author, 'txt' : txt, 'image' : imgName, 'timestamp' : Date.now(), 'root' : 0};
+								var newMessage = {'txid': '123','author' : author, 'txt' : txt, 'image' : imgName, 'timestamp' : Date.now(), 'x' : Number(x),'y' : Number(y), 'root' : 0};
 								dbo.collection("message").insertOne(newMessage, function(err, res) {
 											if (err) throw err;					
 											//pointto = res.insertedId.toString()
@@ -337,7 +347,7 @@ app.post('/write-root', function(req, res){
 	var imgName = Math.floor((Math.random() * 1000000000000000) + 1) +".png"
 	fs.writeFile('public/img/'+imgName, buf, function(err) { console.log(err) });
 		
-		        var newMessage = {'txid': '321','author' : bigAuthor.author, 'txt' : txt, 'image' : imgName, 'timestamp' : ahora, 'root' : 1};
+		        var newMessage = {'txid': '321','author' : bigAuthor.author, 'txt' : txt, 'image' : imgName, 'timestamp' : ahora,'x' : 0, 'y': 0, 'root' : 1};
 				//data.push(newBook); // Save to the DB
 				MongoClient.connect(url, function(err, db) {
 				  if (err) throw err;
