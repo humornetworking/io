@@ -63,10 +63,12 @@
               addEdge: function (data, callback) {
                   console.log('add edge', data);
                   if (data.from == data.to) {
-                      var r = confirm("Do you want to connect the node to itself?");
+					  
+					  return;
+/*                       var r = confirm("Do you want to connect the node to itself?");
                       if (r === true) {
                           callback(data);
-                      }
+                      } */
                   }
                   else {
 					  
@@ -79,46 +81,6 @@
                   //network.addEdgeMode();
               }
           }};
-		  /*
-		  var dsoptions = {
-        nodes: {
-			shape: 'box',
-          borderWidth:4,
-          size:30,
-	      color: {
-            border: '#406897',
-            background: '#6AAFFF'
-          },
-          font:{color:'#eeeeee'},
-          shapeProperties: {
-            useBorderWithImage:true
-          }
-        },
-        edges: {
-          color: 'lightgray'
-        }
-      };*/
-	  /*
-	  var dsoptions = {
-    edges: {
-      font: {
-        size: 12
-      },
-      widthConstraint: {
-        maximum: 90
-      }
-    },
-    nodes: {
-      shape: 'box',
-      margin: 10,
-      widthConstraint: {
-        maximum: 200
-      }
-    },
-    physics: {
-      enabled: false
-    }
-  };*/
 	  
 	  nodes = new vis.DataSet(story.nodes);
 	  
@@ -127,47 +89,16 @@
               edges: story.edges
           };
 		  
-		  /***/
-		  
-		  
-		    var nodes1 = [
-    {id: 1, label: 'El Mundo Infinito', x :-250, y : -600},
-    {id: 2, label: 'La la', x :-400, y : -200},
-    {id: 3, label: 'Pepe Cash', x :-500, y : -50},
-    {id: 4, label: 'Vida bella',x :-150, y : -150},
-    {id: 5, label: 'retgh77pf4ZD65hbBEHXJytNDzhK8LsynX', x :-100, y : -0}
-  ];
 
-  var edges1 = [
-    {from: 1, 
-	 to: 2, 
-	 label: '6', 
-	 arrows:{middle:{scaleFactor:0.5},from:true},
-	 smooth: {type: 'curvedCW', roundness: 0.2}
-	 },
-    {from: 1, to: 3, label: '9',arrows:{middle:{scaleFactor:0.5},from:true},smooth: {type: 'curvedCW', roundness: 0.2}},
-    {from: 2, to: 4, label: '20',arrows:{middle:{scaleFactor:0.5},from:true},smooth: {type: 'curvedCW', roundness: 0.2}},
-    {from: 2, to: 5, label: '1',arrows:{middle:{scaleFactor:0.5},from:true},smooth: {type: 'curvedCW', roundness: 0.2}},
-	{from: 4, to: 5, label: '4',arrows:{middle:{scaleFactor:0.5},from:true},smooth: {type: 'curvedCW', roundness: 0.2}},
-	{from: 4, to: 5, label: '9',arrows:{middle:{scaleFactor:0.5},from:true},smooth: {type: 'curvedCW', roundness: 0.4}}
-  ];
-  
-  	  var data1 = {
-              nodes: nodes1,
-              edges: edges1
-          };
-		  
-		  
-		  /****/
 	  
       network = new vis.Network(container, data, dsoptions);
 	  
 	  
-network.moveTo({
-    position: {x: -250, y: -200},
-    offset: {x: 0, y: 0},
-    scale: 1,
-})
+		network.moveTo({
+			position: {x: -250, y: -200},
+			offset: {x: 0, y: 0},
+			scale: 1,
+		})
 	  
       network.disableEditMode()
 	  
@@ -181,11 +112,11 @@ network.moveTo({
 		ctx.stroke();
 	  });
 	  
-/*
+
 	  network.on("afterDrawing", function (ctx) {
 	      document.body.scrollTop = 0; // For Safari
 		  document.documentElement.scrollTop = 0;
-		  
+		  /*
 		  			$('#viewport').attr('content', 'width=device-width, initial-scale=0.9');
 					try {
 					var scale = 'scale(0.9)';
@@ -197,10 +128,10 @@ network.moveTo({
 					   console.log(err)
 					}
 			
-			
+			*/
 		  
 	  });	  
-	  */
+	  
 
 
 /* 	network.once('stabilized', function() {
@@ -215,24 +146,36 @@ network.moveTo({
         //console.log('click event, getNodeAt returns: ' + this.getNodeAt(params.pointer.DOM));
 		
 		if (addChapter) {
+			$("#summernote").summernote("reset");
 			$('#newChapter').modal('show')
 			addChapter = false;
 		}
     });  
 	  
-	/*
- 	var op = {
-        scale: 1,
-        offset: {x:0,y:0}
+
+      var optionsx = {
+        scale: 3,
+        offset: {x:0,y:0},
+        animation: {
+          duration: 1000,
+          easingFunction: "easeInOutQuad"
+        }
       };
 
-      network.focus(rootBook, op); */
+		network.focus(rootBook, optionsx);
+	  
+		network.moveTo({
+			position: {x: -250, y: -480},
+			offset: {x: 0, y: 0}
+		})
+		
+
     }
 
     function editNode(data, cancelAction, callback) {
       document.getElementById('summernote').value = data.label;
-      document.getElementById('node-saveButton').onclick = saveNodeData.bind(this, data, callback);
-      document.getElementById('node-cancelButton').onclick = cancelAction.bind(this, callback);
+      //document.getElementById('node-saveButton').onclick = saveNodeData.bind(this, data, callback);
+      //document.getElementById('node-cancelButton').onclick = cancelAction.bind(this, callback);
 	  
 	  $('#newChapter').modal('show')
 	  $('.note-image-btn').prop("disabled", false);
@@ -245,8 +188,8 @@ network.moveTo({
 
     // Callback passed as parameter is ignored
     function clearNodePopUp() {
-      document.getElementById('node-saveButton').onclick = null;
-      document.getElementById('node-cancelButton').onclick = null;
+      //document.getElementById('node-saveButton').onclick = null;
+      //document.getElementById('node-cancelButton').onclick = null;
 	  $('#newChapter').modal('hide')
       //document.getElementById('node-popUp').style.display = 'none';
     }
@@ -261,6 +204,7 @@ network.moveTo({
 	  data.label = document.getElementById('summernote').value;
 	  
 				  $('#newChapter').modal('hide')
+				  $('#mainContainer').waitMe({})
 	  			  $('#uploadChapter').modal('show')
 				  $( "#thetext" ).replaceWith( "<div id='thetext'>"+ data.label +"</div>");
 
@@ -274,6 +218,7 @@ network.moveTo({
 					dataImage = dataURL
 					
 					$('#uploadChapter').modal('toggle');
+					$('#mainContainer').waitMe("hide")
 					  $( "#thetext" ).replaceWith( "<div id='thetext'></div>");
 					
 					  book	= App.writeTmp(dataImage, data.label) //Evento asyncronico, Manejarlo
@@ -376,6 +321,8 @@ network.moveTo({
 					
 					  book	= App.writeTmp(dataImage, data.label, actualPointer.canvas.x, actualPointer.canvas.y) //Evento asyncronico, Manejarlo
 		  
+					  
+		  
 					  texto = data.label
 					  clearNodePopUp();
 					  data["image"] = URLSERVER +'/img/'+ book.image
@@ -387,7 +334,7 @@ network.moveTo({
 					  
 					  nodes.add(data);
                       //network.addEdgeMode();
-					 
+					 /*
 					$('#viewport').attr('content', 'width=device-width, initial-scale=0.9');
 					try {
 					var scale = 'scale(0.9)';
@@ -397,7 +344,7 @@ network.moveTo({
 					}
 					catch(err) {
 					   console.log(err)
-					}
+					}*/
 										  
 					//callback(data);
 					

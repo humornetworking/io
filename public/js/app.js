@@ -100,6 +100,7 @@ window.App = {
 				  
 				  $('#newStory').modal('toggle');
 				  $('#uploadRoot').modal('show')
+				  $('#mainContainer').waitMe({})
 				  $( "#thetext-root" ).replaceWith( "<div id='thetext-root'>"+ label +"</div>");
 
 				  
@@ -127,6 +128,7 @@ window.App = {
 									success: function(data) {
 										
 										$('#uploadRoot').modal('toggle');
+										$('#mainContainer').waitMe("hide")
 										$( "#thetext-root" ).replaceWith( "<div id='thetext-root'></div>");
 										
 										
@@ -167,9 +169,11 @@ window.App = {
 	},
 	goChapter: function (idBook) {
 			
-			$("#spinner").show()
+			
 			$('.book-page').hide()
+			
 			$('.chapter-page').show()
+			$('#mainContainer').waitMe({})
 			
 		$.ajax({
 		  type: 'GET',
@@ -188,7 +192,7 @@ window.App = {
 			  };
 			  
 			  window.initGraph(idBook,data);
-			  $("#spinner").hide()
+			  $('#mainContainer').waitMe("hide")
 			  
 
 		})
