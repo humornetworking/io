@@ -31,7 +31,7 @@
 			  enabled: false
 			},
 		  nodes: {
-		  shape: 'image',
+		  shape: 'circularImage',
           borderWidth:4,
           size:30,
 	      color: {
@@ -48,7 +48,10 @@
              "color": {
 			  "color": "rgba(85,58,132,1)",
 			  "inherit": false
-			}
+			},
+			smooth: {
+    			type: 'cubicBezier'
+    		}
         },
             manipulation: {
               enabled: false,
@@ -149,6 +152,19 @@
 			$("#summernote").summernote("reset");
 			$('#newChapter').modal('show')
 			addChapter = false;
+		} else {
+		
+			toastr.options = {
+			  "debug": false,
+			  "positionClass": "toast-bottom-full-width",
+			  "onclick": null,
+			  "fadeIn": 300,
+			  "fadeOut": 1000,
+			  "timeOut": 5000,
+			  "extendedTimeOut": 1000
+			}
+			
+			toastr.success('<a href="http://asciishop.com" target="_blank">Yo escribí esta historia</a>')
 		}
     });  
 	  
@@ -378,12 +394,32 @@
 	
 	
 		function newChapter() {
-			toastr.info('Haga click en algún punto de la pantalla para escribir')
+			toastr.options = {
+			  "debug": false,
+			  "positionClass": "toast-top-full-width",
+			  "onclick": null,
+			  "fadeIn": 300,
+			  "fadeOut": 1000,
+			  "timeOut": 5000,
+			  "extendedTimeOut": 1000
+			}
+			
+			toastr.-('Haga click en algún punto de la pantalla para escribir')
 			addChapter = true;
 			
 		}
 		
 		function newCon() {
+			
+			toastr.options = {
+			  "debug": false,
+			  "positionClass": "toast-top-full-width",
+			  "onclick": null,
+			  "fadeIn": 300,
+			  "fadeOut": 1000,
+			  "timeOut": 5000,
+			  "extendedTimeOut": 1000
+			}
 			toastr.info('Selecciona una historia y conectala con otra')
 			network.addEdgeMode();
 			
