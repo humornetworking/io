@@ -404,7 +404,7 @@
 			  "extendedTimeOut": 1000
 			}
 			
-			toastr.-('Haga click en algún punto de la pantalla para escribir')
+			toastr.info('Haga click en algún punto de la pantalla para escribir')
 			addChapter = true;
 			
 		}

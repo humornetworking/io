@@ -5,6 +5,8 @@ var async = require('async');
 var jwt = require('jsonwebtoken'); //lavidabellaentodassusformas
 var WebSocketServer = require('ws').Server;
 var fs = require("fs")
+//var bitcore = require('bitcore');
+
 //var URLSERVER = "http://localhost:8080"
 var URLSERVER = "http://104.251.213.18:8080"
 
@@ -380,6 +382,49 @@ app.post('/write-root', function(req, res){
 });
 
 	
+app.post('/checkPayment', function(req, res){
+	
+	var texto = req.body.texto;
+	
+	//Addres para recivir los pagos,Get thee addres from the DB
+		var privKey = "5629a28efeb21585d9bdd406d6d3337faadd8d1f8eba8d689decce6ca2301a44"
+		var pubKey = "0377cd7a0b46e2e0d47a1b16675297b4f18f8d7d893887e779b42f143505fa4d0a"
+		var address = "mrwZvPf4KF2vNCrHPrucZoSvo33Ywfg6kn"
+
+    //Check the payment ....
+
+	
+	//Oficial MYWAY account
+		var myWayPrivate = "724f21aacd9730973379f43e9c60a8b0cf1da56d62e2a6dccf3ca3327ca0dadf"
+		var myWayPublic = "0204d3e6cbeb0d159445871db7888714431b2c608cbe054d1fc8a1a115d942693d"
+		var myWayAddress = "n28H16SyNnGAkpU5wudJJW9iNpoFg69kf1"
+		
+		//Once checked, get UTXO index & script
+		var txId = "5037055f15a5089e913080154e629d59263536272acad2a0bf7742f2b3e5efd8"
+		var outputIndex = 0
+		var script = "76a914e210b0cec61767d72e223812a16d19875fa3ddce88ac" // ??? Realmente va
+	
+	var privateKey = new bitcore.PrivateKey(myWayPrivate);
+	var utxo = {
+	  "txId" : txId,
+	  "outputIndex" : outputIndex,
+	  "address" : myWayAddress,
+	  "script" : script,
+	  "satoshis" : 50000
+	};
+
+var transaction = new bitcore.Transaction()
+    .from(utxo)
+    .addData(texto) // Add OP_RETURN data
+    .sign(privateKey);
+	
+	//Pasos, send a small amount a la nueva direccion
+	//Ocupar el UTXO de la nueva direccion para agregar el texto 
+	
+//Broadcast this transaction
+console.log(transaction);
+	
+})
 
 
 function getUserFromToken(req) {

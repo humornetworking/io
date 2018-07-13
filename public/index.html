@@ -27,7 +27,9 @@
   
    <link href="http://vadimsva.github.io/waitMe/waitMe.css" rel="stylesheet"> 
    <script src="http://vadimsva.github.io/waitMe/waitMe.js"></script>
-  
+ 
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.qrcode/1.0/jquery.qrcode.min.js"></script> 
  
  
   
@@ -176,6 +178,24 @@
   </div>
 </div>
 	
+		<!-- MODAL PAYMENT -->
+	
+		<div class="modal fade" id="payment" tabindex="-1"  style="z-index :1100" role="dialog" aria-labelledby="uploadRoot" aria-hidden="true">
+		  <div class="modal-dialog modal-full" role="document">
+			<div class="modal-content">
+
+			  <div class="modal-body">
+							
+							<div id="qrcode"></div>
+							<button type="button" id="pay-chapter" class="btn btn-primary" onclick="App.paymentSent()" >I Paid</button>
+
+				
+			  </div>
+			  
+			</div>
+		  </div>
+		</div>
+	
 
 	<!-- UPLOAD CREATE ROOT -->
 	
@@ -185,7 +205,8 @@
 
 			  <div class="modal-body">
 							
-							<div id="test-root" style="height: 200px;width: 200px;">
+							<div id="test-root" style="height: 200px;width: 200px">
+								<br>
 								<div id="thetext-root"></div>
 							</div>
 				
@@ -238,6 +259,9 @@
 			<textarea id="summernote" name="editordata"></textarea>
 			<button type="button"  class="btn btn-secondary" onclick="$('#newChapter').modal('hide')" >Close</button>
 			<button type="button"  class="btn btn-primary" onclick="addNode()">Save</button>
+			
+			<!-- <button type="button"  class="btn btn-primary" onclick="App.pay()">PAY</button> -->
+			
 		  </div>
 <!-- 		  <div class="modal-footer">
 

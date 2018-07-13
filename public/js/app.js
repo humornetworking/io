@@ -11,6 +11,40 @@ window.App = {
 	
     },
 	
+	pay : function() {
+		
+		localStorage.setItem("myway-pk", "mrwZvPf4KF2vNCrHPrucZoSvo33Ywfg6kn");
+		var mywaypk = localStorage.getItem("myway-pk")
+		$('#qrcode').qrcode(mywaypk);
+		$('#payment').modal('show');
+		
+		
+		
+	},
+	paymentSent : function() {
+		
+				    var data = {};
+					data.author = "andrs";
+					var texto = document.getElementById('summernote').value;
+					data.texto = texto.replace(/<[^>]*>/g, '');
+					
+					$.ajax({
+						type: 'POST',
+						data: JSON.stringify(data),
+				        contentType: 'application/json',
+                        url: URLSERVER +'/checkPayment',						
+                        success: function(data) {
+                            $('#loginModal').modal('toggle');
+                    		
+							
+                        }
+                    }).done(function(data) {
+						localStorage.setItem('iotoken', data.token);
+						
+						
+					  })
+		
+	},
 	checkToken: function () {
 		var token = localStorage.getItem('iotoken');
 		if (!token)
@@ -101,7 +135,7 @@ window.App = {
 				  $('#newStory').modal('toggle');
 				  $('#uploadRoot').modal('show')
 				  $('#mainContainer').waitMe({})
-				  $( "#thetext-root" ).replaceWith( "<div id='thetext-root'>"+ label +"</div>");
+				  $( "#thetext-root" ).replaceWith( " <div id='thetext-root' ><div id='thetext-root' style='margin: 25px;'>"+ label +"</div></div>");
 
 				  
 				  var el = document.getElementById("test-root");
