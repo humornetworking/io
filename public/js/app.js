@@ -82,16 +82,26 @@ window.App = {
     },
 	openWrite: function () {
 		
-			$("#summernote-root").summernote("reset");
-			$('#newStory').modal('show')
-			$('.note-image-btn').prop("disabled", false);
-			/*
-			if(this.checkToken()) {
+		    //Check Session Cookie
+
+		$.ajax({
+		  type: 'GET',
+		  url: URLSERVER +"/checkSession",
+		  context: document.body
+		}).done(function(data) {
+		  
+			if(data == "OK") {
 				$("#summernote-root").summernote("reset");
 				$('#newStory').modal('show')
-			} else {
-				$('#loginModal').modal('show')
-			}*/
+				$('.note-image-btn').prop("disabled", false);
+				
+		    } else {
+				window.location.href = "login.html";
+			}
+		  
+		})
+			
+
     },
 	writeTmp : function(dataURL, texto, x,y){
 		
@@ -183,6 +193,34 @@ window.App = {
 		$.ajax({
 			type: 'GET',
 		  url: URLSERVER +"/get-books",
+		  context: document.body
+		}).done(function(data) {
+		  
+		    $( "#message-list" ).empty();
+			data.forEach(function(msg) {
+				var newMessage = $( "#new-message" ).clone();
+				newMessage.find(".message").replaceWith( "<div style=\"cursor: pointer\" class=\"mb-1 message\" onclick=\"App.goChapter(\'"+ msg._id +"\')\"><img src=\""+ URLSERVER +"/img/"+ msg.image +"\"></div>");
+
+				//newMessage.find(".author").text(msg.author);
+				newMessage.find(".date").text(new Date(msg.timestamp*1000));
+				
+				$( "#message-list" ).append( newMessage );
+			  
+			});
+		  
+		})
+		
+	},
+	search : function() {
+		
+		var data = {};
+		data.search = $("#search").val();
+		
+		$.ajax({
+			type: 'POST',
+		  url: URLSERVER +"/search",
+		  data: JSON.stringify(data),
+		  contentType: 'application/json',
 		  context: document.body
 		}).done(function(data) {
 		  

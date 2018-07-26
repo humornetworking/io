@@ -323,7 +323,7 @@
 	  
 	  $('#newChapter').modal('hide')
 	  $('#uploadChapter').modal('show')
-	  $( "#thetext" ).replaceWith( "<div id='thetext'>"+ data.label +"</div>");
+	  $( "#thetext" ).replaceWith( "<div id='thetext' style='margin-top: 20px ; margin-left: 25px; margin-right: 10px' >"+ data.label +"</div>");
 
 	  var el = document.getElementById("test");
 	  
@@ -342,7 +342,7 @@
 					  texto = data.label
 					  clearNodePopUp();
 					  data["image"] = URLSERVER +'/img/'+ book.image
-					  data["shape"] = 'image'
+					  data["shape"] = 'circularImage'
 					  data["label"] = ''
 					  data["id"] = book.id
 					  data["x"] = actualPointer.canvas.x

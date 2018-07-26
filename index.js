@@ -5,6 +5,38 @@ var async = require('async');
 var jwt = require('jsonwebtoken'); //lavidabellaentodassusformas
 var WebSocketServer = require('ws').Server;
 var fs = require("fs")
+var cookieParser = require('cookie-parser');
+passport = require('passport');
+FacebookStrategy = require('passport-facebook').Strategy;
+var session = require('express-session');
+
+// Login
+
+
+passport.serializeUser(function(user, done) {
+  done(null, user);
+});
+
+passport.deserializeUser(function(obj, done) {
+  done(null, obj);
+});
+
+
+passport.use(new FacebookStrategy({
+    clientID: "832861053471099",
+    clientSecret: "91d269205409383d34d53429b441eaa7",
+    callbackURL: "http://myway.network:8080/auth/facebook/callback"
+  },
+  function(accessToken, refreshToken, profile, done) {
+    // asynchronous verification, for effect...
+    process.nextTick(function () {
+      
+      return done(null, profile);
+    });
+  }
+));
+
+
 //var bitcore = require('bitcore');
 
 //var URLSERVER = "http://localhost:8080"
@@ -34,12 +66,34 @@ app.use(function(req, res, next) {
 app.use(bodyParser({limit: '50mb'}));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(cookieParser());
+
+app.use(session({
+    secret: 'nodejs-passport-facebook-example',
+    resave: true,
+    saveUninitialized: true
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(express.static(__dirname + '/public'));
 var port = process.env.PORT || 8080
 app.listen(port);
 console.log('Magic happens ');
 
+
+app.post('/search', function(req, res){
+	var txt = ".*"+ req.body.search.toLowerCase() +"*";
+	
+	MongoClient.connect(url, function(err, db) {
+	  if (err) throw err;
+	  var dbo = db.db("explguru");
+	  dbo.collection("message").find({"txt" : {$regex : txt},"root" : 1}).toArray(function(err, messages) {
+		res.send(messages);
+	  });
+	});
+			
+});
 
 app.get('/get-books', function(req, res){
 	
@@ -210,9 +264,6 @@ app.post('/write-chap', function(req, res){
 	
 	
 	fs.writeFile('public/img/'+imgName, buf, function(err) { console.log(err) });
-	
-	
-
 	
 	
 	 			MongoClient.connect(url, function(err, db) {
@@ -427,6 +478,38 @@ console.log(transaction);
 })
 
 
+app.get('/checkSession', function(req, res) {
+  if (req.isAuthenticated())
+	res.send("OK");
+  else
+	res.send("NOK");
+});
+
+
+app.get('/policy', function(req, res) {
+     res.redirect('policy.html');
+});
+
+app.get('/auth/facebook',
+  passport.authenticate('facebook'),
+  function(req, res){
+    // The request will be redirected to Facebook for authentication, so this
+    // function will not be called.
+});
+
+app.get('/auth/facebook/callback', 
+  passport.authenticate('facebook', { failureRedirect: '/' }),
+  function(req, res) {
+    res.redirect('/account');
+});
+
+app.get('/account', ensureAuthenticated, function(req, res) {
+  console.log(req.user);
+  
+  //find in the DB if the user exist if not got to account, if it exist index and show username
+  res.redirect('account.html');
+});
+
 function getUserFromToken(req) {
 
         var bearerHeader = req.headers["authorization"];
@@ -494,4 +577,8 @@ function decodeBase64Image(dataString) {
 	  return response;
 	}
 
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) { return next(); }
+  res.redirect('login.html');
+}
 
