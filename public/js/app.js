@@ -53,30 +53,29 @@ window.App = {
 			return true;
     },
 	
-	register: function () {
+	setNickName: function () {
 
 		    		var data = {};
-					data.author = $( "#rnickname" ).val();
-					data.mail = $( "#remail" ).val();
-					data.password = $( "#rpass" ).val();
-					
+					data.author = $( "#author" ).val();
+
 					$.ajax({
 						type: 'POST',
 						data: JSON.stringify(data),
 				        contentType: 'application/json',
-                        url: URLSERVER +'/register',						
+                        url: URLSERVER +'/setUserName',						
                         success: function(data) {
-                            $('#loginModal').modal('toggle');
+                            window.location.href = "index.html";
                     		
 							
                         }
                     }).done(function(data) {
-						localStorage.setItem('iotoken', data.token);
+						window.location.href = "index.html"
 						
 						
 					  })
 					  .fail(function(err) {
 						console.log(err);
+						window.location.href = "login.html"
 					});
 	
     },

@@ -82,6 +82,29 @@ app.listen(port);
 console.log('Magic happens ');
 
 
+
+app.post('/setUserName', function(req, res){
+	var author = req.body.author
+	var id = req.sessionID
+	
+				var newUser = {'author': author,'id' : id,  'keys' : {} };
+				MongoClient.connect(url, function(err, db) {
+				  if (err) throw err;
+				  var dbo = db.db("explguru");
+				  dbo.collection("user").insertOne(newUser, function(err, res) {
+					if (err) throw err;
+					
+					db.close();
+					
+					
+				  });
+				});
+				
+				
+				res.send("OK")
+			
+});
+
 app.post('/search', function(req, res){
 	var txt = ".*"+ req.body.search.toLowerCase() +"*";
 	
