@@ -15,18 +15,22 @@
   "dependencies": {
     "async": "^2.6.0",
     "body-parser": "^1.18.2",
+    "connect-mongostore": "^0.1.4",
+    "connect-redis": "^3.3.3",
     "cookie-parser": "^1.4.3",
     "express": "^4.16.3",
     "express-session": "^1.15.6",
     "fs": "0.0.1-security",
     "http": "0.0.0",
-    "jsonwebtoken": "^8.2.1",
+    "jsonwebtoken": "^8.3.0",
+    "jwt-simple": "^0.5.1",
     "mailgun-js": "^0.18.0",
     "mongodb": "^3.0.7",
     "node-rest-client": "^3.1.0",
     "npm": "^6.0.1",
     "passport": "^0.4.0",
     "passport-facebook": "^2.1.1",
+    "redis": "^2.8.0",
     "request": "^2.86.0",
     "ws": "^5.1.1"
   }

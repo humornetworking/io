@@ -62,8 +62,11 @@ window.App = {
 						type: 'POST',
 						data: JSON.stringify(data),
 				        contentType: 'application/json',
-                        url: URLSERVER +'/setUserName',						
+                        url: URLSERVER +'/setUserName',	
+						headers: {"Authorization": "Bearer "+ localStorage.getItem('token')},						
                         success: function(data) {
+							localStorage.removeItem("token")
+							localStorage.setItem("token",data.token)
                             window.location.href = "index.html";
                     		
 							
@@ -80,16 +83,10 @@ window.App = {
 	
     },
 	openWrite: function () {
-		
-		    //Check Session Cookie
 
-		$.ajax({
-		  type: 'GET',
-		  url: URLSERVER +"/checkSession",
-		  context: document.body
-		}).done(function(data) {
-		  
-			if(data == "OK") {
+			var token = localStorage.getItem("token")
+
+			if (token !== null && token !== "undefined"){
 				$("#summernote-root").summernote("reset");
 				$('#newStory').modal('show')
 				$('.note-image-btn').prop("disabled", false);
@@ -97,8 +94,7 @@ window.App = {
 		    } else {
 				window.location.href = "login.html";
 			}
-		  
-		})
+
 			
 
     },
@@ -145,7 +141,6 @@ window.App = {
 				  $('#uploadRoot').modal('show')
 				  $('#mainContainer').waitMe({})
 				  $( "#thetext-root" ).replaceWith( " <div id='thetext-root' ><div id='thetext-root' style='margin: 25px;'>"+ label +"</div></div>");
-
 				  
 				  var el = document.getElementById("test-root");
 				  
@@ -159,15 +154,13 @@ window.App = {
 								data.image = dataURL
 								data.chain = "ETH"//$( "#chain" ).val();
 								
+								
 								$.ajax({
 									type: 'POST',
 									data: JSON.stringify(data),
 									contentType: 'application/json',
 									url: URLSERVER +'/write-root',
-									/* 	
-									beforeSend: function (xhr) {   //Include the bearer token in header
-											xhr.setRequestHeader("Authorization", 'Bearer '+ iotoken);
-										} */					
+									headers: {"Authorization": "Bearer "+ localStorage.getItem('token')},				
 									success: function(data) {
 										
 										$('#uploadRoot').modal('toggle');

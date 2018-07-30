@@ -1,4 +1,4 @@
-var express    = require('express');        // call express
+var express    = require('express');      
 var app        = express();                 // define our app using express
 var bodyParser = require('body-parser');
 var async = require('async'); 
@@ -8,7 +8,10 @@ var fs = require("fs")
 var cookieParser = require('cookie-parser');
 passport = require('passport');
 FacebookStrategy = require('passport-facebook').Strategy;
+var redis   = require("redis");
 var session = require('express-session');
+var jwt        = require("jsonwebtoken");
+var secret = "lavidalibre"
 
 // Login
 
@@ -56,11 +59,13 @@ var mailgun = require("mailgun-js")({apiKey: 'key-219426aefec7c90432a505766e1888
 var Client = require('node-rest-client').Client;
 var client = new Client();
 
-
 //Express
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, X-Response-Time, X-PINGOTHER, X-CSRF-Token,Authorization');
+	res.setHeader('Access-Control-Allow-Methods', '*');
+	res.setHeader('Access-Control-Expose-Headers', 'X-Api-Version, X-Request-Id, X-Response-Time');
+	res.setHeader('Access-Control-Max-Age', '1000');
   next();
 });
 app.use(bodyParser({limit: '50mb'}));
@@ -68,11 +73,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-app.use(session({
-    secret: 'nodejs-passport-facebook-example',
-    resave: true,
-    saveUninitialized: true
-}));
+  app.use(session({
+    secret: 'ssshhhhh',
+    saveUninitialized: false,
+    resave: false
+})); 
+
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -83,11 +89,15 @@ console.log('Magic happens ');
 
 
 
-app.post('/setUserName', function(req, res){
+app.post('/setUserName', ensureAuthorized, function(req, res){
 	var author = req.body.author
-	var id = req.sessionID
+	console.log("AUTHOR 2 :"+ author)
 	
-				var newUser = {'author': author,'id' : id,  'keys' : {} };
+	var user = getUserFromToken(req)
+	
+	console.log("USER 2 :"+ user)
+	
+				var newUser = {'author': author,'id' : user.id,  'keys' : {} };
 				MongoClient.connect(url, function(err, db) {
 				  if (err) throw err;
 				  var dbo = db.db("explguru");
@@ -100,8 +110,12 @@ app.post('/setUserName', function(req, res){
 				  });
 				});
 				
+				var user = getUserFromToken(req)
+			    var token = jwt.sign({"author": author, "id" : user.id ,"displayName" : user.displayName}, secret, {
+                                expiresIn: '24h'// expires in 24 hours
+                });
 				
-				res.send("OK")
+				res.send({"token" : token})
 			
 });
 
@@ -388,7 +402,7 @@ app.post('/write-link', function(req, res){
 });
 
 
-app.post('/write-root', function(req, res){
+app.post('/write-root', ensureAuthorized, function(req, res){
 	
 	
 	var obj = {};
@@ -412,7 +426,7 @@ app.post('/write-root', function(req, res){
         }
     }
 };//getAuthor(author); Proiblemas con las asyncronia
-
+	var user = getUserFromToken(req)
 	var txt = req.body.texto.substring(0, 100);
 	var chain = req.body.chain;
 	var ahora = Date.now()	
@@ -423,7 +437,7 @@ app.post('/write-root', function(req, res){
 	var imgName = Math.floor((Math.random() * 1000000000000000) + 1) +".png"
 	fs.writeFile('public/img/'+imgName, buf, function(err) { console.log(err) });
 		
-		        var newMessage = {'txid': '321','author' : bigAuthor.author, 'txt' : txt, 'image' : imgName, 'timestamp' : ahora,'x' : 0, 'y': 0, 'root' : 1};
+		        var newMessage = {'txid': '321','author' : user.author, 'txt' : txt, 'image' : imgName, 'timestamp' : ahora,'x' : 0, 'y': 0, 'root' : 1};
 				//data.push(newBook); // Save to the DB
 				MongoClient.connect(url, function(err, db) {
 				  if (err) throw err;
@@ -502,7 +516,8 @@ console.log(transaction);
 
 
 app.get('/checkSession', function(req, res) {
-  if (req.isAuthenticated())
+  console.log("Session :"+ req.sessionID)
+  if (req.sessionID !== 'undefined' && req.sessionID != null)
 	res.send("OK");
   else
 	res.send("NOK");
@@ -520,33 +535,28 @@ app.get('/auth/facebook',
     // function will not be called.
 });
 
+
 app.get('/auth/facebook/callback', 
-  passport.authenticate('facebook', { failureRedirect: '/' }),
+  passport.authenticate('facebook', { failureRedirect: '/login.html' }),
   function(req, res) {
     res.redirect('/account');
 });
 
-app.get('/account', ensureAuthenticated, function(req, res) {
-  console.log(req.user);
+app.get('/account',  function(req, res) {
   
+  //console.log(req.user); 
+  
+  //Check if exists in the DB, donde tendra almacenado su historial, preferencias e storias
+  var token = jwt.sign({"id" : req.user.id +"fb" ,"displayName" : req.user.displayName}, secret, {
+                                expiresIn: '24h' // expires in 24 hours
+                            });
+  
+  console.log("TOKEN 1 :"+ token)
+	
   //find in the DB if the user exist if not got to account, if it exist index and show username
-  res.redirect('account.html');
+  res.redirect('account.html?token=' + token);
 });
 
-function getUserFromToken(req) {
-
-        var bearerHeader = req.headers["authorization"];
-        if (typeof bearerHeader !== 'undefined') {
-            var bearer = bearerHeader.split(" ");
-            var bearerToken = bearer[1];
-
-            var user = jwt.decode(bearerToken, "lavidabellaentodassusformas");
-            return user;
-        } else {
-            return null;
-        }
-
-}
 
 
 function getAuthor(author) {
@@ -585,7 +595,6 @@ function getAuthor(author) {
 }	
 
 
-
 function decodeBase64Image(dataString) {
 	  var matches = dataString.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/),
 		response = {};
@@ -605,3 +614,44 @@ function ensureAuthenticated(req, res, next) {
   res.redirect('login.html');
 }
 
+function ensureAuthorized(req, res, next) {
+
+        var bearerToken;
+        var bearerHeader = req.headers["authorization"];
+		console.log("TOKEN AUTH :"+ bearerHeader)
+        if (typeof bearerHeader !== 'undefined') {
+            var bearer = bearerHeader.split(" ");
+            bearerToken = bearer[1];
+
+            // verifies secret and checks exp
+            jwt.verify(bearerToken, secret, function (err, decoded) {
+                if (err) {
+                    //return res.json({ success: false, message: 'Failed to authenticate token.' });
+                    res.send(403);
+                } else {
+                    // if everything is good, save to request for use in other routes
+                    req.token = bearerToken;
+                    next();
+                }
+            });
+
+
+        } else {
+            res.send(403);
+        }
+    }
+
+    function getUserFromToken(req) {
+
+        var bearerHeader = req.headers["authorization"];
+        if (typeof bearerHeader !== 'undefined') {
+            var bearer = bearerHeader.split(" ");
+            var bearerToken = bearer[1];
+
+            var user = jwt.decode(bearerToken, secret);
+            return user;
+        } else {
+            return null;
+        }
+
+    }

@@ -169,8 +169,8 @@
 }
 
 .feedback {
-    background-color: #4786ec;
-    color: white;
+    background-color: #ffea00;
+    color: black;
     padding: 10px 20px;
 	border-radius: 50%;
 	height: 70px;
@@ -185,6 +185,18 @@
 }
 
 div.vis-network {
-  background-color: antiquewhite;
+  background-color: #fde80194;
 }
 
+body {
+ background-color: #feed2e	
+}	
+
+
+
+#mynetwork canvas{
+
+  border: 5px solid white;
+}
+
+    
