@@ -114,6 +114,7 @@ window.App = {
 										type: 'POST',
 										data: JSON.stringify(data),
 										contentType: 'application/json',
+										headers: {"Authorization": "Bearer "+ localStorage.getItem('token')},
 										url: URLSERVER +'/write-chap',
 										async: false,
 										success: function(dat) { callback(dat) }
@@ -193,7 +194,7 @@ window.App = {
 				var newMessage = $( "#new-message" ).clone();
 				newMessage.find(".message").replaceWith( "<div style=\"cursor: pointer\" class=\"mb-1 message\" onclick=\"App.goChapter(\'"+ msg._id +"\')\"><img src=\""+ URLSERVER +"/img/"+ msg.image +"\"></div>");
 
-				//newMessage.find(".author").text(msg.author);
+				newMessage.find(".author").text(msg.author);
 				newMessage.find(".date").text(new Date(msg.timestamp*1000));
 				
 				$( "#message-list" ).append( newMessage );
@@ -221,7 +222,7 @@ window.App = {
 				var newMessage = $( "#new-message" ).clone();
 				newMessage.find(".message").replaceWith( "<div style=\"cursor: pointer\" class=\"mb-1 message\" onclick=\"App.goChapter(\'"+ msg._id +"\')\"><img src=\""+ URLSERVER +"/img/"+ msg.image +"\"></div>");
 
-				//newMessage.find(".author").text(msg.author);
+				newMessage.find(".author").text(msg.author);
 				newMessage.find(".date").text(new Date(msg.timestamp*1000));
 				
 				$( "#message-list" ).append( newMessage );

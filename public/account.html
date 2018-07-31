@@ -6,14 +6,41 @@
   <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script> 
   
    <script type="text/javascript" src="js/app.js"></script>
+   <link href="css/style.css" rel="stylesheet" type="text/css" />
   
     <title>IOIO</title>
     
   </head>
   <body>
-    <p>Welcome to IOIO</p>
-		Nick name: <input type="text" name="Nick Name" id="author" ><br>
-		<input type="submit" value="Submit" onclick="App.setNickName()">
+  
+  	<div id="mainContainer" class="container-fluid">
+<div class="row">
+	<div class="col-md-12 col-lg-12 col-xl-12 text-center header-logo-login"> 
+		<a href="http://104.251.213.18:8080"><img src="img/ioio.png" title="IOIO :: Colaborative Storytelling"></a>
+	</div>
+</div>
+
+<br>
+<div class="row">
+	<div class="col-md-12 col-lg-12 col-xl-12 text-center "> 
+	
+	<div class="input-group">
+	  <span class="input-group-addon" id="basic-addon1">@</span>
+	  <input type="text" class="form-control" id="author" placeholder="Nickname" aria-describedby="basic-addon1">
+
+	</div>
+	
+		  <br>
+		  
+		  <button type="button" class="btn btn-success" onclick="App.setNickName()">Enviar</button>
+
+	</div>
+</div>
+
+
+</div>  
+    
+		
   </body>
   
   </body>

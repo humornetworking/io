@@ -284,11 +284,11 @@ app.post('/register', function(req, res){
 	res.send({"token" :"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3IiOiJhbmRycyJ9.1cSuE-00MnvUjfooBV0dE77zPZu_GfRkJf1JBXWMowQ"})
 });
 
-app.post('/write-chap', function(req, res){
+app.post('/write-chap', ensureAuthorized, function(req, res){
 	
 	
 	var obj = {};
-	var author = "Andrs"//user.author;
+	var user = getUserFromToken(req)
 	var txt = req.body.texto.substring(0, 100);
 	var root = req.body.root
 	var image = req.body.image
@@ -311,7 +311,7 @@ app.post('/write-chap', function(req, res){
 
 						function(callback) {
 							
-								var newMessage = {'txid': '123','author' : author, 'txt' : txt, 'image' : imgName, 'timestamp' : Date.now(), 'x' : Number(x),'y' : Number(y), 'root' : 0};
+								var newMessage = {'txid': '123','author' : user.author, 'txt' : txt, 'image' : imgName, 'timestamp' : Date.now(), 'x' : Number(x),'y' : Number(y), 'root' : 0};
 								dbo.collection("message").insertOne(newMessage, function(err, res) {
 											if (err) throw err;					
 											//pointto = res.insertedId.toString()
