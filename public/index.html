@@ -448,6 +448,11 @@ var URLSERVER = "http://104.251.213.18:8080"
 		App.goChapter(url[1])
 	  }
 	  
+	  if (window.location.href.includes("token=")) {
+		token = window.location.href.split("token=")
+		localStorage.setItem("token",token[1].replace("#_=_","").trim())
+	  }
+	  
 	});
 	
 

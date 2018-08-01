@@ -88,17 +88,36 @@ var port = process.env.PORT || 8080
 app.listen(port);
 console.log('Magic happens ');
 
-
+app.get('/getAddressByUser', ensureAuthorized,  function(req, res){
+	var user = getUserFromToken(req)
+	
+	MongoClient.connect(url, function(err, db) {
+	  if (err) throw err;
+	  var dbo = db.db("explguru");
+	  dbo.collection("user").find({"id" : user.id}).toArray(function(err, user) {
+		console.log("USER :"+ JSON.stringify(user))
+		res.send({"address": user[0].keys.btc.address});
+	  });
+	});
+	
+})
 
 app.post('/setUserName', ensureAuthorized, function(req, res){
 	var author = req.body.author
-	console.log("AUTHOR 2 :"+ author)
 	
 	var user = getUserFromToken(req)
 	
-	console.log("USER 2 :"+ user)
+	var randomText = getRandomText();
+	var value = Buffer.from(randomText);
+	var hash = bitcore.crypto.Hash.sha256(value);
+	var bn = bitcore.crypto.BN.fromBuffer(hash);
+    var privateKey = new bitcore.PrivateKey(bn).toString();
+	var address = new bitcore.PrivateKey(bn).toAddress().toString();
 	
-				var newUser = {'author': author,'id' : user.id,  'keys' : {} };
+		var newUser = {'author': author,'id' : user.id,  'keys' : {"btc" : {
+            "private" : privateKey,
+            "address" : address
+        }}};
 				MongoClient.connect(url, function(err, db) {
 				  if (err) throw err;
 				  var dbo = db.db("explguru");
@@ -471,47 +490,11 @@ app.post('/write-root', ensureAuthorized, function(req, res){
 });
 
 	
-app.post('/checkPayment', function(req, res){
+app.post('/checkPayment', ensureAuthorized , function(req, res){
 	
-	var texto = req.body.texto;
-	//Addres para recivir los pagos,Get thee addres from the DB
-		var privKey = "5629a28efeb21585d9bdd406d6d3337faadd8d1f8eba8d689decce6ca2301a44"
-		var pubKey = "0377cd7a0b46e2e0d47a1b16675297b4f18f8d7d893887e779b42f143505fa4d0a"
-		var address = "mrwZvPf4KF2vNCrHPrucZoSvo33Ywfg6kn"
+	var texto = req.body.texto
+	var user = getUserFromToken(req)
 
-    //Check the payment ....
-
-	
-	//Oficial MYWAY account
-		var myWayPrivate = "724f21aacd9730973379f43e9c60a8b0cf1da56d62e2a6dccf3ca3327ca0dadf"
-		var myWayPublic = "0204d3e6cbeb0d159445871db7888714431b2c608cbe054d1fc8a1a115d942693d"
-		var myWayAddress = "n28H16SyNnGAkpU5wudJJW9iNpoFg69kf1"
-		
-		//Once checked, get UTXO index & script
-		var txId = "1d29c28fba1e2d1d8677045779ae92ce7af1ba38cf7a47ec5c8740ea562eb014"
-		var outputIndex = 1
-		var script = "76a914e210b0cec61767d72e223812a16d19875fa3ddce88ac" // ??? Realmente va
-	
-	var privateKey = new bitcore.PrivateKey(myWayPrivate);
-	var utxo = {
-	  "txId" : txId,
-	  "outputIndex" : outputIndex,
-	  "address" : myWayAddress,
-	  "script" : script,
-	  "satoshis" : 50000
-	};
-
-var transaction = new bitcore.Transaction()
-    .from(utxo)
-    .addData(texto) // Add OP_RETURN data
-    .sign(privateKey);
-	
-	//Pasos, send a small amount a la nueva direccion
-	//Ocupar el UTXO de la nueva direccion para agregar el texto 
-	
-//Broadcast this transaction
-console.log("Broadcast !"+ texto);
-console.log(transaction);
 	
 })
 
@@ -547,15 +530,33 @@ app.get('/account',  function(req, res) {
   
   //console.log(req.user); 
   
-  //Check if exists in the DB, donde tendra almacenado su historial, preferencias e storias
+  var id = req.user.id +"fb"
   var token = jwt.sign({"id" : req.user.id +"fb" ,"displayName" : req.user.displayName}, secret, {
-                                expiresIn: '24h' // expires in 24 hours
+                                expiresIn: '24h' 
                             });
+  	
+	MongoClient.connect(url, function(err, db) {
+	  if (err) throw err;
+	  var dbo = db.db("explguru");
+	  dbo.collection("user").find({"id" : id}).toArray(function(err, user) {
+		if (user.length == 0){
+			    var token = jwt.sign({"id" : req.user.id +"fb" ,"displayName" : req.user.displayName}, secret, {
+                                expiresIn: '24h' 
+                            });
+			
+			  res.redirect('account.html?token=' + token);
+		} else {
+				var token = jwt.sign({"author": user[0].author, "id" : user[0].id ,"displayName" : user[0].displayName}, secret, {
+                                expiresIn: '24h'
+                });
+			
+			  res.redirect('index.html?token=' + token);
+		}
+		//res.send(messages);
+	  });
+	});
   
-  console.log("TOKEN 1 :"+ token)
-	
-  //find in the DB if the user exist if not got to account, if it exist index and show username
-  res.redirect('account.html?token=' + token);
+
 });
 
 
@@ -656,3 +657,49 @@ function ensureAuthorized(req, res, next) {
         }
 
     }
+	
+function getRandomText() {
+  var text = "";
+  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+  for (var i = 0; i < 5; i++)
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+  return text;
+}
+
+function registerText(texto){
+
+	//Oficial MYWAY account. KEEP SAVE
+		var myWayPrivate = "724f21aacd9730973379f43e9c60a8b0cf1da56d62e2a6dccf3ca3327ca0dadf"
+		var myWayPublic = "0204d3e6cbeb0d159445871db7888714431b2c608cbe054d1fc8a1a115d942693d"
+		var myWayAddress = "n28H16SyNnGAkpU5wudJJW9iNpoFg69kf1"
+		
+		//Find this by API
+		var txId = "1d29c28fba1e2d1d8677045779ae92ce7af1ba38cf7a47ec5c8740ea562eb014"
+		var outputIndex = 1
+		var script = "76a914e210b0cec61767d72e223812a16d19875fa3ddce88ac" // ??? Realmente va
+	
+	var privateKey = new bitcore.PrivateKey(myWayPrivate);
+	var utxo = {
+	  "txId" : txId,
+	  "outputIndex" : outputIndex,
+	  "address" : myWayAddress,
+	  "script" : script,
+	  "satoshis" : 50000
+	};
+
+var transaction = new bitcore.Transaction()
+    .from(utxo)
+    .addData(texto) // Add OP_RETURN data
+    .sign(privateKey);
+	
+	var data = {"tx" : transaction}
+	
+	var apiUrl = "https://api.blockcypher.com/v1/btc/test3/txs/send";
+	client.post(apiUrl, data, function (data, response) {
+		return
+	});
+	
+	
+}	

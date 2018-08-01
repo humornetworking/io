@@ -13,11 +13,18 @@ window.App = {
 	
 	pay : function() {
 		
-		localStorage.setItem("myway-pk", "mrwZvPf4KF2vNCrHPrucZoSvo33Ywfg6kn");
-		var mywaypk = localStorage.getItem("myway-pk")
-		$('#qrcode').qrcode(mywaypk);
-		$('#payment').modal('show');
 		
+							    $.ajax({
+									type: 'GET',
+									url: URLSERVER +'/getAddressByUser',
+									headers: {"Authorization": "Bearer "+ localStorage.getItem('token')},				
+									success: function(data) {
+										
+										var mywaypk = data.address
+										$('#qrcode').qrcode(mywaypk);
+										$('#payment').modal('show');
+									}
+								})
 		
 		
 	},
@@ -32,7 +39,8 @@ window.App = {
 						type: 'POST',
 						data: JSON.stringify(data),
 				        contentType: 'application/json',
-                        url: URLSERVER +'/checkPayment',						
+                        url: URLSERVER +'/checkPayment',
+						headers: {"Authorization": "Bearer "+ localStorage.getItem('token')},						
                         success: function(data) {
                             $('#loginModal').modal('toggle');
                     		
