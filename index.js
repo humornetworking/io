@@ -12,9 +12,10 @@ var redis   = require("redis");
 var session = require('express-session');
 var jwt        = require("jsonwebtoken");
 var secret = "lavidalibre"
+var bitcore = require("bitcore-lib")
+bitcore.Networks.defaultNetwork = bitcore.Networks.testnet;
 
 // Login
-
 
 passport.serializeUser(function(user, done) {
   done(null, user);
@@ -473,7 +474,6 @@ app.post('/write-root', ensureAuthorized, function(req, res){
 app.post('/checkPayment', function(req, res){
 	
 	var texto = req.body.texto;
-	
 	//Addres para recivir los pagos,Get thee addres from the DB
 		var privKey = "5629a28efeb21585d9bdd406d6d3337faadd8d1f8eba8d689decce6ca2301a44"
 		var pubKey = "0377cd7a0b46e2e0d47a1b16675297b4f18f8d7d893887e779b42f143505fa4d0a"
@@ -488,8 +488,8 @@ app.post('/checkPayment', function(req, res){
 		var myWayAddress = "n28H16SyNnGAkpU5wudJJW9iNpoFg69kf1"
 		
 		//Once checked, get UTXO index & script
-		var txId = "5037055f15a5089e913080154e629d59263536272acad2a0bf7742f2b3e5efd8"
-		var outputIndex = 0
+		var txId = "1d29c28fba1e2d1d8677045779ae92ce7af1ba38cf7a47ec5c8740ea562eb014"
+		var outputIndex = 1
 		var script = "76a914e210b0cec61767d72e223812a16d19875fa3ddce88ac" // ??? Realmente va
 	
 	var privateKey = new bitcore.PrivateKey(myWayPrivate);
@@ -510,6 +510,7 @@ var transaction = new bitcore.Transaction()
 	//Ocupar el UTXO de la nueva direccion para agregar el texto 
 	
 //Broadcast this transaction
+console.log("Broadcast !"+ texto);
 console.log(transaction);
 	
 })
