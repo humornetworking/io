@@ -146,7 +146,7 @@
 	network.on("click", function (params) {
         params.event = "[original event]";
 		actualPointer = params.pointer
-        var selection = properties.nodes;
+        var selection = params.nodes;
         var clickedNode = nodes.get([selection])[0];
 		
 		if (addChapter) {

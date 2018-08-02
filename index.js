@@ -755,31 +755,48 @@ setInterval(function(){
 	  var dbo = db.db("explguru");
 	  dbo.collection("payment").find({}).toArray(function(err, payment) {
 		for (i = 0; i < payment.length; i++) { 
- 			
-			var apiUrl = "https://api.blockcypher.com/v1/btc/test3/addrs/"+ payment.address;
-			client.post(apiUrl, data, function (data, response) {
-				if(Number(data.balance) > Number(payment.balance)) {
-					console.log("Llego el pago !")
-					dbo.collection("payment").remove({"id" : payment.id});
-					var trx = registerText(payment.author + " dice : "+ payment.texto)
-					console.log("La TRX "+ JSON.stringify(trx));
-					//Update the node with the link
-					
-					  var myquery = { 'id' : payment.idnode };
-					  var newvalues = { $set: { 'proof': 'https://tchain.btc.com/'+ trx } };
-					  dbo.collection("message").updateOne(myquery, newvalues, function(err, res) {
-						if (err) throw err;
-						console.log("Nodo actualizado");
-						db.close();
-					  });
-					
-					
+		      console.log("Chequeando :"+ payment[i].balance +" -- "+  payment[i].address)
+			  var apiUrl = "https://api.blockcypher.com/v1/btc/test3/addrs/"+ payment[i].address;
+			  async.parallel([
+
+				function(callback) {
+									client.get(apiUrl, function (data, response) {
+										
+										var result = "NOK"
+										if(Number(data.balance) > Number(payment[i].balance)) {
+											result = "OK"
+										}
+										callback(false, result);
+
+									});
 				}
-				
-			});
-	
+			  ],
+				  function(err, results) {
+					if(err) { console.log(err); return; }
+					console.log("PAGO OK ? :"+ results[0])
+					if (results[0] == "OK") {
+						console.log("Llego el pago !")
+						dbo.collection("payment").remove({"id" : payment[i].id});
+						var trx = registerText(payment[i].author + " dice : "+ payment[i].texto)
+						console.log("La TRX "+ JSON.stringify(trx));
+						
+						var myquery = { 'id' : payment[i].idnode };
+						var newvalues = { $set: { 'proof': 'https://tchain.btc.com/'+ trx } };
+						dbo.collection("message").updateOne(myquery, newvalues, function(err, res) {
+							if (err) throw err;
+							console.log("Nodo actualizado");
+							
+						});
+					}
+					
+				  }
+			  )
+
 			
 		}
+		
+		db.close();
+		
 	  })
 	})	  
 	
