@@ -146,7 +146,8 @@
 	network.on("click", function (params) {
         params.event = "[original event]";
 		actualPointer = params.pointer
-        //console.log('click event, getNodeAt returns: ' + this.getNodeAt(params.pointer.DOM));
+        var selection = properties.nodes;
+        var clickedNode = nodes.get([selection])[0];
 		
 		if (addChapter) {
 			$("#summernote").summernote("reset");
@@ -154,17 +155,20 @@
 			addChapter = false;
 		} else {
 		
-			toastr.options = {
-			  "debug": false,
-			  "positionClass": "toast-bottom-full-width",
-			  "onclick": null,
-			  "fadeIn": 300,
-			  "fadeOut": 1000,
-			  "timeOut": 5000,
-			  "extendedTimeOut": 1000
-			}
+		   if (clickedNode.proof != '') {
 			
-			toastr.success('<a href="http://asciishop.com" target="_blank">Yo escribí esta historia</a>')
+				toastr.options = {
+				  "debug": false,
+				  "positionClass": "toast-bottom-full-width",
+				  "onclick": null,
+				  "fadeIn": 300,
+				  "fadeOut": 1000,
+				  "timeOut": 5000,
+				  "extendedTimeOut": 1000
+				}
+				
+				toastr.success('<a href="'+ clickedNode.proof +'" target="_blank">Yo escribí esta historia</a>')
+		   }
 		}
     });  
 	  
@@ -349,21 +353,6 @@
 					  data["y"] = actualPointer.canvas.y
 					  
 					  nodes.add(data);
-                      //network.addEdgeMode();
-					 /*
-					$('#viewport').attr('content', 'width=device-width, initial-scale=0.9');
-					try {
-					var scale = 'scale(0.9)';
-					 document.body.style.webkitTransform = scale      // Chrome, Opera, Safari
-					 document.body.style.msTransform =   scale       // IE 9
-					 document.body.style.transform = scale; 
-					}
-					catch(err) {
-					   console.log(err)
-					}*/
-										  
-					//callback(data);
-					
 					
 		  });
 		},500);

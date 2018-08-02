@@ -30,27 +30,59 @@ window.App = {
 	},
 	paymentSent : function() {
 		
-				    var data = {};
-					data.author = "andrs";
-					var texto = document.getElementById('summernote').value;
-					data.texto = texto.replace(/<[^>]*>/g, '');
+	  data.label = document.getElementById('summernote').value;
+	  
+	  $('#newChapter').modal('hide')
+	  $('#uploadChapter').modal('show')
+	  $( "#thetext" ).replaceWith( "<div id='thetext' style='margin-top: 20px ; margin-left: 25px; margin-right: 10px' >"+ data.label +"</div>");
+
+	  var el = document.getElementById("test");
+	  
+	    setTimeout(function(){
+			html2canvas(el).then(canvas => {
+					var dataURL = canvas.toDataURL("image/png")
+					dataImage = dataURL
+					
+					$('#uploadChapter').modal('toggle');
+					  $( "#thetext" ).replaceWith( "<div id='thetext'></div>");
+					
+					  book	= App.writeTmp(dataImage, data.label, actualPointer.canvas.x, actualPointer.canvas.y) //Evento asyncronico, Manejarlo
+		  
+					  
+		  
+					  texto = data.label
+					  clearNodePopUp();
+					  data["image"] = URLSERVER +'/img/'+ book.image
+					  data["shape"] = 'circularImage'
+					  data["label"] = ''
+					  data["id"] = book.id
+					  data["x"] = actualPointer.canvas.x
+					  data["y"] = actualPointer.canvas.y
+					  
+					  nodes.add(data);
+
+		            var dataPay = {};
+					var texto = data.label;
+					dataPay.texto = texto.replace(/<[^>]*>/g, '')
+					dataPay.idNode = book.id
 					
 					$.ajax({
 						type: 'POST',
-						data: JSON.stringify(data),
+						data: JSON.stringify(dataPay),
 				        contentType: 'application/json',
                         url: URLSERVER +'/checkPayment',
 						headers: {"Authorization": "Bearer "+ localStorage.getItem('token')},						
                         success: function(data) {
-                            $('#loginModal').modal('toggle');
+                            $('#payment').modal('toggle');
                     		
 							
                         }
-                    }).done(function(data) {
-						localStorage.setItem('iotoken', data.token);
-						
-						
-					  })
+                    })
+					  
+		  });
+		},500);
+		
+
 		
 	},
 	checkToken: function () {

@@ -207,9 +207,9 @@ app.get('/get-chapters/:id', function(req, res){
 				//nNodes.push({ 'id': messages[i]._id, 'image' : URLSERVER +'/img/'+ messages[i].image, 'shape': 'image'})
 				
 				if (messages[i]._id == idBook) {
-					nNodes.push({ 'id': messages[i]._id, 'image' : URLSERVER +'/img/'+ messages[i].image, 'x' :-250, 'y' : -600})
+					nNodes.push({ 'id': messages[i]._id, 'image' : URLSERVER +'/img/'+ messages[i].image, 'x' :-250, 'y' : -600, 'proof' : messages[i].proof })
 				} else {
-					nNodes.push({ 'id': messages[i]._id, 'image' : URLSERVER +'/img/'+ messages[i].image, 'x' : messages[i].x, 'y':messages[i].y})
+					nNodes.push({ 'id': messages[i]._id, 'image' : URLSERVER +'/img/'+ messages[i].image, 'x' : messages[i].x, 'y':messages[i].y, 'proof' : messages[i].proof})
 				}
 				
 				
@@ -331,7 +331,7 @@ app.post('/write-chap', ensureAuthorized, function(req, res){
 
 						function(callback) {
 							
-								var newMessage = {'txid': '123','author' : user.author, 'txt' : txt, 'image' : imgName, 'timestamp' : Date.now(), 'x' : Number(x),'y' : Number(y), 'root' : 0};
+								var newMessage = {'txid': '123','author' : user.author, 'txt' : txt, 'image' : imgName, 'timestamp' : Date.now(), 'x' : Number(x),'y' : Number(y), 'root' : 0 ,'proof' : ''};
 								dbo.collection("message").insertOne(newMessage, function(err, res) {
 											if (err) throw err;					
 											//pointto = res.insertedId.toString()
@@ -457,7 +457,7 @@ app.post('/write-root', ensureAuthorized, function(req, res){
 	var imgName = Math.floor((Math.random() * 1000000000000000) + 1) +".png"
 	fs.writeFile('public/img/'+imgName, buf, function(err) { console.log(err) });
 		
-		        var newMessage = {'txid': '321','author' : user.author, 'txt' : txt, 'image' : imgName, 'timestamp' : ahora,'x' : 0, 'y': 0, 'root' : 1};
+		        var newMessage = {'txid': '321','author' : user.author, 'txt' : txt, 'image' : imgName, 'timestamp' : ahora,'x' : 0, 'y': 0, 'root' : 1,'proof' : ''};
 				//data.push(newBook); // Save to the DB
 				MongoClient.connect(url, function(err, db) {
 				  if (err) throw err;
@@ -493,8 +493,35 @@ app.post('/write-root', ensureAuthorized, function(req, res){
 app.post('/checkPayment', ensureAuthorized , function(req, res){
 	
 	var texto = req.body.texto
+	var idnode = req.body.idNode
 	var user = getUserFromToken(req)
+	
+	var apiUrl = "https://api.blockcypher.com/v1/btc/test3/addrs/"+ user.keys.btc.address;
+	client.get(apiUrl, data, function (data, response) {
 
+				var newUser = {'address': user.keys.btc.address,'idnode' : idnode, 'texto' : texto,'author' : user.author, 'id' : user.id,  'balance' : data.balance};
+				MongoClient.connect(url, function(err, db) {
+				  if (err) throw err;
+				  var dbo = db.db("explguru");
+				  dbo.collection("payment").insertOne(newUser, function(err, res) {
+					if (err) throw err;
+					
+					db.close();
+					
+					
+				  });
+				});
+	
+	
+	});
+    
+
+	
+	//Create function to every 30 sec check payment table
+	//Insert into payment table, with user ID
+	//Check with the api balance by address
+	//If change, register the text update node info with the link & remove item from table
+	//Send WS message "success"
 	
 })
 
@@ -689,7 +716,7 @@ function registerText(texto){
 	  "satoshis" : 50000
 	};
 
-var transaction = new bitcore.Transaction()
+	var transaction = new bitcore.Transaction()
     .from(utxo)
     .addData(texto) // Add OP_RETURN data
     .sign(privateKey);
@@ -697,9 +724,64 @@ var transaction = new bitcore.Transaction()
 	var data = {"tx" : transaction}
 	
 	var apiUrl = "https://api.blockcypher.com/v1/btc/test3/txs/send";
-	client.post(apiUrl, data, function (data, response) {
-		return
-	});
+
+	  		  async.parallel([
+
+				function(callback) {
+									client.post(apiUrl, data, function (data, response) {
+										callback(false, data);
+
+									});
+				}
+			  ],
+				  function(err, results) {
+					if(err) { console.log(err); res.send(500,"Server Error"); return; }
+					
+					return results[0];
+					
+				  }
+			  )
 	
 	
-}	
+	
+}
+
+//Loop checking pending transactions
+setInterval(function(){ 
+	
+	
+	MongoClient.connect(url, function(err, db) {
+	  if (err) throw err;
+	  var dbo = db.db("explguru");
+	  dbo.collection("payment").find({}).toArray(function(err, payment) {
+		for (i = 0; i < payment.length; i++) { 
+ 			
+			var apiUrl = "https://api.blockcypher.com/v1/btc/test3/addrs/"+ payment.address;
+			client.post(apiUrl, data, function (data, response) {
+				if(Number(data.balance) > Number(payment.balance)) {
+					console.log("Llego el pago !")
+					dbo.collection("payment").remove({"id" : payment.id});
+					var trx = registerText(payment.author + " dice : "+ payment.texto)
+					console.log("La TRX "+ JSON.stringify(trx));
+					//Update the node with the link
+					
+					  var myquery = { 'id' : payment.idnode };
+					  var newvalues = { $set: { 'proof': 'https://tchain.btc.com/'+ trx } };
+					  dbo.collection("message").updateOne(myquery, newvalues, function(err, res) {
+						if (err) throw err;
+						console.log("Nodo actualizado");
+						db.close();
+					  });
+					
+					
+				}
+				
+			});
+	
+			
+		}
+	  })
+	})	  
+	
+
+ }, 60000);	
