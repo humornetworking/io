@@ -62,7 +62,7 @@ window.App = {
 					  nodes.add(data);
 
 		            var dataPay = {};
-					var texto = data.label;
+					//var texto = data.label;
 					dataPay.texto = texto.replace(/<[^>]*>/g, '')
 					dataPay.idNode = book.id
 					

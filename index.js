@@ -131,7 +131,7 @@ app.post('/setUserName', ensureAuthorized, function(req, res){
 				});
 				
 				var user = getUserFromToken(req)
-			    var token = jwt.sign({"author": author, "id" : user.id ,"displayName" : user.displayName}, secret, {
+			    var token = jwt.sign({"address": address, "author": author, "id" : user.id ,"displayName" : user.displayName}, secret, {
                                 expiresIn: '24h'// expires in 24 hours
                 });
 				
@@ -496,14 +496,15 @@ app.post('/checkPayment', ensureAuthorized , function(req, res){
 	var idnode = req.body.idNode
 	var user = getUserFromToken(req)
 	
-	var apiUrl = "https://api.blockcypher.com/v1/btc/test3/addrs/"+ user.keys.btc.address;
-	client.get(apiUrl, data, function (data, response) {
-
-				var newUser = {'address': user.keys.btc.address,'idnode' : idnode, 'texto' : texto,'author' : user.author, 'id' : user.id,  'balance' : data.balance};
+	
+	var apiUrl = "https://api.blockcypher.com/v1/btc/test3/addrs/"+ user.address;
+	client.get(apiUrl, function (data, response) {
+                console.log("BALANCE :"+ JSON.stringify(data))
+				var payment = {'address': user.address,'idnode' : idnode, 'texto' : texto,'author' : user.author, 'id' : user.id,  'balance' : data.balance};
 				MongoClient.connect(url, function(err, db) {
 				  if (err) throw err;
 				  var dbo = db.db("explguru");
-				  dbo.collection("payment").insertOne(newUser, function(err, res) {
+				  dbo.collection("payment").insertOne(payment, function(err, res) {
 					if (err) throw err;
 					
 					db.close();
@@ -573,7 +574,7 @@ app.get('/account',  function(req, res) {
 			
 			  res.redirect('account.html?token=' + token);
 		} else {
-				var token = jwt.sign({"author": user[0].author, "id" : user[0].id ,"displayName" : user[0].displayName}, secret, {
+				var token = jwt.sign({"address": user[0].keys.btc.address,"author": user[0].author, "id" : user[0].id ,"displayName" : user[0].displayName}, secret, {
                                 expiresIn: '24h'
                 });
 			
@@ -749,6 +750,7 @@ function registerText(texto){
 //Loop checking pending transactions
 setInterval(function(){ 
 	
+	console.log("Chequeando Pagos")
 	
 	MongoClient.connect(url, function(err, db) {
 	  if (err) throw err;
@@ -763,7 +765,9 @@ setInterval(function(){
 									client.get(apiUrl, function (data, response) {
 										
 										var result = "NOK"
-										if(Number(data.balance) > Number(payment[i].balance)) {
+										console.log("PAYMENT "+JSON.stringify(payment))
+										var balance = payment[0].balance
+										if(Number(data.balance) > Number(balance)) {
 											result = "OK"
 										}
 										callback(false, result);
@@ -801,4 +805,4 @@ setInterval(function(){
 	})	  
 	
 
- }, 60000);	
+ }, 20000);	
