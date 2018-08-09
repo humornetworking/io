@@ -31,8 +31,8 @@
 			  enabled: false
 			},
 		  nodes: {
-		  shape: 'circularImage',
-          borderWidth:4,
+		  shape: 'image',
+          borderWidth:0,
           size:30,
 	      color: {
             border: '#406897',
@@ -40,7 +40,7 @@
           },
           font:{color:'#eeeeee'},
           shapeProperties: {
-            useBorderWithImage:true
+            useBorderWithImage:false
           }
 		  
         },
@@ -105,16 +105,17 @@
 	  
       network.disableEditMode()
 	  
+	  /*
 	  network.on("beforeDrawing", function (ctx) {
 		var nodeId = rootBook;
 		var nodePosition = network.getPositions([nodeId]);
 		ctx.strokeStyle = '#A6D5F7';
 		ctx.fillStyle = '#294475';
-		ctx.circle(nodePosition[nodeId].x, nodePosition[nodeId].y,50);
+		ctx.circle(nodePosition[nodeId].x, nodePosition[nodeId].y,100);
 		ctx.fill();
 		ctx.stroke();
 	  });
-	  
+	  */
 
 	  network.on("afterDrawing", function (ctx) {
 	      document.body.scrollTop = 0; // For Safari
@@ -174,7 +175,7 @@
 	  
 
       var optionsx = {
-        scale: 3,
+        scale: 2,
         offset: {x:0,y:0},
         animation: {
           duration: 1000,
@@ -346,7 +347,7 @@
 					  texto = data.label
 					  clearNodePopUp();
 					  data["image"] = URLSERVER +'/img/'+ book.image
-					  data["shape"] = 'circularImage'
+					  data["shape"] = 'image'
 					  data["label"] = ''
 					  data["id"] = book.id
 					  data["x"] = actualPointer.canvas.x

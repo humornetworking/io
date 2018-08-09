@@ -73,11 +73,13 @@ window.App = {
                         url: URLSERVER +'/checkPayment',
 						headers: {"Authorization": "Bearer "+ localStorage.getItem('token')},						
                         success: function(data) {
-                            $('#payment').modal('toggle');
+                            //$('#payment').modal('toggle');
                     		
 							
                         }
                     })
+					  
+					  $('#payment').modal('show');
 					  
 		  });
 		},500);
@@ -181,7 +183,7 @@ window.App = {
 				  $('#newStory').modal('toggle');
 				  $('#uploadRoot').modal('show')
 				  $('#mainContainer').waitMe({})
-				  $( "#thetext-root" ).replaceWith( " <div id='thetext-root' ><div id='thetext-root' style='margin: 25px;'>"+ label +"</div></div>");
+				  $( "#thetext-root" ).replaceWith( " <div id='thetext-root' ><div id='thetext-root' >"+ label +"</div></div>");
 				  
 				  var el = document.getElementById("test-root");
 				  

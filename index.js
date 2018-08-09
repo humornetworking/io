@@ -696,6 +696,13 @@ function getRandomText() {
   return text;
 }
 
+app.get('/test',  function(req, res){
+
+    var tx = registerText("Pepe")
+	res.send(tx)
+	
+})
+
 function registerText(texto){
 
 	//Oficial MYWAY account. KEEP SAVE
@@ -704,8 +711,8 @@ function registerText(texto){
 		var myWayAddress = "n28H16SyNnGAkpU5wudJJW9iNpoFg69kf1"
 		
 		//Find this by API
-		var txId = "1d29c28fba1e2d1d8677045779ae92ce7af1ba38cf7a47ec5c8740ea562eb014"
-		var outputIndex = 1
+		var txId = "14f6df3137c7b2662c12fde9d8128adad02fbd5f2aac6d001358b245aa32abcb"
+		var outputIndex = 0
 		var script = "76a914e210b0cec61767d72e223812a16d19875fa3ddce88ac" // ??? Realmente va
 	
 	var privateKey = new bitcore.PrivateKey(myWayPrivate);
@@ -722,16 +729,22 @@ function registerText(texto){
     .addData(texto) // Add OP_RETURN data
     .sign(privateKey);
 	
-	var data = {"tx" : transaction}
-	
-	var apiUrl = "https://api.blockcypher.com/v1/btc/test3/txs/send";
+	var data = {"tx" : transaction.toString()}
+	console.log("TRX obj :"+ JSON.stringify(data))
+	console.log("TRX :"+ transaction)
+	var apiUrl = "https://api.blockcypher.com/v1/bcy/test/txs/push?token=d858e999978944499fcaf6f5408790d0";
 
 	  		  async.parallel([
 
 				function(callback) {
-									client.post(apiUrl, data, function (data, response) {
-										callback(false, data);
+									client.post(apiUrl, data, function (data1, response) {
+										
+										console.log(JSON.stringify(data1))
+										
+										callback(false, data1);
 
+									}).on('error', function (err) {
+										console.log('something went wrong on the request', err.request.options);
 									});
 				}
 			  ],
@@ -757,6 +770,7 @@ setInterval(function(){
 	  var dbo = db.db("explguru");
 	  dbo.collection("payment").find({}).toArray(function(err, payment) {
 		for (i = 0; i < payment.length; i++) { 
+		      var pay = payment[i]
 		      console.log("Chequeando :"+ payment[i].balance +" -- "+  payment[i].address)
 			  var apiUrl = "https://api.blockcypher.com/v1/btc/test3/addrs/"+ payment[i].address;
 			  async.parallel([
@@ -764,12 +778,13 @@ setInterval(function(){
 				function(callback) {
 									client.get(apiUrl, function (data, response) {
 										
-										var result = "NOK"
+										var status = "NOK"
 										console.log("PAYMENT "+JSON.stringify(payment))
-										var balance = payment[0].balance
+										var balance = pay.balance
 										if(Number(data.balance) > Number(balance)) {
-											result = "OK"
+											status = "OK"
 										}
+										var result = {"status": status , "id" : pay.id, "idnode" : pay.idnode, "texto" : pay.texto, "author" : pay.author}
 										callback(false, result);
 
 									});
@@ -777,18 +792,19 @@ setInterval(function(){
 			  ],
 				  function(err, results) {
 					if(err) { console.log(err); return; }
-					console.log("PAGO OK ? :"+ results[0])
-					if (results[0] == "OK") {
-						console.log("Llego el pago !")
-						dbo.collection("payment").remove({"id" : payment[i].id});
-						var trx = registerText(payment[i].author + " dice : "+ payment[i].texto)
+					console.log("PAGO OK ? :"+ JSON.stringify(results[0]))
+					if (results[0].status == "OK") {
+						console.log("Eliminando el payment ID !"+ results[0].id)
+						dbo.collection("payment").remove({"id" : results[0].id});
+						var trx = registerText(results[0].author + " dice : "+ results[0].texto)
 						console.log("La TRX "+ JSON.stringify(trx));
 						
-						var myquery = { 'id' : payment[i].idnode };
+						var myquery = { 'id' : results[0].idnode };
 						var newvalues = { $set: { 'proof': 'https://tchain.btc.com/'+ trx } };
 						dbo.collection("message").updateOne(myquery, newvalues, function(err, res) {
 							if (err) throw err;
 							console.log("Nodo actualizado");
+							db.close();
 							
 						});
 					}
@@ -799,7 +815,7 @@ setInterval(function(){
 			
 		}
 		
-		db.close();
+		
 		
 	  })
 	})	  
