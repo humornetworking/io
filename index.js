@@ -102,6 +102,34 @@ app.get('/getAddressByUser', ensureAuthorized,  function(req, res){
 	
 })
 
+
+app.post('/updatePositionByBook', function(req, res){
+
+	  var chapters = req.body.chapters
+	  console.log(" JSON : "+ JSON.stringify(chapters))
+			
+	  MongoClient.connect(url, function(err, db) {
+	  if (err) throw err;
+	  var dbo = db.db("explguru");
+						
+						
+						for(var i = 0; i < chapters.length; i++){
+							let chapter = chapters[i]
+							var myquery = { '_id' : ObjectId(chapter.id) };
+							var newvalues = { $set: { 'x': chapter.x, 'y': chapter.y } };
+							dbo.collection("message").updateOne(myquery, newvalues, function(err, res) {
+								if (err) throw err;
+							});
+							
+						}
+						
+						db.close();
+						
+
+		});
+
+	});
+			
 app.post('/setUserName', ensureAuthorized, function(req, res){
 	var author = req.body.author
 	
@@ -207,7 +235,7 @@ app.get('/get-chapters/:id', function(req, res){
 				//nNodes.push({ 'id': messages[i]._id, 'image' : URLSERVER +'/img/'+ messages[i].image, 'shape': 'image'})
 				
 				if (messages[i]._id == idBook) {
-					nNodes.push({ 'id': messages[i]._id, 'image' : URLSERVER +'/img/'+ messages[i].image, 'x' :-250, 'y' : -600, 'proof' : messages[i].proof })
+					nNodes.push({ 'id': messages[i]._id, 'image' : URLSERVER +'/img/'+ messages[i].image, 'x' :-250, 'y' : -600, 'proof' : messages[i].proof, 'title' : messages[i].title, 'txt' : messages[i].txt })
 				} else {
 					nNodes.push({ 'id': messages[i]._id, 'image' : URLSERVER +'/img/'+ messages[i].image, 'x' : messages[i].x, 'y':messages[i].y, 'proof' : messages[i].proof})
 				}
@@ -300,7 +328,6 @@ app.post('/register', function(req, res){
 				
 			saveUser(req, res, author, mail, password);
 				
-	
 	res.send({"token" :"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3IiOiJhbmRycyJ9.1cSuE-00MnvUjfooBV0dE77zPZu_GfRkJf1JBXWMowQ"})
 });
 
@@ -309,6 +336,9 @@ app.post('/write-chap', ensureAuthorized, function(req, res){
 	
 	var obj = {};
 	var user = getUserFromToken(req)
+	
+	console.log("USUARIO : "+  JSON.stringify(user))
+	
 	var txt = req.body.texto.substring(0, 100);
 	var root = req.body.root
 	var image = req.body.image
@@ -451,13 +481,14 @@ app.post('/write-root', ensureAuthorized, function(req, res){
 	var chain = req.body.chain;
 	var ahora = Date.now()	
 	var image = req.body.image
+	var title = req.body.title
 
 	var img = decodeBase64Image(image)
 	var buf = new Buffer(img.data, 'base64')
 	var imgName = Math.floor((Math.random() * 1000000000000000) + 1) +".png"
 	fs.writeFile('public/img/'+imgName, buf, function(err) { console.log(err) });
 		
-		        var newMessage = {'txid': '321','author' : user.author, 'txt' : txt, 'image' : imgName, 'timestamp' : ahora,'x' : 0, 'y': 0, 'root' : 1,'proof' : ''};
+		        var newMessage = {'txid': '321','author' : user.author, 'title': title, 'txt' : txt, 'image' : imgName, 'timestamp' : ahora,'x' : 0, 'y': 0, 'root' : 1,'proof' : ''};
 				//data.push(newBook); // Save to the DB
 				MongoClient.connect(url, function(err, db) {
 				  if (err) throw err;
@@ -763,7 +794,6 @@ function registerText(texto){
 //Loop checking pending transactions
 setInterval(function(){ 
 	
-	console.log("Chequeando Pagos")
 	
 	MongoClient.connect(url, function(err, db) {
 	  if (err) throw err;

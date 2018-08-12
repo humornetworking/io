@@ -150,15 +150,18 @@ window.App = {
 		data.root = rootBook
 		data.x = x
 		data.y = y
+		
+		
+		
 					async.seq(
 						function(callback) {
 									$.ajax({
 										type: 'POST',
 										data: JSON.stringify(data),
 										contentType: 'application/json',
-										headers: {"Authorization": "Bearer "+ localStorage.getItem('token')},
 										url: URLSERVER +'/write-chap',
-										async: false,
+										headers: {"Authorization": "Bearer "+ localStorage.getItem('token')},	
+										async : false,
 										success: function(dat) { callback(dat) }
 									})
 							
@@ -179,6 +182,7 @@ window.App = {
 			} */
 			
 				  var label = document.getElementById('summernote-root').value;
+				  var title = $("#title").val();
 				  
 				  $('#newStory').modal('toggle');
 				  $('#uploadRoot').modal('show')
@@ -196,6 +200,7 @@ window.App = {
 								data.texto = label;
 								data.image = dataURL
 								data.chain = "ETH"//$( "#chain" ).val();
+								data.title = title
 								
 								
 								$.ajax({
@@ -276,6 +281,8 @@ window.App = {
 	},
 	goChapter: function (idBook) {
 			
+			$('.navbar1').show()
+			$('#centerButton').show()
 			
 			$('.book-page').hide()
 			
@@ -342,6 +349,87 @@ window.App = {
 						data: JSON.stringify(data),
 				        contentType: 'application/json',
                         url: URLSERVER +'/write-link',
+						headers: {"Authorization": "Bearer "+ localStorage.getItem('token')},					
+                        success: function(data) {
+                            
+									//App.goChapter(rootBook)
+							
+                        }
+                    }).done(function(data) {
+						
+						
+			})
+	},
+	share: function() {
+		
+		var node = nodes._data[rootBook]
+		
+		let url = 'http://myway.network:8080/?book='+ rootBook
+		let title = node.title
+		let description = node.txt.replace(/<[^>]*>/g, '')
+		let image = 'http://myway.network:8080/img/ioio.png'
+		
+		App.shareOverrideOGMeta(url, title,description, image)
+	},
+	shareOverrideOGMeta: function (overrideLink, overrideTitle, overrideDescription, overrideImage)
+	{
+		FB.ui({
+			method: 'share_open_graph',
+			action_type: 'og.likes',
+			action_properties: JSON.stringify({
+				object: {
+					'og:url': overrideLink,
+					'og:title': overrideTitle,
+					'og:description': overrideDescription,
+					'og:image': overrideImage
+				}
+			})
+		},
+		function (response) {
+		// Action after response
+		});
+	},
+	centerBook : function(){
+		
+		var optionsx = {
+			scale: 2,
+			offset: {x:0,y:0},
+			animation: {
+			  duration: 1000,
+			  easingFunction: "easeInOutQuad"
+			}
+		  };
+
+		network.focus(rootBook, optionsx);
+		
+		network.moveTo({
+			position: {x: -250, y: -480},
+			offset: {x: 0, y: 0}
+		})
+	},
+	updateNodesPosition : function() {
+	
+	    var chapters = []
+		for (var key in nodes._data) {
+			if (nodes._data.hasOwnProperty(key)) {
+				
+				var node = network.getPositions(key)
+				var x = node[key].x
+				var y = node[key].y
+				var chapter = {"id": key, "x" : x, "y" : y}
+				chapters.push(chapter)
+				//console.log(key + " -> " + nodes._data[key]);
+			}
+		}
+		
+		var data = {"chapters" : chapters}
+		
+		
+		$.ajax({
+						type: 'POST',
+						data: JSON.stringify(data),
+				        contentType: 'application/json',
+                        url: URLSERVER +'/updatePositionByBook',
 						/* 	
 						beforeSend: function (xhr) {   //Include the bearer token in header
 								xhr.setRequestHeader("Authorization", 'Bearer '+ iotoken);
@@ -355,6 +443,8 @@ window.App = {
 						
 						
 			})
-	}
+		
+		
 	
+	}
 };

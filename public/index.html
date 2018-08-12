@@ -3,6 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<meta property="fb:app_id" content="832861053471099" />
+	<meta property="og:url" content="http://myway.network:8080" >
+	<meta property="og:type" content="article" >
+	<meta property="og:title" content="Colaborative Storytelling" >
+	<meta property="og:description" content="Democratic access to the writing" >
+	<meta property="og:image" content="http://myway.network:8080/img/ioio.png" >
+	<meta property="og:image:width" content="1200" >
+	<meta property="og:image:height" content="630" >
+
  <title>IOIO : Colaborative Storytelling</title>
 
   <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
@@ -30,17 +40,45 @@
  
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.qrcode/1.0/jquery.qrcode.min.js"></script> 
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
  
- 
+<script>
+  window.fbAsyncInit = function() {
+	FB.init({
+	  appId            : '832861053471099',
+	  autoLogAppEvents : true,
+	  xfbml            : true,
+	  version          : 'v2.10'
+	});
+	FB.AppEvents.logPageView();
+  };
+
+  (function(d, s, id){
+	 var js, fjs = d.getElementsByTagName(s)[0];
+	 if (d.getElementById(id)) {return;}
+	 js = d.createElement(s); js.id = id;
+	 js.src = "//connect.facebook.net/en_US/sdk.js";
+	 fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+</script>
   
   </head>
 <body>
+
+<div class="navbar1">
+  <a href="#home" class="fa fa-facebook" onclick="App.share()">
+  </a>
+  <a class="fa fa-twitter" href="#news"></a>
+  <a class="fa fa-google" href="#contact"></a>
+</div>
+
 <div id="spinner" style="display:none; float:center"></div>
 
 <div id="mainContainer" class="container-fluid">
 <div class="row">
 	<div class="col-md-12 col-lg-12 col-xl-12 text-center header-logo"> 
-		<a href="http://104.251.213.18:8080"><img src="img/ioio.png" title="IOIO :: Colaborative Storytelling"></a>
+		<a href="http://myway.network:8080"><img src="img/ioio.png" title="IOIO :: Colaborative Storytelling"></a>
 	</div>
 </div>
   <div class="row">
@@ -61,7 +99,9 @@
 								
 	</button>
 </div>
-					
+			
+
+			
 					<div class="col-md-12 col-lg-12 col-xl-12 text-center header-write-book"> 
     						
 						<div class="input-group stylish-input-group" >
@@ -70,8 +110,6 @@
 								<button type="submit" onclick="App.search()">
 									<span class="glyphicon glyphicon-search"></span>
 								</button>  
-								
-
 								
 							</span>
 							
@@ -116,21 +154,36 @@
 	<!-- CHAPTER PAGE -->
 	<div class="chapter-page" style="display: none;">
 
+	<div id="centerButton">
+	
+		<button type="button" class="buttonCenter" onclick="App.centerBook()">
+				<span class="glyphicon glyphicon-screenshot" style="font-size: 45px;"  ></span> 
+		</button>
+
+	</div>
+	
 					<div class="container h-100"> 
 					  <div class="row h-100 justify-content-center align-items-center">
 						
 					
 					<div class="row">
 					<div class="col-md-12 col-lg-12 col-xl-12 text-center header-write-book"> 
-								<button type="button" class="btn" style="width:45%" onclick="newChapter()">
+								<button type="button" class="buttonChapter" style="width:30%;font-size:30px" onclick="newChapter()">
 								<span class="glyphicon glyphicon-pencil"></span> 
-									Write
+									
 								</button>
 								
-								<button type="button" class="btn" style="width:45%" onclick="newCon()">
+								<button type="button" class="buttonChapter" style="width:30%;font-size:30px" onclick="newCon()">
 							   <span class="glyphicon glyphicon-link"></span> 
-									Connect
+									
 								</button>
+													
+								
+							   	<button type="button" class="buttonChapter" style="width:30%;font-size:30px" onclick="App.updateNodesPosition()">
+							   <span class="glyphicon glyphicon-floppy-saved"></span> 
+									
+								</button>		
+								
 					</div>
 					</div>
 					
@@ -246,8 +299,8 @@
 		  </div> -->
 
 		  <div class="modal-body">
-
-		   <textarea id="summernote-root" name="editordata"></textarea>
+			<input type="text" class="form-control" id="title" placeholder="Title" >
+		    <textarea id="summernote-root" name="editordata"></textarea>
 			<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="$('#newStory').modal('hide')">Close</button>
 			<button type="button" id="save-chapter" class="btn btn-primary" onclick="App.write()" >Save changes</button>
 
@@ -393,8 +446,10 @@
 </body>
 <script>
 
+$('.navbar1').hide()
+$('#centerButton').hide()
 //var URLSERVER = "http://localhost:8080"
-var URLSERVER = "http://104.251.213.18:8080"
+var URLSERVER = "http://myway.network:8080"
 
 	$( document ).ready(function() {
 		App.refreshList();
@@ -445,7 +500,13 @@ var URLSERVER = "http://104.251.213.18:8080"
 	  
 	  if (window.location.href.includes("book=")) {
 		url = window.location.href.split("book=")
-		App.goChapter(url[1])
+		var idBook = url[1]
+		if (idBook.indexOf('&') > 0) {
+		   idBook = idBook.substring(0, idBook.indexOf('&'))
+		} 
+		
+		App.goChapter(idBook)
+        		
 	  }
 	  
 	  if (window.location.href.includes("token=")) {
