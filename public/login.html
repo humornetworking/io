@@ -2,9 +2,15 @@
 <html>
   <head>
     <title>IOIO</title>
+	
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script> 
     
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link href="css/style.css" rel="stylesheet" type="text/css" />
+  
+    <meta name="google-signin-scope" content="profile email">
+    <meta name="google-signin-client_id" content="997226468547-mjtjtj9f9hjqcvom2jl0jti9hfdvf65m.apps.googleusercontent.com">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
   
   </head>
   <body>
@@ -30,11 +36,62 @@
 
 <div class="row">
 	<div class="col-md-12 col-lg-12 col-xl-12 text-center "> 
-		<a href="/auth/google" class="logo-google fa fa-google"></a>
+		<a href="#" class="logo-google fa fa-google" onclick="gotogoo()"></a>
 	</div>
 </div>
 
+<div class="g-signin2" data-onsuccess="onSignIn" data-theme="dark" style="display : none"></div>
+
 </div>
+
+    
+    <script>
+	
+	//var URLSERVER = "http://localhost:8080"
+var URLSERVER = "http://myway.network:8080"
+	
+      function onSignIn(googleUser) {
+        // Useful data for your client-side scripts:
+        var profile = googleUser.getBasicProfile();
+		/*
+        console.log("ID: " + profile.getId()); // Don't send this directly to your server!
+        console.log('Full Name: ' + profile.getName());
+        console.log('Given Name: ' + profile.getGivenName());
+        console.log('Family Name: ' + profile.getFamilyName());
+        console.log("Image URL: " + profile.getImageUrl());
+        console.log("Email: " + profile.getEmail());
+
+        // The ID token you need to pass to your backend:
+        var id_token = googleUser.getAuthResponse().id_token;
+        console.log("ID Token: " + id_token);
+		*/
+		
+		var data = {"id" : profile.getId()}
+		$.ajax({
+						type: 'POST',
+						data: JSON.stringify(data),
+				        contentType: 'application/json',
+                        url: URLSERVER +'/account/goog',				
+                        success: function(data) {
+                            
+                        }
+                    }).done(function(data) {
+						
+						if(data.active){
+							window.location.replace(URLSERVER +"/index.html?token=" + data.token);
+						} else {
+							window.location.replace(URLSERVER +"/account.html?token=" + data.token);
+						}
+						
+			})
+		
+      };
+	  
+	  
+	  function gotogoo(){
+		$( ".abcRioButton" ).trigger( "click" );
+	  }
+    </script>
 
    
   </body>

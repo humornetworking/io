@@ -13,7 +13,7 @@
 	<meta property="og:image:width" content="1200" >
 	<meta property="og:image:height" content="630" >
 
- <title>IOIO : Colaborative Storytelling</title>
+ <title>ACME</title>
 
   <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script> 
@@ -67,10 +67,9 @@
 <body>
 
 <div class="navbar1">
-  <a href="#home" class="fa fa-facebook" onclick="App.share()">
-  </a>
-  <a class="fa fa-twitter" href="#news"></a>
-  <a class="fa fa-google" href="#contact"></a>
+  <a href="#" class="fa fa-facebook" onclick="App.share('facebook')"></a>
+  <a href="#" class="fa fa-twitter" onclick="App.share('twitter')" ></a>
+  <a href="#" class="fa fa-whatsapp" onclick="App.share('whatsapp')" ></a>
 </div>
 
 <div id="spinner" style="display:none; float:center"></div>
@@ -348,9 +347,7 @@
 	 <!-- MODAL LOGIN -->
 		
 	 <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
-	 
 
-	 
 	  <div class="modal-dialog" role="document">
 		<div class="modal-content">
 		  <div class="modal-header">
@@ -465,6 +462,7 @@ var URLSERVER = "http://myway.network:8080"
 	  
 	  $('#summernote').summernote({
 		height: height,
+		width : 300,
 		 fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
 	    toolbar: [
 			['style', ['style']],
@@ -485,6 +483,7 @@ var URLSERVER = "http://myway.network:8080"
 	  
 	  	 $('#summernote-root').summernote({
 		 height: height,
+		 width : 300,
 		 fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
 	    toolbar: [
 			['style', ['style']],

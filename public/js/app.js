@@ -187,12 +187,13 @@ window.App = {
 				  $('#newStory').modal('toggle');
 				  $('#uploadRoot').modal('show')
 				  $('#mainContainer').waitMe({})
-				  $( "#thetext-root" ).replaceWith( " <div id='thetext-root' ><div id='thetext-root' >"+ label +"</div></div>");
-				  
+				  $( "#thetext-root" ).replaceWith( " <div id='thetext-root' style='width:300px ; display: inline-block;flex-direction: column' >"+ label +"</div>");
 				  var el = document.getElementById("test-root");
 				  
 				    setTimeout(function(){
-					  html2canvas(el).then(canvas => {
+					  html2canvas(el, {
+						  width: 300
+						}).then(canvas => {
 						  
 								var dataURL = canvas.toDataURL("image/png")
 								var iotoken = localStorage.getItem("iotoken");
@@ -313,6 +314,8 @@ window.App = {
 			
 			
     },	
+	
+	
 	openChapter: function () {
 			if(this.checkToken()) {
 				$("#summernote").summernote("reset");
@@ -360,7 +363,7 @@ window.App = {
 						
 			})
 	},
-	share: function() {
+	share: function(sn) {
 		
 		var node = nodes._data[rootBook]
 		
@@ -369,9 +372,26 @@ window.App = {
 		let description = node.txt.replace(/<[^>]*>/g, '')
 		let image = 'http://myway.network:8080/img/ioio.png'
 		
-		App.shareOverrideOGMeta(url, title,description, image)
+		
+		if (sn == "facebook")
+			App.shareFacebook(url, title,description, image)
+	    else if (sn == "twitter")
+			App.shareTwitter(url, title,description, image)
+		else if (sn == "whatsapp")
+			App.shareWhatsapp(url, title,description, image)
+
 	},
-	shareOverrideOGMeta: function (overrideLink, overrideTitle, overrideDescription, overrideImage)
+	shareWhatsapp : function (overrideLink, overrideTitle, overrideDescription, overrideImage)
+	{
+		var url = "whatsapp://send?text="+ overrideLink
+		window.open(url, '_blank');
+	},
+	shareTwitter : function (overrideLink, overrideTitle, overrideDescription, overrideImage)
+	{
+		var url = "http://twitter.com/share?text="+ overrideTitle +"&url="+ overrideLink +"&hashtags=ioio"
+		window.open(url, '_blank');
+	},
+	shareFacebook: function (overrideLink, overrideTitle, overrideDescription, overrideImage)
 	{
 		FB.ui({
 			method: 'share_open_graph',

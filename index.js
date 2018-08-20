@@ -8,6 +8,8 @@ var fs = require("fs")
 var cookieParser = require('cookie-parser');
 passport = require('passport');
 FacebookStrategy = require('passport-facebook').Strategy;
+TwitterStrategy = require('passport-twitter').Strategy;
+GoogleStrategy = require('passport-google').Strategy;
 var redis   = require("redis");
 var session = require('express-session');
 var jwt        = require("jsonwebtoken");
@@ -39,6 +41,32 @@ passport.use(new FacebookStrategy({
     });
   }
 ));
+
+passport.use(new TwitterStrategy({
+    consumerKey: "pO591S3sBKNYvXmM2rSmNA",
+    consumerSecret: "5QtAZMVL24KMG0yR3X03Faex1Mp5LhWQwguWDEXMqVY",
+    callbackURL: "http://myway.network:8080/auth/twitter/callback"
+  },       
+  function(token, tokenSecret, profile, cb) {
+    console.log("ID :"+ profile.id)
+	return cb(null, profile);
+  } 
+));
+
+var GoogleStrategy = require('passport-google-oauth20').Strategy;
+
+passport.use(new GoogleStrategy({
+    clientID: "997226468547-mjtjtj9f9hjqcvom2jl0jti9hfdvf65m.apps.googleusercontent.com",
+    clientSecret: "l8xyY1tjjPRp0is2bEea5qw7",
+    callbackURL: "	http://myway.network:8080/auth/google/callback"
+  },
+  function(token, tokenSecret, profile, cb) {
+    console.log("ID :"+ profile.id)
+	return cb(null, profile);
+  } 
+));
+
+
 
 
 //var bitcore = require('bitcore');
@@ -582,15 +610,55 @@ app.get('/auth/facebook',
 app.get('/auth/facebook/callback', 
   passport.authenticate('facebook', { failureRedirect: '/login.html' }),
   function(req, res) {
-    res.redirect('/account');
+    res.redirect('/account/fb');
 });
 
-app.get('/account',  function(req, res) {
+app.get('/auth/twitter',
+  passport.authenticate('twitter'),
+  function(req, res){
+    // The request will be redirected to Facebook for authentication, so this
+    // function will not be called.
+});
+
+app.get('/auth/twitter/callback', 
+  passport.authenticate('twitter', { failureRedirect: '/login.html' }),
+  function(req, res) {
+    res.redirect('/account/tw');
+});
+
+
+app.get('/auth/google',
   
-  //console.log(req.user); 
+  passport.authenticate('google', {scope: ['profile']}),
+  function(req, res){
+    // The request will be redirected to Facebook for authentication, so this
+    // function will not be called.
+});
+
+
+app.get('/auth/google/callback', 
+  passport.authenticate('google', { failureRedirect: '/login.html' }),
+  function(req, res) {
+    res.redirect('/account/go');
+});
+
+app.get('/account/:sn',  function(req, res) {
+  var sn = req.params.sn
   
-  var id = req.user.id +"fb"
-  var token = jwt.sign({"id" : req.user.id +"fb" ,"displayName" : req.user.displayName}, secret, {
+  var id = req.user.id 
+  
+  console.log("EL ID :"+ id)
+  
+  if(sn == "fb") {
+	id = id +"fb"
+  } else if(sn == "tw") {
+	id = id +"tw"
+  } else if(sn == "go") {
+	id = id +"go"
+  }   
+  
+  
+  var token = jwt.sign({"id" : id ,"displayName" : req.user.displayName}, secret, {
                                 expiresIn: '24h' 
                             });
   	
@@ -599,11 +667,11 @@ app.get('/account',  function(req, res) {
 	  var dbo = db.db("explguru");
 	  dbo.collection("user").find({"id" : id}).toArray(function(err, user) {
 		if (user.length == 0){
-			    var token = jwt.sign({"id" : req.user.id +"fb" ,"displayName" : req.user.displayName}, secret, {
+			    var token = jwt.sign({"id" : id ,"displayName" : req.user.displayName}, secret, {
                                 expiresIn: '24h' 
                             });
 			
-			  res.redirect('account.html?token=' + token);
+			  res.redirect('http://myway.network:8080/account.html?token=' + token);
 		} else {
 				var token = jwt.sign({"address": user[0].keys.btc.address,"author": user[0].author, "id" : user[0].id ,"displayName" : user[0].displayName}, secret, {
                                 expiresIn: '24h'
@@ -618,6 +686,43 @@ app.get('/account',  function(req, res) {
 
 });
 
+app.post('/account/goog',  function(req, res) {
+  
+  var id = req.body.id
+  id = id +"go"
+  
+  console.log("EL ID :"+ id)
+  
+  var token = jwt.sign({"id" : id ,"displayName" : "pepe"}, secret, {
+                                expiresIn: '24h' 
+                            });
+							
+							
+  	
+	MongoClient.connect(url, function(err, db) {
+	  if (err) throw err;
+	  var dbo = db.db("explguru");
+	  dbo.collection("user").find({"id" : id}).toArray(function(err, user) {
+		if (user.length == 0){
+			    var token = jwt.sign({"id" : id ,"displayName" : "pepe"}, secret, {
+                                expiresIn: '24h' 
+                            });
+			res.send({"token" : token, "active" : false})
+
+		} else {
+				var token = jwt.sign({"address": user[0].keys.btc.address,"author": user[0].author, "id" : user[0].id ,"displayName" : user[0].displayName}, secret, {
+                                expiresIn: '24h'
+                });
+				
+			res.send({"token" : token, "active" : true})
+
+		}
+		//res.send(messages);
+	  });
+	});
+  
+
+});
 
 
 function getAuthor(author) {
@@ -729,7 +834,7 @@ function getRandomText() {
 
 app.get('/test',  function(req, res){
 
-    var tx = registerText("Pepe")
+    var tx = registerText("La monda pela")
 	res.send(tx)
 	
 })
@@ -742,8 +847,8 @@ function registerText(texto){
 		var myWayAddress = "n28H16SyNnGAkpU5wudJJW9iNpoFg69kf1"
 		
 		//Find this by API
-		var txId = "14f6df3137c7b2662c12fde9d8128adad02fbd5f2aac6d001358b245aa32abcb"
-		var outputIndex = 0
+		var txId = "320268d345e5b7e850130b913ee51f8de4a9b7499e623e79b9533227542f0ba1"
+		var outputIndex = 1
 		var script = "76a914e210b0cec61767d72e223812a16d19875fa3ddce88ac" // ??? Realmente va
 	
 	var privateKey = new bitcore.PrivateKey(myWayPrivate);
@@ -757,12 +862,15 @@ function registerText(texto){
 
 	var transaction = new bitcore.Transaction()
     .from(utxo)
+	.to("n2DhUP4yX5DiWfdDcoUHTJR9k72RPSqBZu",50000)
     .addData(texto) // Add OP_RETURN data
     .sign(privateKey);
 	
 	var data = {"tx" : transaction.toString()}
 	console.log("TRX obj :"+ JSON.stringify(data))
 	console.log("TRX :"+ transaction)
+	
+	/*
 	var apiUrl = "https://api.blockcypher.com/v1/bcy/test/txs/push?token=d858e999978944499fcaf6f5408790d0";
 
 	  		  async.parallel([
@@ -786,7 +894,7 @@ function registerText(texto){
 					
 				  }
 			  )
-	
+	*/
 	
 	
 }
