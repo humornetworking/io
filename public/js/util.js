@@ -8,6 +8,7 @@
 	var dataImage = ""
     var actualPointer = {}
 	var addChapter = false
+	var nodeSelected = {}
 
 
     function destroy() {
@@ -149,6 +150,7 @@
 		actualPointer = params.pointer
         var selection = params.nodes;
         var clickedNode = nodes.get([selection])[0];
+		nodeSelected = clickedNode 
 		
 		if (addChapter) {
 			$("#summernote").summernote("reset");
@@ -156,6 +158,23 @@
 			addChapter = false;
 		} else {
 		
+		    var authorID = localStorage.getItem("authorID")
+
+		   if (clickedNode.authorID == authorID && clickedNode.proof == '') {
+			
+				toastr.options = {
+				  "debug": false,
+				  "positionClass": "toast-bottom-full-width",
+				  "onclick": null,
+				  "fadeIn": 300,
+				  "fadeOut": 1000,
+				  "timeOut": 5000,
+				  "extendedTimeOut": 1000
+				}
+				
+				toastr.success('<a href="#" onclick="App.pay()">Tokeniza esta historia</a>')
+		   }
+			
 		   if (clickedNode.proof != '') {
 			
 				toastr.options = {

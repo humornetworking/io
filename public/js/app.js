@@ -30,41 +30,9 @@ window.App = {
 	},
 	paymentSent : function() {
 		
-	  data.label = document.getElementById('summernote').value;
-	  
-	  $('#newChapter').modal('hide')
-	  $('#uploadChapter').modal('show')
-	  $( "#thetext" ).replaceWith( "<div id='thetext' style='margin-top: 20px ; margin-left: 25px; margin-right: 10px' >"+ data.label +"</div>");
-
-	  var el = document.getElementById("test");
-	  
-	    setTimeout(function(){
-			html2canvas(el).then(canvas => {
-					var dataURL = canvas.toDataURL("image/png")
-					dataImage = dataURL
-					
-					$('#uploadChapter').modal('toggle');
-					  $( "#thetext" ).replaceWith( "<div id='thetext'></div>");
-					
-					  book	= App.writeTmp(dataImage, data.label, actualPointer.canvas.x, actualPointer.canvas.y) //Evento asyncronico, Manejarlo
-		  
-					  
-		  
-					  texto = data.label
-					  clearNodePopUp();
-					  data["image"] = URLSERVER +'/img/'+ book.image
-					  data["shape"] = 'circularImage'
-					  data["label"] = ''
-					  data["id"] = book.id
-					  data["x"] = actualPointer.canvas.x
-					  data["y"] = actualPointer.canvas.y
-					  
-					  nodes.add(data);
-
 		            var dataPay = {};
-					//var texto = data.label;
-					dataPay.texto = texto.replace(/<[^>]*>/g, '')
-					dataPay.idNode = book.id
+					dataPay.idNode = nodeSelected.id
+					dataPay.idImage = nodeSelected.image
 					
 					$.ajax({
 						type: 'POST',
@@ -74,16 +42,10 @@ window.App = {
 						headers: {"Authorization": "Bearer "+ localStorage.getItem('token')},						
                         success: function(data) {
                             //$('#payment').modal('toggle');
-                    		
+                    id		
 							
                         }
                     })
-					  
-					  $('#payment').modal('show');
-					  
-		  });
-		},500);
-		
 
 		
 	},
@@ -108,8 +70,10 @@ window.App = {
 						headers: {"Authorization": "Bearer "+ localStorage.getItem('token')},						
                         success: function(data) {
 							localStorage.removeItem("token")
+							localStorage.removeItem("authorID")
 							localStorage.setItem("token",data.token)
-                            window.location.href = "index.html";
+                            localStorage.setItem("authorID",data.authorID)
+							window.location.href = "index.html";
                     		
 							
                         }

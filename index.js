@@ -16,6 +16,14 @@ var jwt        = require("jsonwebtoken");
 var secret = "lavidalibre"
 var bitcore = require("bitcore-lib")
 bitcore.Networks.defaultNetwork = bitcore.Networks.testnet;
+var ipfsAPI = require('ipfs-api');
+var ipfs = ipfsAPI('localhost', '5001', {protocol: 'http'}) // leaving out the arguments will default to these values
+var ipfs = ipfsAPI('/ip4/127.0.0.1/tcp/5001')
+var exec = require('child_process').exec;
+
+//Setup
+var path='/root/omnicore-ioio/src';
+var datadir = '/root/.bitcoin';
 
 // Login
 
@@ -191,7 +199,7 @@ app.post('/setUserName', ensureAuthorized, function(req, res){
                                 expiresIn: '24h'// expires in 24 hours
                 });
 				
-				res.send({"token" : token})
+				res.send({"token" : token,"authorID" : user.id})
 			
 });
 
@@ -263,9 +271,9 @@ app.get('/get-chapters/:id', function(req, res){
 				//nNodes.push({ 'id': messages[i]._id, 'image' : URLSERVER +'/img/'+ messages[i].image, 'shape': 'image'})
 				
 				if (messages[i]._id == idBook) {
-					nNodes.push({ 'id': messages[i]._id, 'image' : URLSERVER +'/img/'+ messages[i].image, 'x' :-250, 'y' : -600, 'proof' : messages[i].proof, 'title' : messages[i].title, 'txt' : messages[i].txt })
+					nNodes.push({ 'id': messages[i]._id, 'image' : URLSERVER +'/img/'+ messages[i].image, 'x' :-250, 'y' : -600, 'proof' : messages[i].proof, 'title' : messages[i].title, 'txt' : messages[i].txt, 'authorID' : messages[i].authorID })
 				} else {
-					nNodes.push({ 'id': messages[i]._id, 'image' : URLSERVER +'/img/'+ messages[i].image, 'x' : messages[i].x, 'y':messages[i].y, 'proof' : messages[i].proof})
+					nNodes.push({ 'id': messages[i]._id, 'image' : URLSERVER +'/img/'+ messages[i].image, 'x' : messages[i].x, 'y':messages[i].y, 'proof' : messages[i].proof, 'authorID' : messages[i].authorID})
 				}
 				
 				
@@ -389,7 +397,7 @@ app.post('/write-chap', ensureAuthorized, function(req, res){
 
 						function(callback) {
 							
-								var newMessage = {'txid': '123','author' : user.author, 'txt' : txt, 'image' : imgName, 'timestamp' : Date.now(), 'x' : Number(x),'y' : Number(y), 'root' : 0 ,'proof' : ''};
+								var newMessage = {'txid': '123','authorID' : user.id, 'author' : user.author, 'txt' : txt, 'image' : imgName, 'timestamp' : Date.now(), 'x' : Number(x),'y' : Number(y), 'root' : 0 ,'proof' : ''};
 								dbo.collection("message").insertOne(newMessage, function(err, res) {
 											if (err) throw err;					
 											//pointto = res.insertedId.toString()
@@ -516,7 +524,7 @@ app.post('/write-root', ensureAuthorized, function(req, res){
 	var imgName = Math.floor((Math.random() * 1000000000000000) + 1) +".png"
 	fs.writeFile('public/img/'+imgName, buf, function(err) { console.log(err) });
 		
-		        var newMessage = {'txid': '321','author' : user.author, 'title': title, 'txt' : txt, 'image' : imgName, 'timestamp' : ahora,'x' : 0, 'y': 0, 'root' : 1,'proof' : ''};
+		        var newMessage = {'txid': '321','authorID' : user.id,'author' : user.author, 'title': title, 'txt' : txt, 'image' : imgName, 'timestamp' : ahora,'x' : 0, 'y': 0, 'root' : 1,'proof' : ''};
 				//data.push(newBook); // Save to the DB
 				MongoClient.connect(url, function(err, db) {
 				  if (err) throw err;
@@ -551,15 +559,15 @@ app.post('/write-root', ensureAuthorized, function(req, res){
 	
 app.post('/checkPayment', ensureAuthorized , function(req, res){
 	
-	var texto = req.body.texto
 	var idnode = req.body.idNode
+	var idimage = req.body.idImage
 	var user = getUserFromToken(req)
 	
 	
 	var apiUrl = "https://api.blockcypher.com/v1/btc/test3/addrs/"+ user.address;
 	client.get(apiUrl, function (data, response) {
                 console.log("BALANCE :"+ JSON.stringify(data))
-				var payment = {'address': user.address,'idnode' : idnode, 'texto' : texto,'author' : user.author, 'id' : user.id,  'balance' : data.balance};
+				var payment = {'address': user.address,'idnode' : idnode,'idimage' : idimage,'author' : user.author, 'id' : user.id,  'balance' : data.balance};
 				MongoClient.connect(url, function(err, db) {
 				  if (err) throw err;
 				  var dbo = db.db("explguru");
@@ -677,7 +685,7 @@ app.get('/account/:sn',  function(req, res) {
                                 expiresIn: '24h'
                 });
 			
-			  res.redirect('index.html?token=' + token);
+			  res.redirect('index.html?token=' + token +'&authorID='+ user[0].id);
 		}
 		//res.send(messages);
 	  });
@@ -834,10 +842,69 @@ function getRandomText() {
 
 app.get('/test',  function(req, res){
 
-    var tx = registerText("La monda pela")
-	res.send(tx)
+    file = "./public/img/665555694440955.png"
+	//file = "733112329690273.png"
+    data = fs.readFileSync(file)
+
+	//console.log("The file :"+ data)
+	
+	var buf = new Buffer(data,'base64');
+
+	ipfs.util.addFromStream(buf, (err, result) => {
+	  if (err) {
+		throw err
+	  }
+		var hash = result[0].hash;
+		console.log("HASH :"+ hash)
+		
+	  })
+
+	
+	//console.log("The Data :"+ base64Data)
+
+	res.send("OK")
 	
 })
+
+function tokenizeStory(author,address,idnode,idimage){
+	
+	idimage = idimage.substr(idimage.lastIndexOf("/")+1)
+    var file = "./public/img/"+ idimage
+	console.log("El File :"+ file)
+    var data = fs.readFileSync(file)
+
+	var buf = new Buffer(data,'base64');
+
+	ipfs.util.addFromStream(buf, (err, result) => {
+	  if (err) {
+		throw err
+	  }
+		var hash = result[0].hash;
+		console.log("HASH :"+ hash)
+		callOmniRpc(hash, author,address, idnode )
+		
+	  })	
+   
+}	
+
+function callOmniRpc(hash, author,address, idnode ) {
+	//./omnicore-cli -datadir=/root/.bitcoin -testnet omni_create_nft "mxPpb6TPZXWCFxtooQW1jyR9wF55yyk79d" "mzdkcPNebHLppJgDzphzMoosWc5aUqaSKn" 1 1 0 "Lobo" "http://myway.network:8080/?book=5b6b990dbf844119861d641f" "QmXqfKW3Zij7gHC8JZfeJ2YgcoUjn1BA1AEu83udapF5jZ"
+	  console.log("LLAMADA OMNI")
+	  return
+	  
+	  var link = "https://gateway.ipfs.io/ipfs/"+ hash;
+	  var command = path+"/omnicore-cli -datadir="+ datadir +" --testnet omni_create_nft mxPpb6TPZXWCFxtooQW1jyR9wF55yyk79d "+ address +" 1 1 0 "+ author +" "+ link +" "+ hash
+	  
+	  var buyObj = "";
+	  	exec(command, function (error, stdout, stderr) {
+			if (error === null) {
+				
+						//Insert TRX into token table
+					}
+				});
+	
+	
+}
 
 function registerText(texto){
 
@@ -922,7 +989,7 @@ setInterval(function(){
 										if(Number(data.balance) > Number(balance)) {
 											status = "OK"
 										}
-										var result = {"status": status , "id" : pay.id, "idnode" : pay.idnode, "texto" : pay.texto, "author" : pay.author}
+										var result = {"status": status , "id" : pay.id, "idnode" : pay.idnode,'idimage' : pay.idimage, "author" : pay.author, "address" : pay.address}
 										callback(false, result);
 
 									});
@@ -932,13 +999,14 @@ setInterval(function(){
 					if(err) { console.log(err); return; }
 					console.log("PAGO OK ? :"+ JSON.stringify(results[0]))
 					if (results[0].status == "OK") {
+						
 						console.log("Eliminando el payment ID !"+ results[0].id)
-						dbo.collection("payment").remove({"id" : results[0].id});
-						var trx = registerText(results[0].author + " dice : "+ results[0].texto)
-						console.log("La TRX "+ JSON.stringify(trx));
+						dbo.collection("payment").deleteOne({"id" : results[0].id});
+						var trx = tokenizeStory(results[0].author, results[0].address, results[0].idnode,results[0].idimage)
+						
 						
 						var myquery = { 'id' : results[0].idnode };
-						var newvalues = { $set: { 'proof': 'https://tchain.btc.com/'+ trx } };
+						var newvalues = { $set: { 'proof': trx } };
 						dbo.collection("message").updateOne(myquery, newvalues, function(err, res) {
 							if (err) throw err;
 							console.log("Nodo actualizado");
@@ -960,3 +1028,6 @@ setInterval(function(){
 	
 
  }, 20000);	
+
+ 
+ 
