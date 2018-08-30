@@ -39,7 +39,7 @@ passport.deserializeUser(function(obj, done) {
 passport.use(new FacebookStrategy({
     clientID: "832861053471099",
     clientSecret: "91d269205409383d34d53429b441eaa7",
-    callbackURL: "http://myway.network:8080/auth/facebook/callback"
+    callbackURL: "http://ioio.cl/auth/facebook/callback"
   },
   function(accessToken, refreshToken, profile, done) {
     // asynchronous verification, for effect...
@@ -80,7 +80,7 @@ passport.use(new GoogleStrategy({
 //var bitcore = require('bitcore');
 
 //var URLSERVER = "http://localhost:8080"
-var URLSERVER = "http://104.251.213.18:8080"
+var URLSERVER = "http://ioio.cl"
 
 var MongoClient = require('mongodb').MongoClient;
 var ObjectId = require('mongodb').ObjectID;
@@ -120,7 +120,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(express.static(__dirname + '/public'));
-var port = process.env.PORT || 8080
+var port = process.env.PORT || 80
 app.listen(port);
 console.log('Magic happens ');
 
@@ -679,7 +679,7 @@ app.get('/account/:sn',  function(req, res) {
                                 expiresIn: '24h' 
                             });
 			
-			  res.redirect('http://myway.network:8080/account.html?token=' + token);
+			  res.redirect(URLSERVER +'/account.html?token=' + token);
 		} else {
 				var token = jwt.sign({"address": user[0].keys.btc.address,"author": user[0].author, "id" : user[0].id ,"displayName" : user[0].displayName}, secret, {
                                 expiresIn: '24h'
@@ -889,17 +889,29 @@ function tokenizeStory(author,address,idnode,idimage){
 
 function callOmniRpc(hash, author,address, idnode ) {
 	//./omnicore-cli -datadir=/root/.bitcoin -testnet omni_create_nft "mxPpb6TPZXWCFxtooQW1jyR9wF55yyk79d" "mzdkcPNebHLppJgDzphzMoosWc5aUqaSKn" 1 1 0 "Lobo" "http://myway.network:8080/?book=5b6b990dbf844119861d641f" "QmXqfKW3Zij7gHC8JZfeJ2YgcoUjn1BA1AEu83udapF5jZ"
-	  console.log("LLAMADA OMNI")
-	  return
+	  //console.log("LLAMADA OMNI")
+	  //return
 	  
 	  var link = "https://gateway.ipfs.io/ipfs/"+ hash;
 	  var command = path+"/omnicore-cli -datadir="+ datadir +" --testnet omni_create_nft mxPpb6TPZXWCFxtooQW1jyR9wF55yyk79d "+ address +" 1 1 0 "+ author +" "+ link +" "+ hash
-	  
+	  console.log("LLAMADA OMNI :"+ command)
 	  var buyObj = "";
 	  	exec(command, function (error, stdout, stderr) {
 			if (error === null) {
-				
-						//Insert TRX into token table
+					console.log("TRX OMNI :"+ stdout)
+					//Insert TRX into token table
+					  var nft = {"author" : author,"address": address, "trx" : stdout}
+					  dbo.collection("token").insertOne(nft, function(err, res) {
+						if (err) throw err;
+						
+						db.close();
+						
+						
+					  });
+						
+						
+					} else {
+							console.log("Error :"+ error +" "+ stderr)
 					}
 				});
 	
