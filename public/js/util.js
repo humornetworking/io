@@ -1,14 +1,4 @@
-    var nodes = null;
-    var edges = null;
-    var network = null;
-    // randomly create some nodes and edges
-    var data = [];
-	var texto = ""
-	var rootBook =""
-	var dataImage = ""
-    var actualPointer = {}
-	var addChapter = false
-	var nodeSelected = {}
+
 
 
     function destroy() {
@@ -105,45 +95,13 @@
 		})
 	  
       network.disableEditMode()
-	  
-	  /*
-	  network.on("beforeDrawing", function (ctx) {
-		var nodeId = rootBook;
-		var nodePosition = network.getPositions([nodeId]);
-		ctx.strokeStyle = '#A6D5F7';
-		ctx.fillStyle = '#294475';
-		ctx.circle(nodePosition[nodeId].x, nodePosition[nodeId].y,100);
-		ctx.fill();
-		ctx.stroke();
-	  });
-	  */
 
 	  network.on("afterDrawing", function (ctx) {
 	      document.body.scrollTop = 0; // For Safari
 		  document.documentElement.scrollTop = 0;
-		  /*
-		  			$('#viewport').attr('content', 'width=device-width, initial-scale=0.9');
-					try {
-					var scale = 'scale(0.9)';
-					 document.body.style.webkitTransform = scale      // Chrome, Opera, Safari
-					 document.body.style.msTransform =   scale       // IE 9
-					 document.body.style.transform = scale; 
-					}
-					catch(err) {
-					   console.log(err)
-					}
-			
-			*/
 		  
 	  });	  
 	  
-
-
-/* 	network.once('stabilized', function() {
-		var scaleOption = { scale : 1.5 };
-		network.moveTo(scaleOption);
-		
-	}) */
 	  
 	network.on("click", function (params) {
         params.event = "[original event]";
@@ -214,24 +172,21 @@
 
     function editNode(data, cancelAction, callback) {
       document.getElementById('summernote').value = data.label;
-      //document.getElementById('node-saveButton').onclick = saveNodeData.bind(this, data, callback);
-      //document.getElementById('node-cancelButton').onclick = cancelAction.bind(this, callback);
-	  
+      
 	  $('#newChapter').modal('show')
 	  $('.note-image-btn').prop("disabled", false);
 	  $('.note-image-btn').blur(function() {
 			$('.note-image-btn').prop("disabled", false);
 	  });
 		
-      //document.getElementById('node-popUp').style.display = 'block';
+      
     }
 
     // Callback passed as parameter is ignored
     function clearNodePopUp() {
-      //document.getElementById('node-saveButton').onclick = null;
-      //document.getElementById('node-cancelButton').onclick = null;
+      
 	  $('#newChapter').modal('hide')
-      //document.getElementById('node-popUp').style.display = 'none';
+      
     }
 
     function cancelNodeEdit(callback) {

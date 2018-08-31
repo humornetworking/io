@@ -24,7 +24,7 @@
    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/async/2.6.1/async.min.js"></script>
 
   <script type="text/javascript" src="js/app.js"></script>
-  <script type="text/javascript" src="js/util.js"></script>
+  <!-- <script type="text/javascript" src="js/util.js"></script> -->
   
   <link href="css/vis-network.min.css" rel="stylesheet" type="text/css" />
   <link href="css/style.css" rel="stylesheet" type="text/css" />
@@ -77,7 +77,7 @@
 <div id="mainContainer" class="container-fluid">
 <div class="row">
 	<div class="col-md-12 col-lg-12 col-xl-12 text-center header-logo"> 
-		<a href="http://myway.network:8080"><img src="img/ioio.png" title="IOIO :: Colaborative Storytelling"></a>
+		<a href="http://ioio.cl"><img src="img/ioio.png" title="IOIO :: Colaborative Storytelling"></a>
 	</div>
 </div>
   <div class="row">
@@ -167,12 +167,12 @@
 					
 					<div class="row">
 					<div class="col-md-12 col-lg-12 col-xl-12 text-center header-write-book"> 
-								<button type="button" class="buttonChapter" style="width:30%;font-size:30px" onclick="newChapter()">
+								<button type="button" class="buttonChapter" style="width:30%;font-size:30px" onclick="App.newChapter()">
 								<span class="glyphicon glyphicon-pencil"></span> 
 									
 								</button>
 								
-								<button type="button" class="buttonChapter" style="width:30%;font-size:30px" onclick="newCon()">
+								<button type="button" class="buttonChapter" style="width:30%;font-size:30px" onclick="App.newCon()">
 							   <span class="glyphicon glyphicon-link"></span> 
 									
 								</button>
@@ -186,23 +186,6 @@
 					</div>
 					</div>
 					
-<!-- 						<div class="row">
-							<div class="col-xs-5 col-md-3 col-lg-1 vcenter">
-								<button type="button" class="btn" style="width:100%" onclick="newChapter()">
-								<span class="glyphicon glyphicon-pencil"></span> 
-									Write
-								</button>
-							</div>
-							&nbsp;&nbsp;&nbsp;
-							<div class="col-xs-5 col-md-7 col-lg-9 vcenter">
-							
-							   <button type="button" class="btn" style="width:100%" onclick="newCon()">
-							   <span class="glyphicon glyphicon-link"></span> 
-									Connect
-								</button>
-							</div>
-						</div>
-						<br> -->
 						
 						<div id="mynetwork" class="list-chapter"></div>
 				  
@@ -327,7 +310,7 @@
 				
 			<textarea id="summernote" name="editordata"></textarea>
 			<button type="button"  class="btn btn-secondary" onclick="$('#newChapter').modal('hide')" >Close</button>
-			<button type="button"  class="btn btn-primary" onclick="addNode()">Save</button>
+			<button type="button"  class="btn btn-primary" onclick="App.addNode()">Save</button>
 			&nbsp;
 			<button type="button"  class="btn btn-success" onclick="App.pay()">Registrar este episodio</button>
 			
