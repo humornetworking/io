@@ -23,7 +23,7 @@ var Rest = require('node-rest-client').Client;
 var restClient = new Rest();
 
 var setup = require('./setup'); 
-var util = require('./util')(app, jwt, MongoClient, setup, fs, exec)
+var util = require('./util')(app, jwt, MongoClient, setup, fs, exec, ipfs)
 
 //Setup
 bitcore.Networks.defaultNetwork = bitcore.Networks.testnet;
@@ -87,7 +87,7 @@ passport.use(new FacebookStrategy({
 passport.use(new TwitterStrategy({
     consumerKey: "pO591S3sBKNYvXmM2rSmNA",
     consumerSecret: "5QtAZMVL24KMG0yR3X03Faex1Mp5LhWQwguWDEXMqVY",
-    callbackURL: "http://myway.network:8080/auth/twitter/callback"
+    callbackURL: "http://ioio.cl/auth/twitter/callback"
   },       
   function(token, tokenSecret, profile, cb) {
     console.log("ID :"+ profile.id)
@@ -96,7 +96,7 @@ passport.use(new TwitterStrategy({
 ));
 
 //REST API
-require('./rest.js')(app, jwt, MongoClient, util, setup, passport, fs, async, restClient, bitcore, ObjectId);
+require('./rest.js')(app, jwt, MongoClient, util, setup, passport, fs, async, restClient, bitcore, ObjectId, exec, ipfs);
 
 
 //Loop checking pending transactions
@@ -114,12 +114,12 @@ setInterval(function(){
 			  async.parallel([
 
 				function(callback) {
-									client.get(apiUrl, function (data, response) {
+									restClient.get(apiUrl, function (data, response) {
 										
 										var status = "NOK"
 										console.log("PAYMENT "+JSON.stringify(payment))
 										var balance = pay.balance
-										if(Number(data.balance) > Number(balance)) {
+										if(Number(data.unconfirmed_balance) > Number(balance)) {
 											status = "OK"
 										}
 										var result = {"status": status , "id" : pay.id, "idnode" : pay.idnode,'idimage' : pay.idimage, "author" : pay.author, "address" : pay.address}

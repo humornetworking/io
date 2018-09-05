@@ -1,4 +1,4 @@
-module.exports = function(app, jwt, MongoClient, util, setup, passport,fs,async, restClient,bitcore, ObjectId) {
+module.exports = function(app, jwt, MongoClient, util, setup, passport,fs,async, restClient,bitcore, ObjectId, exec, ipfs) {
     app.get('/getAddressByUser', util.ensureAuthorized, function(req, res) {
         var user = util.getUserFromToken(req)
 
@@ -480,7 +480,7 @@ module.exports = function(app, jwt, MongoClient, util, setup, passport,fs,async,
                     if (err) throw err;
 
                     db.close();
-
+					
 
                 });
             });
@@ -488,7 +488,8 @@ module.exports = function(app, jwt, MongoClient, util, setup, passport,fs,async,
 
         });
 
-
+		res.send("OK")
+		
     })
 
 
@@ -518,6 +519,7 @@ module.exports = function(app, jwt, MongoClient, util, setup, passport,fs,async,
             failureRedirect: '/login.html'
         }),
         function(req, res) {
+			console.log("Llamando al redirect")
             res.redirect('/account/fb');
         });
 
@@ -542,7 +544,7 @@ module.exports = function(app, jwt, MongoClient, util, setup, passport,fs,async,
 
         var id = req.user.id
 
-        console.log("EL ID :" + id)
+        console.log("EL SN :" + sn)
 
         if (sn == "fb") {
             id = id + "fb"
@@ -552,6 +554,8 @@ module.exports = function(app, jwt, MongoClient, util, setup, passport,fs,async,
             id = id + "go"
         }
 
+		
+		console.log("EL ID :" + id)
 
         var token = jwt.sign({
             "id": id,
@@ -567,6 +571,8 @@ module.exports = function(app, jwt, MongoClient, util, setup, passport,fs,async,
                 "id": id
             }).toArray(function(err, user) {
                 if (user.length == 0) {
+					console.log("NO ENCONTRADO :")
+					
                     var token = jwt.sign({
                         "id": id,
                         "displayName": req.user.displayName
@@ -576,6 +582,8 @@ module.exports = function(app, jwt, MongoClient, util, setup, passport,fs,async,
 
                     res.redirect(setup.url_server + '/account.html?token=' + token);
                 } else {
+					console.log("ENCONTRADO :")
+					
                     var token = jwt.sign({
                         "address": user[0].keys.btc.address,
                         "author": user[0].author,
@@ -585,7 +593,7 @@ module.exports = function(app, jwt, MongoClient, util, setup, passport,fs,async,
                         expiresIn: '24h'
                     });
 
-                    res.redirect('index.html?token=' + token + '&authorID=' + user[0].id);
+                    res.redirect(setup.url_server + '/index.html?token=' + token + '&authorID=' + user[0].id);
                 }
                 //res.send(messages);
             });
@@ -593,4 +601,152 @@ module.exports = function(app, jwt, MongoClient, util, setup, passport,fs,async,
 
 
     });
+	
+/* app.post('/account/goog',  function(req, res) {
+  
+	  var id = req.body.id
+	  id = id +"go"
+	  
+	  console.log("EL ID :"+ id)
+	  
+	  var token = jwt.sign({"id" : id ,"displayName" : "pepe"}, setup.secret, {
+									expiresIn: '24h' 
+								});
+								
+								
+		
+		MongoClient.connect(url, function(err, db) {
+		  if (err) throw err;
+		  var dbo = db.db("explguru");
+		  dbo.collection("user").find({"id" : id}).toArray(function(err, user) {
+			  console.log(err)
+					var token = jwt.sign({"id" : id ,"displayName" : "pepe"}, setup.secret, {
+			if (user.length == 0){
+									expiresIn: '24h' 
+								});
+				res.send({"token" : token, "active" : false})
+			} else {
+					var token = jwt.sign({"address": user[0].keys.btc.address,"author": user[0].author, "id" : user[0].id ,"displayName" : user[0].displayName}, secret, {
+									expiresIn: '24h'
+					});
+					
+				res.send({"token" : token, "active" : true})
+			}
+			//res.send(messages);
+		  });
+		});
+  
+ }); */
+	
+    app.post('/profile', util.ensureAuthorized, function(req, res) {
+	
+	var user = util.getUserFromToken(req)
+	console.log("Usuario :"+ JSON.stringify(user))
+
+        MongoClient.connect(setup.database, function(err, db) {
+            if (err) throw err;
+            var dbo = db.db("explguru");
+            dbo.collection("token").find({
+                'address': user.address
+            }).toArray(function(err, messages) {
+                res.send(messages);
+            });
+        });
+
+    });
+	
+	
+	app.post('/getInfoToken', util.ensureAuthorized, function(req, res) {
+	var trx = req.body.trx
+	var user = util.getUserFromToken(req)
+	var address = user.address
+	
+	    MongoClient.connect(setup.database, function(err, db) {
+            if (err) throw err;
+            var dbo = db.db("explguru");
+            dbo.collection("token").find({
+                'trx': trx
+            }).toArray(function(err, messages) {
+				
+				var message = messages[0]
+				var command = setup.path + "/omnicore-cli -datadir=" + setup.datadir + " --testnet omni_getbalance_nft "+ address
+				console.log("LLAMADA OMNI :" + command)
+				var buyObj = "";
+				exec(command, function(error, stdout, stderr) {
+					if (error === null) {
+						
+						//Buscar el ipfs hash en la respuesta, si esta  se imitio, sino no se emitio
+						var tokens = JSON.parse(stdout)
+						
+						var output = {}
+						for (let element of tokens) {
+							if (element["ipfs hash"] == message.hash){
+							  output = {"address" : address,"trx": trx, "hash": message.hash}
+							  break;
+							}
+						}
+						
+						
+						res.send(output)
+						
+					} else {
+						console.log("Error :" + error + " " + stderr)
+						res.send({})
+					}
+				});				
+				
+                
+            });
+        });
+	
+	
+    });
+	
+	
+	app.get('/test', function(req, res) {
+    var hash = "QmTYrFZDcsVZNxuHN5TAvSwHHqQ4R6BYi9NsZMzJ6yMZz2",
+    address = "myeEPsCkiGr6km4Hc9CzStUu6E6fpgUSHd",
+	trx = "123";
+	
+	    MongoClient.connect(setup.database, function(err, db) {
+            if (err) throw err;
+            var dbo = db.db("explguru");
+            dbo.collection("token").find({
+                'trx': trx
+            }).toArray(function(err, messages) {
+				
+				var message = messages[0]
+				var command = setup.path + "/omnicore-cli -datadir=" + setup.datadir + " --testnet omni_get_balance_nft "+ address
+				console.log("LLAMADA OMNI :" + command)
+				var buyObj = "";
+				exec(command, function(error, stdout, stderr) {
+					if (error === null) {
+						
+						//Buscar el ipfs hash en la respuesta, si esta  se imitio, sino no se emitio
+						var tokens = JSON.parse(stdout)
+						
+						var output = {}
+						for (let element of tokens) {
+							if (element["ipfs hash"] == message.hash){
+							  output = {"address" : address,"trx": trx, "hash": message.hash}
+							  break;
+							}
+						}
+						
+						
+						res.send(output)
+						
+					} else {
+						console.log("Error :" + error + " " + stderr)
+						res.send({})
+					}
+				});				
+				
+                
+            });
+        });
+	
+	
+    });
+	
 }

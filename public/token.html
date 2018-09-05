@@ -26,24 +26,25 @@
 			<div class="container h-100">
 				<div class="row h-100 justify-content-center align-items-center">
 
-					  <div class="list-group list-story" id="token-list"></div>
+					  <div id="info-token" style="display:none">
+							
+							<p>Address: <input type="text" id="address" value=""></p>
+							<p>Trx: <input type="text" id="trx" value=""></p>
+							<p>Hash: <input type="text" id="hash" value=""></p>
+					  
+					  </div>
+					  
+					  <div id="no-token" style="display:none">
+							
+							<p>Este token todavía no ha sido emitido</p>
+					  
+					  </div>
 	
 				</div>
 			</div>
 
 
 </div>  
-
-<!-- NEW TOKEN-->					
-					<div style="display: none;">
-					  <div id="new-token" class="list-group-item list-group-item-action flex-column align-items-start">
-						<div class="d-flex w-100 justify-content-between">
-
-							<h5 class="mb-1 message" ></h5>
-						</div>
-
-					  </div>
-					</div>
     
 		
   </body>
@@ -51,7 +52,13 @@
   </body>
 <script>
 
-	App.getTokenList()
+	  if (window.location.href.includes("trx=")) {
+		url = window.location.href.split("trx=")
+		var trx = url[1]
+		
+		App.getInfoToken(trx)
+        		
+	  }
 
 </script>
   

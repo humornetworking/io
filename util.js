@@ -1,4 +1,4 @@
-module.exports = function(app, jwt, MongoClient, setup, fs, exec) {
+module.exports = function(app, jwt, MongoClient, setup, fs, exec, ipfs) {
 	
 return {
 	
@@ -122,7 +122,37 @@ return {
             }
             var hash = result[0].hash;
             console.log("HASH :" + hash)
-            callOmniRpc(hash, author, address, idnode)
+            //callOmniRpc(hash, author, address, idnode)
+			    var link = "https://gateway.ipfs.io/ipfs/" + hash;
+				var command = setup.path + "/omnicore-cli -datadir=" + setup.datadir + " --testnet omni_create_nft mxPpb6TPZXWCFxtooQW1jyR9wF55yyk79d " + address + " 1 1 0 " + author + " " + link + " " + hash
+				console.log("LLAMADA OMNI :" + command)
+				var buyObj = "";
+				exec(command, function(error, stdout, stderr) {
+					if (error === null) {
+						console.log("TRX OMNI :" + stdout)
+						//Insert TRX into token table
+						var nft = {
+							"author": author,
+							"address": address,
+							"trx": stdout,
+							"hash": hash
+						}
+						
+						MongoClient.connect(setup.database, function(err, db) {
+							var dbo = db.db("explguru");
+							dbo.collection("token").insertOne(nft, function(err, res) {
+								if (err) throw err;
+								db.close();
+							});
+						});
+
+
+					} else {
+						console.log("Error :" + error + " " + stderr)
+					}
+				});
+			
+			
 
         })
     },
@@ -138,8 +168,8 @@ return {
                 var nft = {
                     "author": author,
                     "address": address,
-                    "trx": stdout
-
+                    "trx": stdout,
+					"hash": hash
                 }
 				
 				MongoClient.connect(setup.database, function(err, db) {

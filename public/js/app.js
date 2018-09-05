@@ -9,6 +9,7 @@ var dataImage = ""
 var actualPointer = {}
 var addChapter = false
 var nodeSelected = {}
+var URLSERVER = "http://ioio.cl"
 
 window.App = {
 
@@ -57,8 +58,8 @@ window.App = {
                 "Authorization": "Bearer " + localStorage.getItem('token')
             },
             success: function(data) {
-                //$('#payment').modal('toggle');
-                id
+                $('#payment').modal('toggle');
+                
 
             }
         })
@@ -607,20 +608,7 @@ window.App = {
                     toastr.success('<a href="#" onclick="App.pay()">Tokeniza esta historia</a>')
                 }
 
-                if (clickedNode.proof != '') {
 
-                    toastr.options = {
-                        "debug": false,
-                        "positionClass": "toast-bottom-full-width",
-                        "onclick": null,
-                        "fadeIn": 300,
-                        "fadeOut": 1000,
-                        "timeOut": 5000,
-                        "extendedTimeOut": 1000
-                    }
-
-                    toastr.success('<a href="' + clickedNode.proof + '" target="_blank">Yo escribí esta historia</a>')
-                }
             }
         });
 
@@ -865,6 +853,64 @@ window.App = {
         toastr.info('Selecciona una historia y conectala con otra')
         network.addEdgeMode();
 
-    }
+    },
+	
+	getTokenList: function(){
+		        
+				var data = {}
+				$.ajax({
+                    type: 'POST',
+                    data: JSON.stringify(data),
+                    contentType: 'application/json',
+                    url: URLSERVER + '/profile',
+                    headers: {
+                        "Authorization": "Bearer " + localStorage.getItem('token')
+                    },
+                    success: function(data) {
 
+						$("#token-list").empty();
+						data.forEach(function(msg) {
+							var newToken = $("#new-token").clone();
+							newToken.find(".message").replaceWith("<div style=\"cursor: pointer\" class=\"mb-1 message\" ><a href=\"http://ioio.cl/token.html?trx="+ msg.trx +"\">Click</a></div>");
+							$("#token-list").append(newToken);
+
+						});
+					
+                    }
+                }).done(function(data) {
+
+
+                })
+	},
+	
+	getInfoToken: function(trx){
+		        
+				var data = {}
+				data.trx = trx
+				
+				$.ajax({
+                    type: 'POST',
+                    data: JSON.stringify(data),
+                    contentType: 'application/json',
+                    url: URLSERVER + '/getInfoToken',
+					headers: {
+                        "Authorization": "Bearer " + localStorage.getItem('token')
+                    },
+                    success: function(data) {
+
+						if($.isEmptyObject(data)){
+							$("#no-token").show();	
+						} else {
+							$("#info-token").show();
+							$("#address").val(data.address);
+							$("#trx").val(data.trx);
+							$("#hash").val(data.hash);
+						}
+					
+                    }
+                }).done(function(data) {
+
+
+                })
+	}
 };

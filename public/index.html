@@ -92,13 +92,20 @@
 
 					<!-- Button trigger modal -->
 		
-<div id="mybutton">
+<div id="write-button">
 	<button class="feedback" onclick="App.openWrite()">
 						<span class="glyphicon glyphicon-pencil" style="font-size: 30px;"></span> 
 								
 	</button>
 </div>
-			
+
+
+	<div id="profile-button" style="display: none;">
+		<button class="feedback" onclick="location.href = 'profile.html';">
+							<span class="glyphicon glyphicon-user" style="font-size: 30px;"></span> 
+									
+		</button>
+	</div>			
 
 			
 					<div class="col-md-12 col-lg-12 col-xl-12 text-center header-write-book"> 
@@ -129,9 +136,7 @@
 					<div class="container h-100">
 					  <div class="row h-100 justify-content-center align-items-center">
 
-					  <div class="list-group list-story" id="message-list">
-
-					</div>
+					  <div class="list-group list-story" id="message-list"></div>
 
 					<div style="display: none;">
 					  <div id="new-message" class="list-group-item list-group-item-action flex-column align-items-start">
@@ -499,9 +504,17 @@ var URLSERVER = "http://ioio.cl"
 		localStorage.setItem("token",token.replace("#_=_","").trim())
 		localStorage.setItem("authorID",authorID.replace("#_=_","").trim())
 	  
-		//token = window.location.href.split("token=")
-		//localStorage.setItem("token",token[1].replace("#_=_","").trim())
+
 	  }
+
+
+        var token = localStorage.getItem("token")
+        if (token !== null && token !== "undefined") {
+            $("#profile-button").show();
+
+        } else {
+            $("#profile-button").hide();
+        }
 	  
 	});
 	
