@@ -130,11 +130,12 @@ return {
 				exec(command, function(error, stdout, stderr) {
 					if (error === null) {
 						console.log("TRX OMNI :" + stdout)
+						let trx = stdout.substring(0, stdout.length - 2);
 						//Insert TRX into token table
 						var nft = {
 							"author": author,
 							"address": address,
-							"trx": stdout,
+							"trx": trx,
 							"hash": hash
 						}
 						

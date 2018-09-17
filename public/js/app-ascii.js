@@ -25,31 +25,21 @@ window.App = {
     },
 
     pay: function() {
-	
-	    var token = localStorage.getItem("token")
-	
-        if (token !== null && token !== "undefined") {
-
-			$.ajax({
-				type: 'GET',
-				url: URLSERVER + '/getAddressByUser',
-				headers: {
-					"Authorization": "Bearer " + localStorage.getItem('token')
-				},
-				success: function(data) {
-
-					var mywaypk = data.address
-					$('#qrcode').qrcode(mywaypk);
-					$('#payment').modal('show');
-				}
-			})
-		
-        } else {
-            window.location.href = "login.html";
-        }
-	
 
 
+        $.ajax({
+            type: 'GET',
+            url: URLSERVER + '/getAddressByUser',
+            headers: {
+                "Authorization": "Bearer " + localStorage.getItem('token')
+            },
+            success: function(data) {
+
+                var mywaypk = data.address
+                $('#qrcode').qrcode(mywaypk);
+                $('#payment').modal('show');
+            }
+        })
 
 
     },
@@ -119,9 +109,8 @@ window.App = {
     },
     openWrite: function() {
 
-        //var token = localStorage.getItem("token")
-		var token = "ABC"
-			
+        var token = localStorage.getItem("token")
+
         if (token !== null && token !== "undefined") {
             $("#summernote-root").summernote("reset");
             $('#newStory').modal('show')
@@ -153,10 +142,10 @@ window.App = {
                     type: 'POST',
                     data: JSON.stringify(data),
                     contentType: 'application/json',
-                    url: URLSERVER + '/write-chap',/* 
+                    url: URLSERVER + '/write-chap',
                     headers: {
                         "Authorization": "Bearer " + localStorage.getItem('token')
-                    }, */
+                    },
                     async: false,
                     success: function(dat) {
                         callback(dat)
@@ -181,7 +170,7 @@ window.App = {
         $('#uploadRoot').modal('show')
         $('#mainContainer').waitMe({})
 		
-        $("#thetext-root").replaceWith(" <div id='thetext-root' class='thetext-root' >" + label + "</div>");
+        $("#thetext-root").replaceWith(" <div id='thetext-root'>" + label + "</div>");
         var el = document.getElementById("test-root");
 
 		
@@ -203,10 +192,10 @@ window.App = {
                     type: 'POST',
                     data: JSON.stringify(data),
                     contentType: 'application/json',
-                    url: URLSERVER + '/write-root',/* 
+                    url: URLSERVER + '/write-root',
                     headers: {
                         "Authorization": "Bearer " + localStorage.getItem('token')
-                    }, */
+                    },
                     success: function(data) {
 
                         $('#uploadRoot').modal('toggle');
@@ -237,17 +226,14 @@ window.App = {
             $("#message-list").empty();
             data.forEach(function(msg) {
                 var newMessage = $("#new-message").clone();
-				
-				//newMessage.find("#new-message").replaceWith("<div id=\"new-message\" class=\"list-group-item list-group-item-action flex-column align-items-start\"  onclick=\"App.goChapter(\'" + msg._id + "\')\"  >")
-                //newMessage.find(".message").replaceWith("<div style=\"cursor: pointer\" class=\"mb-1 message\" onclick=\"App.goChapter(\'" + msg._id + "\')\">" + msg.txt + "</div>");
-				newMessage.find(".message").replaceWith("<div style=\"cursor: pointer\" class=\"mb-1 message\" onclick=\"App.goChapter(\'" + msg._id + "\')\"><img width=\"300\" src=\"" + URLSERVER + "/img/" + msg.image + "\"></div>");				
+                newMessage.find(".message").replaceWith("<div style=\"cursor: pointer\" class=\"mb-1 message\" onclick=\"App.goChapter(\'" + msg._id + "\')\">" + msg.txt + "</div>");
+
                 newMessage.find(".author").text(msg.author);
                 newMessage.find(".date").text(new Date(msg.timestamp));
                 $("#message-list").append(newMessage);
 
             });
 
-			
         })
 
     },
@@ -267,7 +253,7 @@ window.App = {
             $("#message-list").empty();
             data.forEach(function(msg) {
                 var newMessage = $("#new-message").clone();
-                newMessage.find(".message").replaceWith("<div style=\"cursor: pointer\" class=\"mb-1 message\" onclick=\"App.goChapter(\'" + msg._id + "\')\"><img width=\"300\" src=\"" + URLSERVER + "/img/" + msg.image + "\"></div>");
+                newMessage.find(".message").replaceWith("<div style=\"cursor: pointer\" class=\"mb-1 message\" onclick=\"App.goChapter(\'" + msg._id + "\')\"><img src=\"" + URLSERVER + "/img/" + msg.image + "\"></div>");
 
                 newMessage.find(".author").text(msg.author);
                 newMessage.find(".date").text(new Date(msg.timestamp * 1000));
@@ -322,9 +308,7 @@ window.App = {
 
     openChapter: function() {
 		
-		//var token = localStorage.getItem("token")
-		var token = "ABC"
-		if (token !== null && token !== "undefined")
+		var token = localStorage.getItem("token")
 
         if (token !== null && token !== "undefined") {
             $("#summernote").summernote("reset");
@@ -360,10 +344,10 @@ window.App = {
             type: 'POST',
             data: JSON.stringify(data),
             contentType: 'application/json',
-            url: URLSERVER + '/write-link',/* 
+            url: URLSERVER + '/write-link',
             headers: {
                 "Authorization": "Bearer " + localStorage.getItem('token')
-            }, */
+            },
             success: function(data) {
 
                 //App.goChapter(rootBook)
@@ -378,10 +362,10 @@ window.App = {
 
         var node = nodes._data[rootBook]
 
-        let url = 'http://ioio.cl/?book=' + rootBook
+        let url = 'http://myway.network:8080/?book=' + rootBook
         let title = node.title
         let description = node.txt.replace(/<[^>]*>/g, '')
-        let image = 'http://ioio.cl/img/ioio.png'
+        let image = 'http://myway.network:8080/img/ioio.png'
 
 
         if (sn == "facebook")
@@ -616,9 +600,9 @@ window.App = {
                 addChapter = false;
             } else {
 
-                //var authorID = localStorage.getItem("authorID")
+                var authorID = localStorage.getItem("authorID")
 
-                //if (clickedNode.authorID == authorID && clickedNode.proof == '') {
+                if (clickedNode.authorID == authorID && clickedNode.proof == '') {
 
                     toastr.options = {
                         "debug": false,
@@ -631,7 +615,7 @@ window.App = {
                     }
 
                     toastr.success('<a href="#" onclick="App.pay()">Tokeniza esta historia</a>')
-                //}
+                }
 
 
             }
@@ -937,5 +921,55 @@ window.App = {
 
 
                 })
-	}
+	},
+	
+	sendData: function(code, sexo, color, talla, modelo) {
+
+
+        var data = {}
+        data.code = $('#code').val();
+        data.sexo = $( "#sexo option:selected" ).text();
+        data.correo = $('#correo').val();
+        data.talla = $( "#talla option:selected" ).text();
+        data.modelo = $('#modelo').val();
+
+		
+		if(data.code == "" || data.code == "undefined") {
+				alert("Faltan Datos")
+				return
+		}
+
+		if(data.correo == "" || data.correo == "undefined") {
+				alert("Faltan Datos")
+				return
+		}
+		
+		if(data.modelo == "" || data.modelo == "undefined") {
+				alert("Faltan Datos")
+				return
+		}
+		
+                $.ajax({
+                    type: 'POST',
+                    data: JSON.stringify(data),
+                    contentType: 'application/json',
+                    url: URLSERVER + '/sendToken',
+                    async: false,
+                    success: function(dat) {
+                        alert("Muchas Gracias. Nos contactaremos con usted una vez que el producto este terminado.")
+						$('#code').val("");
+						$('#correo').val("");
+						$('#modelo').val("");
+                    }
+                })
+
+            
+      
+
+ 
+
+
+    }
+	
+	
 };

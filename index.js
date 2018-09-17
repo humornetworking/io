@@ -96,7 +96,7 @@ passport.use(new TwitterStrategy({
 ));
 
 //REST API
-require('./rest.js')(app, jwt, MongoClient, util, setup, passport, fs, async, restClient, bitcore, ObjectId, exec, ipfs);
+require('./rest.js')(app, jwt, MongoClient, util, setup, passport, fs, async, restClient, bitcore, ObjectId, exec, ipfs, mailgun);
 
 
 //Loop checking pending transactions

@@ -108,18 +108,6 @@
   padding: 0;
 }
 
-@media (min-width: 700px)  { 
-
-.modal-dialog {
-  width: 320px;
-  height: 30%;
-  margin: 0;
-  padding: 0;
-}
-
-
- }
-
 .modal-content {
   height: auto;
   min-height: 100%;
@@ -273,11 +261,11 @@
 
 
 div.vis-network {
-  background-color: #ffff7f;
+  background-color: #ffffff;
 }
 
 body {
- background-color: #ffff7f	
+ background-color: #eee	
 }	
 
 
@@ -442,14 +430,7 @@ body {
   left: 25%;
 }
 
-.thetext-root {
-	width : 300px;
-	max-width:300px; /* or whatever width you want. */
-   display: inline-block;
-   flex-direction: column;
-}
-
-.modal-body {
-    
-    padding: 0px; 
+.center_div{
+    margin: 0 auto;
+    width:50% /* value of your choice which suits your alignment */
 }

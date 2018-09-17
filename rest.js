@@ -1,4 +1,4 @@
-module.exports = function(app, jwt, MongoClient, util, setup, passport,fs,async, restClient,bitcore, ObjectId, exec, ipfs) {
+module.exports = function(app, jwt, MongoClient, util, setup, passport,fs,async, restClient,bitcore, ObjectId, exec, ipfs, mailgun) {
     app.get('/getAddressByUser', util.ensureAuthorized, function(req, res) {
         var user = util.getUserFromToken(req)
 
@@ -240,11 +240,12 @@ module.exports = function(app, jwt, MongoClient, util, setup, passport,fs,async,
     });
 
 
-    app.post('/write-chap', util.ensureAuthorized, function(req, res) {
+    app.post('/write-chap',  function(req, res) {
 
 
         var obj = {};
-        var user = util.getUserFromToken(req)
+		var user = {"author" : "anonimous","id" : "123"}
+        //var user = util.getUserFromToken(req)
 
         console.log("USUARIO : " + JSON.stringify(user))
 
@@ -388,13 +389,14 @@ module.exports = function(app, jwt, MongoClient, util, setup, passport,fs,async,
     });
 
 
-    app.post('/write-root', util.ensureAuthorized, function(req, res) {
+    app.post('/write-root',  function(req, res) {
 
 
         var obj = {};
 
-        var user = util.getUserFromToken(req)
-        var author = user.author;
+        //var user = util.getUserFromToken(req)
+        var user = {"author" : "anonimous"}
+		var author = user.author;
 		var txt = req.body.texto.substring(0, 100);
         var chain = req.body.chain;
         var ahora = Date.now()
@@ -669,6 +671,7 @@ module.exports = function(app, jwt, MongoClient, util, setup, passport,fs,async,
             }).toArray(function(err, messages) {
 				
 				var message = messages[0]
+				console.log(JSON.stringify(messages))
 				var command = setup.path + "/omnicore-cli -datadir=" + setup.datadir + " --testnet omni_getbalance_nft "+ address
 				console.log("LLAMADA OMNI :" + command)
 				var buyObj = "";
@@ -677,6 +680,7 @@ module.exports = function(app, jwt, MongoClient, util, setup, passport,fs,async,
 						
 						//Buscar el ipfs hash en la respuesta, si esta  se imitio, sino no se emitio
 						var tokens = JSON.parse(stdout)
+						console.log(JSON.stringify(tokens))
 						
 						var output = {}
 						for (let element of tokens) {
@@ -748,5 +752,42 @@ module.exports = function(app, jwt, MongoClient, util, setup, passport,fs,async,
 	
 	
     });
+	
+	app.post('/sendToken', function(req, res) {
+	
+ 	var code = req.body.code;
+	var sexo = req.body.sexo;
+	var talla = req.body.talla;
+	var correo = req.body.correo;	
+	var modelo = req.body.modelo; 
+
+	
+	        var newUser = {
+            'code': code,
+            'sexo': sexo,
+            'talla': talla,
+			'correo' : correo,
+			'modelo' : modelo
+            }
+        
+        MongoClient.connect(setup.database, function(err, db) {
+            if (err) throw err;
+            var dbo = db.db("explguru");
+            dbo.collection("asciishop").insertOne(newUser, function(err, res) {
+                if (err) throw err;
+
+                db.close();
+
+
+
+            });
+        });
+		
+						res.send({
+								"status": "OK"
+							})
+
+
+    }); 
 	
 }
