@@ -144,6 +144,7 @@ window.App = {
         data.root = rootBook
         data.x = x
         data.y = y
+		data.token = localStorage.getItem('token')
 
 
 
@@ -197,6 +198,7 @@ window.App = {
                 data.image = dataURL
                 data.chain = "ETH" //$( "#chain" ).val();
                 data.title = title
+				data.token = localStorage.getItem('token')
 
 
                 $.ajax({
@@ -241,8 +243,12 @@ window.App = {
 				//newMessage.find("#new-message").replaceWith("<div id=\"new-message\" class=\"list-group-item list-group-item-action flex-column align-items-start\"  onclick=\"App.goChapter(\'" + msg._id + "\')\"  >")
                 //newMessage.find(".message").replaceWith("<div style=\"cursor: pointer\" class=\"mb-1 message\" onclick=\"App.goChapter(\'" + msg._id + "\')\">" + msg.txt + "</div>");
 				newMessage.find(".message").replaceWith("<div style=\"cursor: pointer\" class=\"mb-1 message\" onclick=\"App.goChapter(\'" + msg._id + "\')\"><img width=\"300\" src=\"" + URLSERVER + "/img/" + msg.image + "\"></div>");				
-                newMessage.find(".author").text(msg.author);
+                newMessage.find(".title").text(msg.title);
+				newMessage.find(".title").click(function() {App.goChapter(msg._id)})
+				newMessage.find(".author").text(msg.author);
+				newMessage.find(".author").click(function() {App.goChapter(msg._id)})
                 newMessage.find(".date").text(new Date(msg.timestamp));
+				newMessage.find(".date").click(function() {App.goChapter(msg._id)})
                 $("#message-list").append(newMessage);
 
             });
@@ -267,10 +273,10 @@ window.App = {
             $("#message-list").empty();
             data.forEach(function(msg) {
                 var newMessage = $("#new-message").clone();
-                newMessage.find(".message").replaceWith("<div style=\"cursor: pointer\" class=\"mb-1 message\" onclick=\"App.goChapter(\'" + msg._id + "\')\"><img width=\"300\" src=\"" + URLSERVER + "/img/" + msg.image + "\"></div>");
-
-                newMessage.find(".author").text(msg.author);
-                newMessage.find(".date").text(new Date(msg.timestamp * 1000));
+				newMessage.find(".message").replaceWith("<div style=\"cursor: pointer\" class=\"mb-1 message\" onclick=\"App.goChapter(\'" + msg._id + "\')\"><img width=\"300\" src=\"" + URLSERVER + "/img/" + msg.image + "\"></div>");				
+                newMessage.find(".title").text(msg.title);
+				newMessage.find(".author").text(msg.author);
+                newMessage.find(".date").text(new Date(msg.timestamp));
 
                 $("#message-list").append(newMessage);
 
@@ -280,10 +286,10 @@ window.App = {
 
     },
     goChapter: function(idBook) {
-
+	
 	
 	setTimeout(function(){
-	$('#mainContainer').waitMe({waitTime : 500})}, 5)
+	$('#mainContainer').waitMe({waitTime : 500})}, 1)
 	
 			
 			
@@ -619,19 +625,20 @@ window.App = {
                 //var authorID = localStorage.getItem("authorID")
 
                 //if (clickedNode.authorID == authorID && clickedNode.proof == '') {
-
+/*
                     toastr.options = {
                         "debug": false,
-                        "positionClass": "toast-bottom-full-width",
+                        "positionClass": "toast-top-full-width",
                         "onclick": null,
                         "fadeIn": 300,
                         "fadeOut": 1000,
-                        "timeOut": 5000,
+                        "timeOut": 2000,
                         "extendedTimeOut": 1000
                     }
 
                     toastr.success('<a href="#" onclick="App.pay()">Tokeniza esta historia</a>')
-                //}
+*/               
+			   //}
 
 
             }
@@ -795,15 +802,19 @@ window.App = {
 
         $('#newChapter').modal('hide')
         $('#uploadChapter').modal('show')
-        $("#thetext").replaceWith("<div id='thetext' style='margin-top: 20px ; margin-left: 25px; margin-right: 10px' >" + data.label + "</div>");
-
+        //$("#thetext").replaceWith("<div id='thetext' style='margin-top: 20px ; margin-left: 25px; margin-right: 10px' >" + data.label + "</div>");
+$("#thetext").replaceWith("<div id='thetext' >" + data.label + "</div>");
+		
         var el = document.getElementById("test");
 
+		setTimeout(function(){$('#mainContainer').waitMe({})}, 1)
+		
         setTimeout(function() {
             html2canvas(el).then(canvas => {
                 var dataURL = canvas.toDataURL("image/png")
                 dataImage = dataURL
 
+				$('#mainContainer').waitMe("hide")
                 $('#uploadChapter').modal('toggle');
                 $("#thetext").replaceWith("<div id='thetext'></div>");
 
@@ -855,7 +866,7 @@ window.App = {
             "onclick": null,
             "fadeIn": 300,
             "fadeOut": 1000,
-            "timeOut": 5000,
+            "timeOut": 2000,
             "extendedTimeOut": 1000
         }
 
@@ -872,7 +883,7 @@ window.App = {
             "onclick": null,
             "fadeIn": 300,
             "fadeOut": 1000,
-            "timeOut": 5000,
+            "timeOut": 2000,
             "extendedTimeOut": 1000
         }
         toastr.info('Selecciona una historia y conectala con otra')

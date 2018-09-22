@@ -111,7 +111,14 @@
 							<span class="glyphicon glyphicon-user" style="font-size: 20px;margin-right: 10px"></span> 
 									
 		</button>
-	</div>			
+	</div>	
+
+	<div id="login-button" style="display: none;">
+		<button class="" onclick="location.href = 'login.html';">
+							<span class="glyphicon glyphicon-log-in" style="font-size: 20px;margin-right: 10px"></span> 
+									
+		</button>
+	</div>	
 
 			
 					<div class="col-md-12 col-lg-12 col-xl-12 text-center header-write-book"> 
@@ -146,11 +153,13 @@
 
 					<div style="display: none;">
 					  <div id="new-message" class="list-group-item list-group-item-action flex-column align-items-start">
+						<h3 class="mb-1 title"></h3>
+						<h4 class="mb-1 author"></h4>
 						<div class="d-flex w-100 justify-content-between">
 
 							<h5 class="mb-1 message" onclick="App.goChapter('5b083fc52cb83d3d1c3ec303')"></h5>
 						</div>
-						<p class="mb-1 author"></p>
+						
 						<small class="text-muted date"></small>
 					  </div>
 					</div> 
@@ -273,7 +282,7 @@
 			<div class="modal-content" style="width:320px">
 			  <div class="modal-body">
 							
-					<div id="test-root" class='thetext-root' >
+					<div id="test-root" class='thetext-root' style="border-radius: 25px;" >
 						<br>
 						<div id="thetext-root"></div>
 					</div>
@@ -297,7 +306,7 @@
 		  </div> -->
 
 		  <div class="modal-body">
-			<input type="text" class="form-control" id="title" placeholder="Title" >
+			<input type="text" class="form-control" id="title" placeholder="Title" style="width:300px;margin-bottom: 10px;" >
 		    <textarea id="summernote-root" name="editordata"></textarea>
 
 		  </div>
@@ -517,13 +526,15 @@ var URLSERVER = "http://ioio.cl"
         var token = localStorage.getItem("token")
         if (token !== null && token !== "undefined") {
             $("#profile-button").show();
+			$("#login-button").hide();
 
         } else {
+			$("#login-button").show();
             $("#profile-button").hide();
         }
 	  
 	});
-	
+
 
 	
 </script>

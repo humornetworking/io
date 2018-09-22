@@ -244,10 +244,13 @@ module.exports = function(app, jwt, MongoClient, util, setup, passport,fs,async,
 
 
         var obj = {};
-		var user = {"author" : "anonimous","id" : "123"}
-        //var user = util.getUserFromToken(req)
-
-        console.log("USUARIO : " + JSON.stringify(user))
+		var token = req.body.token;
+		console.log("TOKEN :"+ token)
+		user = {}
+		if (!token)
+			user = {"author" : "Anonymous","id" : "123"}
+		else 
+			user = util.getUserByToken(token)
 
         var txt = req.body.texto.substring(0, 100);
         var root = req.body.root
@@ -395,7 +398,14 @@ module.exports = function(app, jwt, MongoClient, util, setup, passport,fs,async,
         var obj = {};
 
         //var user = util.getUserFromToken(req)
-        var user = {"author" : "anonimous"}
+		var token = req.body.token;
+		console.log("TOKEN :"+ token)
+		user = {}
+		if (!token)
+			user = {"author" : "Anonymous"}
+		else 
+			user = util.getUserByToken(token)
+		
 		var author = user.author;
 		var txt = req.body.texto.substring(0, 100);
         var chain = req.body.chain;

@@ -5,6 +5,8 @@ var async = require('async');
 var jwt = require('jsonwebtoken'); //lavidabellaentodassusformas
 var WebSocketServer = require('ws').Server;
 var fs = require("fs")
+var http = require('http');
+var https = require('https');
 var cookieParser = require('cookie-parser');
 var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
@@ -33,6 +35,11 @@ var datadir = setup.datadir;
 var secret = setup.secret;
 var urlDB = setup.database;
 
+//Https credentials
+var privateKey  = fs.readFileSync('server.key', 'utf8');
+var certificate = fs.readFileSync('server.cert', 'utf8');
+var credentials = {key: privateKey, cert: certificate};
+
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.setHeader('Access-Control-Allow-Headers', 'Origin, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, X-Response-Time, X-PINGOTHER, X-CSRF-Token,Authorization');
@@ -56,8 +63,15 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(express.static(__dirname + '/public'));
-var port = process.env.PORT || 80
-app.listen(port);
+
+var httpServer = http.createServer(app);
+var httpsServer = https.createServer(credentials, app);
+
+httpServer.listen(80);
+httpsServer.listen(8443);
+
+//var port = process.env.PORT || 80
+//app.listen(port);
 console.log('IOIO is up');
 
 //Passport setup

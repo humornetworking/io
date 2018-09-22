@@ -99,6 +99,13 @@ return {
             return null;
         }
     },
+	getUserByToken: function(token) {
+
+        var bearerToken = token;
+        var user = jwt.decode(bearerToken, setup.secret);
+        return user;
+
+    },
     getRandomText: function() {
         var text = "";
         var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
