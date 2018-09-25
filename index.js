@@ -114,6 +114,7 @@ require('./rest.js')(app, jwt, MongoClient, util, setup, passport, fs, async, re
 
 
 //Loop checking pending transactions
+/*
 setInterval(function(){ 
 	
 	
@@ -175,6 +176,7 @@ setInterval(function(){
 	
 
  }, 20000);	
+ */
 
  
  

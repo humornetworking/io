@@ -1,86 +1,131 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script> 
+  <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script> 
+  
+   <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet"> 
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+  
+   <script type="text/javascript" src="js/app.js"></script>
+   <link href="css/style.css" rel="stylesheet" type="text/css" />
+  
     <title>IOIO</title>
-	
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script> 
     
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link href="css/style.css" rel="stylesheet" type="text/css" />
-  
-    <meta name="google-signin-scope" content="profile email">
-    <meta name="google-signin-client_id" content="997226468547-mjtjtj9f9hjqcvom2jl0jti9hfdvf65m.apps.googleusercontent.com">
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
-  
   </head>
   <body>
-    
-	<div id="mainContainer" class="container-fluid">
+  
+  	<div id="mainContainer" class="container-fluid">
 <div class="row">
 	<div class="col-md-12 col-lg-12 col-xl-12 text-center header-logo-login"> 
 		<a href="http://104.251.213.18:8080"><img src="img/ioio.png" title="IOIO :: Colaborative Storytelling"></a>
 	</div>
 </div>
+
 <br>
 <div class="row">
-	<div class="col-md-12 col-lg-12 col-xl-12 text-center "> 
-		<a href="/auth/facebook" class="logo-social fa fa-facebook"></a>
-	</div>
+
+<div class="container">
+
+<ul class="nav nav-pills">
+  <li class="active"><a href="#1a" data-toggle="tab">Ingresar</a>
+
+  
+  </li>
+  <li><a href="#1b" data-toggle="tab">Registrarse</a>
+  
+  </li>
+
+</ul>
+
+
+			<div class="tab-content clearfix" >
+			  <div class="tab-pane active" id="1a">
+          
+		  
+					  <div class="col-md-12 col-lg-12 col-xl-12 text-center "> 
+					
+					<div class="input-group">
+					  <span class="input-group-addon" id="basic-addon1">UserName</span>
+					  <input type="text" class="form-control" id="authorIn" placeholder="Nickname" aria-describedby="basic-addon1" style="width: 250px;">
+
+					</div>
+					<div class="input-group">
+
+					  <span class="input-group-addon" id="basic-addon1">Password</span>
+					  <input type="password" class="form-control" id="passwordIn" placeholder="Password" aria-describedby="basic-addon1"  style="width: 250px;">
+
+					</div>
+
+					
+						  <br>
+						  
+						  <button type="button" class="btn btn-success" onclick="App.signInLightUser()">Enviar</button>
+
+					</div>
+		  
+		  
+				</div>
+				
+			
+          
+				<div class="tab-pane" id="1b">
+          
+		  
+					  <div class="col-md-12 col-lg-12 col-xl-12 text-center "> 
+					
+					<div class="input-group">
+					  <span class="input-group-addon" id="basic-addon1">UserName</span>
+					  <input type="text" class="form-control" id="author" placeholder="Nickname" aria-describedby="basic-addon1"  style="width: 250px;">
+
+					</div>
+					<div class="input-group">
+
+					  <span class="input-group-addon" id="basic-addon1">Password</span>
+					  <input type="password" class="form-control" id="password" placeholder="Password" aria-describedby="basic-addon1"  style="width: 250px;">
+
+					</div>
+
+					
+						  <br>
+						  
+						  <button type="button" class="btn btn-success" onclick="App.signUpLightUser()">Enviar</button>
+
+					</div>
+		  
+		  
+				</div>
+		  
+		  
+			
+			</div>
+
+
+</div>	
+	
+	
 </div>
 
-<div class="row">
-	<div class="col-md-12 col-lg-12 col-xl-12 text-center "> 
-		<a href="/auth/twitter" class="logo-twitter fa fa-twitter"></a>
-	</div>
-</div>
 
-<div class="row">
-	<div class="col-md-12 col-lg-12 col-xl-12 text-center "> 
-		<a href="#" class="logo-google fa fa-google" onclick="gotogoo()"></a>
-	</div>
-</div>
-
-<div class="g-signin2" data-onsuccess="onSignIn" data-theme="dark" style="display : none"></div>
-
-</div>
-
+</div>  
     
-    <script>
-	
-	//var URLSERVER = "http://localhost:8080"
-var URLSERVER = "http://ioio.cl"
-	
-      function onSignIn(googleUser) {
-        // Useful data for your client-side scripts:
-        var profile = googleUser.getBasicProfile();
 		
-		var data = {"id" : profile.getId()}
-		$.ajax({
-						type: 'POST',
-						data: JSON.stringify(data),
-				        contentType: 'application/json',
-                        url: URLSERVER +'/account/goog',				
-                        success: function(data) {
-                            
-                        }
-                    }).done(function(data) {
-						
-						if(data.active){
-							window.location.replace(URLSERVER +"/index.html?token=" + data.token);
-						} else {
-							window.location.replace(URLSERVER +"/account.html?token=" + data.token);
-						}
-						
-			})
-		
-      };
-	  
-	  
-	  function gotogoo(){
-		$( ".abcRioButton" ).trigger( "click" );
-	  }
-    </script>
-
-   
   </body>
+  
+  </body>
+<script>
+
+//var URLSERVER = "http://localhost:8080"
+var URLSERVER = "http://ioio.cl"
+
+	  if (window.location.href.includes("token=")) {
+		var token = window.location.href.split("token=")
+		
+
+			localStorage.setItem("token",token[1].replace("#_=_","").trim())
+	  }
+
+</script>
+  
 </html>

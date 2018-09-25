@@ -22,47 +22,14 @@
 
 <br>
 
-<div class="row">
-			<div class="container h-100">
-				<div class="row h-100 justify-content-center align-items-center text-center">
-
-					  <div id="info-token" >
-							
-							<h3>Autor: </h3> <h2 id="author"></h2>
-
-					  
-					  </div>
-					  
-	
-				</div>
-			</div>
-</div>
-
+<h2> My Tokens</h2><br>
 
 <div class="row">
-
-<h3> Mis Libros</h3>
 			
 			<div class="container h-100">
 				<div class="row h-100 justify-content-center align-items-center">
 
-					  <div class="list-group list-story" id="book-list"></div>
-	
-				</div>
-			</div>
-
-
-</div>  
-
-
-<div class="row">
-
-<h3> Mis Colaboraciones</h3>
-			
-			<div class="container h-100">
-				<div class="row h-100 justify-content-center align-items-center">
-
-					  <div class="list-group list-story" id="colab-list"></div>
+					  <div class="list-group list-story" id="token-list"></div>
 	
 				</div>
 			</div>
@@ -73,15 +40,12 @@
 
 <!-- NEW TOKEN-->					
 					<div style="display: none;">
-					  <div id="new-message" class="list-group-item list-group-item-action flex-column align-items-start">
-						<h3 class="mb-1 title"></h3>
-						<h4 class="mb-1 author"></h4>
+					  <div id="new-token" class="list-group-item list-group-item-action flex-column align-items-start">
 						<div class="d-flex w-100 justify-content-between">
 
-							<h5 class="mb-1 message" onclick="App.goChapter('5b083fc52cb83d3d1c3ec303')"></h5>
+							<h5 class="mb-1 message" ></h5>
 						</div>
-						
-						<small class="text-muted date"></small>
+
 					  </div>
 					</div>
     
@@ -91,9 +55,7 @@
   </body>
 <script>
 
-	App.getBooksByUser()
-	App.getUserByToken()
-	
+	App.getTokenList()
 
 </script>
   

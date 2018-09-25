@@ -1,6 +1,8 @@
 module.exports = function(app, jwt, MongoClient, util, setup, passport,fs,async, restClient,bitcore, ObjectId, exec, ipfs, mailgun) {
     app.get('/getAddressByUser', util.ensureAuthorized, function(req, res) {
-        var user = util.getUserFromToken(req)
+        
+		
+		var user = util.getUserFromToken(req)
 
         MongoClient.connect(setup.database, function(err, db) {
             if (err) throw err;
@@ -17,6 +19,27 @@ module.exports = function(app, jwt, MongoClient, util, setup, passport,fs,async,
 
     })
 
+	
+	app.post('/getUserByToken',  function(req, res) {
+        
+		var token = req.body.token;
+		
+		user = util.getUserByToken(token)
+		
+        MongoClient.connect(setup.database, function(err, db) {
+            if (err) throw err;
+            var dbo = db.db("explguru");
+            dbo.collection("user").find({
+                "id": user.id
+            }).toArray(function(err, user) {
+                console.log("USER :" + JSON.stringify(user))
+                res.send({
+                    "author": user[0].author
+                });
+            });
+        });
+
+    })
 
     app.post('/updatePositionByBook', function(req, res) {
 
@@ -136,9 +159,18 @@ module.exports = function(app, jwt, MongoClient, util, setup, passport,fs,async,
     });
 
 
-    app.get('/get-chapters/:id', function(req, res) {
-        var idBook = req.params.id
-
+    app.post('/get-chapters', function(req, res) {
+        //var idBook = req.params.id
+		var idBook = req.body.idBook
+		var token = req.body.token
+		
+		var userID = ""
+		var owner = false
+		if(token) {
+			user = util.getUserByToken(token)
+			userID = user.id
+		}
+		
         MongoClient.connect(setup.database, function(err, db) {
             if (err) throw err;
             var dbo = db.db("explguru");
@@ -183,6 +215,10 @@ module.exports = function(app, jwt, MongoClient, util, setup, passport,fs,async,
                     for (var i = 0; i < messages.length; i++) {
                         //nNodes.push({ 'id': messages[i]._id, 'image' : setup.url_server +'/img/'+ messages[i].image, 'shape': 'image'})
 
+						if(messages[i].root === 1 && messages[i].authorID === userID){
+								owner = true;
+						}
+						
                         if (messages[i]._id == idBook) {
                             nNodes.push({
                                 'id': messages[i]._id,
@@ -227,7 +263,8 @@ module.exports = function(app, jwt, MongoClient, util, setup, passport,fs,async,
 
                     var chapters = {
                         "nodes": nNodes,
-                        "edges": nEdges
+                        "edges": nEdges,
+						"owner" : owner
                     }
 
                     res.send(chapters);
@@ -613,6 +650,111 @@ module.exports = function(app, jwt, MongoClient, util, setup, passport,fs,async,
 
 
     });
+	
+	
+	app.post('/signUpLightUser', function(req, res) {
+        
+		var username = req.body.username
+        var password = req.body.password
+
+        MongoClient.connect(setup.database, function(err, db) {
+            if (err) throw err;
+            var dbo = db.db("explguru");
+            dbo.collection("user").find({
+                "author": username
+            }).toArray(function(err, user) {
+                if (user.length == 0) {
+					console.log("NO ENCONTRADO :")
+					
+					var id = Math.floor((Math.random() * 1000000000000000) + 1)
+					
+                    var token = jwt.sign({
+                        "id": id,
+                        "author": username
+                    }, setup.secret, {
+                        expiresIn: '24h'
+                    });
+
+					var newUser = {
+						'author': username,
+						'id': id,
+						'password' : password
+					};
+					MongoClient.connect(setup.database, function(err, db) {
+						if (err) throw err;
+						var dbo = db.db("explguru");
+						dbo.collection("user").insertOne(newUser, function(err, res) {
+							if (err) throw err;
+
+							db.close();
+
+
+						});
+					});
+					
+                    res.send({"status" :"OK","token": token});
+                } else {
+
+                    res.send({"status" :"NOK"});
+                }
+                
+            });
+        });
+
+
+    });
+
+	app.post('/signInLightUser', function(req, res) {
+        
+		var username = req.body.username
+        var password = req.body.password
+		
+
+        MongoClient.connect(setup.database, function(err, db) {
+            if (err) throw err;
+            var dbo = db.db("explguru");
+            dbo.collection("user").find({
+                "author": username,
+				"password": password
+            }).toArray(function(err, user) {
+                if (user.length == 0) {
+					
+					res.send({"status" :"NOK"});
+                } else {
+
+				    var token = jwt.sign({
+                        "author": user[0].author,
+                        "id": user[0].id
+                    }, setup.secret, {
+                        expiresIn: '24h'
+                    });
+				
+                    res.send({"status" :"OK","token": token});
+                }
+                
+            });
+        });
+
+
+    });
+	
+	app.post('/getBooksByUser', function(req, res) {
+        var token = req.body.token;
+		
+		user = util.getUserByToken(token)
+
+        MongoClient.connect(setup.database, function(err, db) {
+            if (err) throw err;
+            var dbo = db.db("explguru");
+            dbo.collection("message").find({
+                "authorID": user.id
+            }).toArray(function(err, messages) {
+                res.send(messages);
+            });
+        });
+
+    });
+
 	
 /* app.post('/account/goog',  function(req, res) {
   

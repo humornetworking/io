@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>IOIO</title>
+	
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script> 
+    
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+  
+    <meta name="google-signin-scope" content="profile email">
+    <meta name="google-signin-client_id" content="997226468547-mjtjtj9f9hjqcvom2jl0jti9hfdvf65m.apps.googleusercontent.com">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+  
+  </head>
+  <body>
+    
+	<div id="mainContainer" class="container-fluid">
+<div class="row">
+	<div class="col-md-12 col-lg-12 col-xl-12 text-center header-logo-login"> 
+		<a href="http://104.251.213.18:8080"><img src="img/ioio.png" title="IOIO :: Colaborative Storytelling"></a>
+	</div>
+</div>
+<br>
+<div class="row">
+	<div class="col-md-12 col-lg-12 col-xl-12 text-center "> 
+		<a href="/auth/facebook" class="logo-social fa fa-facebook"></a>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12 col-lg-12 col-xl-12 text-center "> 
+		<a href="/auth/twitter" class="logo-twitter fa fa-twitter"></a>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12 col-lg-12 col-xl-12 text-center "> 
+		<a href="#" class="logo-google fa fa-google" onclick="gotogoo()"></a>
+	</div>
+</div>
+
+<div class="g-signin2" data-onsuccess="onSignIn" data-theme="dark" style="display : none"></div>
+
+</div>
+
+    
+    <script>
+	
+	//var URLSERVER = "http://localhost:8080"
+var URLSERVER = "http://ioio.cl"
+	
+      function onSignIn(googleUser) {
+        // Useful data for your client-side scripts:
+        var profile = googleUser.getBasicProfile();
+		
+		var data = {"id" : profile.getId()}
+		$.ajax({
+						type: 'POST',
+						data: JSON.stringify(data),
+				        contentType: 'application/json',
+                        url: URLSERVER +'/account/goog',				
+                        success: function(data) {
+                            
+                        }
+                    }).done(function(data) {
+						
+						if(data.active){
+							window.location.replace(URLSERVER +"/index.html?token=" + data.token);
+						} else {
+							window.location.replace(URLSERVER +"/account.html?token=" + data.token);
+						}
+						
+			})
+		
+      };
+	  
+	  
+	  function gotogoo(){
+		$( ".abcRioButton" ).trigger( "click" );
+	  }
+    </script>
+
+   
+  </body>
+</html>

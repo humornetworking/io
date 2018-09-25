@@ -117,6 +117,90 @@ window.App = {
             });
 
     },
+	   signUpLightUser: function() {
+
+        var data = {};
+        data.username = $("#author").val();
+		data.password = $("#password").val();
+
+        $.ajax({
+                type: 'POST',
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                url: URLSERVER + '/signUpLightUser',
+                /*headers: {
+                    "Authorization": "Bearer " + localStorage.getItem('token')
+                },*/
+                success: function(data) {
+					
+					if (data.status == "OK") {
+					
+						localStorage.removeItem("token")
+						localStorage.setItem("token", data.token)
+						window.location.href = "index.html";
+					} else {
+							
+						toastr.options = {
+							"debug": false,
+							"positionClass": "toast-top-full-width",
+							"onclick": null,
+							"fadeIn": 300,
+							"fadeOut": 1000,
+							"timeOut": 2000,
+							"extendedTimeOut": 1000
+						}
+						toastr.info('El nombre de usuario ya existe')
+						
+					}
+
+
+                }
+            })
+
+    },
+	signInLightUser: function() {
+
+        var data = {};
+        data.username = $("#authorIn").val();
+		data.password = $("#passwordIn").val();
+
+        $.ajax({
+                type: 'POST',
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                url: URLSERVER + '/signInLightUser',
+                /*headers: {
+                    "Authorization": "Bearer " + localStorage.getItem('token')
+                },*/
+                success: function(data) {
+					
+					if (data.status == "OK") {
+					
+						localStorage.removeItem("token")
+						localStorage.setItem("token", data.token)
+						window.location.href = "index.html";
+					} else {
+					
+						toastr.options = {
+							"debug": false,
+							"positionClass": "toast-top-full-width",
+							"onclick": null,
+							"fadeIn": 300,
+							"fadeOut": 1000,
+							"timeOut": 2000,
+							"extendedTimeOut": 1000
+						}
+						toastr.info('Credenciales no validas')
+						
+					}
+
+
+                }
+            })
+
+    }
+	
+	,
     openWrite: function() {
 
         //var token = localStorage.getItem("token")
@@ -177,6 +261,22 @@ window.App = {
 
         var label = document.getElementById('summernote-root').value;
         var title = $("#title").val();
+		
+		if (!label || label == "<p><br></p>" || !title) {
+			toastr.options = {
+				"debug": false,
+				"positionClass": "toast-top-full-width",
+				"onclick": null,
+				"fadeIn": 300,
+				"fadeOut": 1000,
+				"timeOut": 2000,
+				"extendedTimeOut": 1000
+			}
+			toastr.info('Debe ingresar el titulo y el contenido de la historia')
+			return
+        
+		}
+			
 
         $('#newStory').modal('toggle');
         $('#uploadRoot').modal('show')
@@ -298,13 +398,21 @@ window.App = {
 			$('.book-page').hide()
 			$('.chapter-page').show()		
         
+		        var data = {};
+                data.idBook = idBook
+				data.token = localStorage.getItem('token')
+		
         $.ajax({
-            type: 'GET',
-            url: URLSERVER + "/get-chapters/" + idBook,
+            type: 'POST',
+			data: JSON.stringify(data),
+            contentType: 'application/json',
+            url: URLSERVER + "/get-chapters",
             async: false
         }).done(function(data) {
 		
-
+			if(!data.owner) {
+				$("#savePosition").hide()
+			}
 		
             var nodes = data.nodes
             var edges = data.edges
@@ -799,6 +907,22 @@ window.App = {
     addNode: function() {
 
         data.label = document.getElementById('summernote').value;
+		
+			if (!data.label || data.label == "<p><br></p>") {
+			toastr.options = {
+				"debug": false,
+				"positionClass": "toast-top-full-width",
+				"onclick": null,
+				"fadeIn": 300,
+				"fadeOut": 1000,
+				"timeOut": 2000,
+				"extendedTimeOut": 1000
+			}
+			toastr.info('Debe ingresar el contenido de la historia')
+			return
+        
+		}
+		
 
         $('#newChapter').modal('hide')
         $('#uploadChapter').modal('show')
@@ -919,6 +1043,63 @@ $("#thetext").replaceWith("<div id='thetext' >" + data.label + "</div>");
                 })
 	},
 	
+	getBooksByUser: function(){
+		        
+				var data = {}
+				
+				data.token = localStorage.getItem('token')
+				
+				$.ajax({
+                    type: 'POST',
+                    data: JSON.stringify(data),
+                    contentType: 'application/json',
+                    url: URLSERVER + '/getBooksByUser',
+                    success: function(data) {
+
+						$("#book-list").empty();
+						$("#colab-list").empty();
+						
+						data.forEach(function(msg) {
+							var newMessage = $("#new-message").clone();
+							newMessage.find(".message").replaceWith("<div style=\"cursor: pointer\" class=\"mb-1 message\" onclick=\"App.goChapter(\'" + msg._id + "\')\"><img width=\"300\" src=\"" + URLSERVER + "/img/" + msg.image + "\"></div>");				
+							newMessage.find(".title").text(msg.title);
+							//newMessage.find(".title").click(function() {App.goChapter(msg._id)})
+							newMessage.find(".author").text(msg.author);
+							//newMessage.find(".author").click(function() {App.goChapter(msg._id)})
+							newMessage.find(".date").text(new Date(msg.timestamp));
+							//newMessage.find(".date").click(function() {App.goChapter(msg._id)})
+							
+							if(msg.root == 1)
+								$("#book-list").append(newMessage);
+							else
+								$("#colab-list").append(newMessage);
+
+						});
+					
+                    }
+                }).done(function(data) {
+
+
+                })
+	},
+	getUserByToken: function(){
+		        
+				var data = {}
+				
+				data.token = localStorage.getItem('token')
+				
+				$.ajax({
+                    type: 'POST',
+                    data: JSON.stringify(data),
+                    contentType: 'application/json',
+                    url: URLSERVER + '/getUserByToken',
+                    success: function(data) {
+
+						$("#author").text(data.author);
+					
+                    }
+                })
+	},
 	getInfoToken: function(trx){
 		        
 				var data = {}
