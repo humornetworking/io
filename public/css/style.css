@@ -108,22 +108,7 @@
   padding: 0;
 }
 
-@media (min-width: 700px)  { 
 
-.modal-dialog {
-  width: 320px;
-  height: 30%;
-  margin: 0;
-  padding: 0;
-}
-
-.modal-content {
-	position : relative;
-    top: 50%;
-    left: 185%;
-}
-
- }
 
 .modal-content {
   height: auto;
@@ -250,7 +235,7 @@
 
 #profile-button {
   position: fixed;
-  right: 0px;
+  left: 0px;
   z-index: 999;
 }
 
@@ -259,6 +244,13 @@
   right: 0px;
   z-index: 999;
 }
+
+#logout-button {
+  position: fixed;
+  right: 0px;
+  z-index: 999;
+}
+
 
 #centerButton {
   position: fixed;
@@ -469,11 +461,47 @@ body {
 	margin-bottom: -15px;
 }
 
-.modal-footer {
-	
-}	
+
+
 
 
 .fa-whatsapp {
     background-color: #25d366;
+}
+
+
+
+@media (min-width: 1000px)  { 
+
+.modal-dialog {
+  width: 320px;
+  height: 30%;
+  margin: 0;
+  padding: 0;
+}
+
+.modal-content {
+	position : relative;
+    top: 50%;
+    left: 185%;
+}
+
+.navbar-style {
+  left: 44%;
+}
+/*
+.in {
+$( ".note-btn.btn.btn-default.btn-sm" ).click(function() {
+  $(".in").css("position","absolute");
+  $(".in").css("left","0px");
+  $(".in").css("top","0px");
+  $( ".in > .modal-dialog > .modal-content" ).eq(1).css("left","0px");
+  
+});
+
+$(".modal-backdrop").css("display","none");
+	
+	
+}*/
+
 }

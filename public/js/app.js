@@ -210,6 +210,14 @@ window.App = {
             $("#summernote-root").summernote("reset");
             $('#newStory').modal('show')
             $('.note-image-btn').prop("disabled", false);
+			
+			$( ".note-btn.btn.btn-default.btn-sm" ).click(function() {
+			  $(".in").css("position","absolute");
+			  $(".in").css("left","0px");
+			  $(".in").css("top","0px");
+			  $( ".in > .modal-dialog > .modal-content" ).eq(1).css("left","0px");
+			  
+			});
 
         } else {
             window.location.href = "login.html";
@@ -342,7 +350,7 @@ window.App = {
 				
 				//newMessage.find("#new-message").replaceWith("<div id=\"new-message\" class=\"list-group-item list-group-item-action flex-column align-items-start\"  onclick=\"App.goChapter(\'" + msg._id + "\')\"  >")
                 //newMessage.find(".message").replaceWith("<div style=\"cursor: pointer\" class=\"mb-1 message\" onclick=\"App.goChapter(\'" + msg._id + "\')\">" + msg.txt + "</div>");
-				newMessage.find(".message").replaceWith("<div style=\"cursor: pointer\" class=\"mb-1 message\" onclick=\"App.goChapter(\'" + msg._id + "\')\"><img width=\"300\" src=\"" + URLSERVER + "/img/" + msg.image + "\"></div>");				
+				newMessage.find(".message").replaceWith("<div style=\"cursor: pointer\" id=\"" + msg._id + "\"  class=\"mb-1 message\" onclick=\"App.goChapter(\'" + msg._id + "\')\"><img width=\"300\" src=\"" + URLSERVER + "/img/" + msg.image + "\"></div>");				
                 newMessage.find(".title").text(msg.title);
 				newMessage.find(".title").click(function() {App.goChapter(msg._id)})
 				newMessage.find(".author").text(msg.author);
@@ -387,12 +395,10 @@ window.App = {
     },
     goChapter: function(idBook) {
 	
+	$('#mainContainer').waitMe({})
 	
 	setTimeout(function(){
-	$('#mainContainer').waitMe({waitTime : 500})}, 1)
 	
-			
-			
 			$('.navbar1').show()
 			$('#centerButton').show()
 			$('.book-page').hide()
@@ -428,7 +434,16 @@ window.App = {
             $('#mainContainer').waitMe("hide")
 
 
-        })
+        })	
+	
+	
+	
+	
+	}, 400)
+	
+			
+			
+
 
 
     },
@@ -1129,5 +1144,11 @@ $("#thetext").replaceWith("<div id='thetext' >" + data.label + "</div>");
 
 
                 })
+	},
+	logout: function(){
+		
+		    localStorage.removeItem("token")
+            window.location.href = "index.html";
+		
 	}
 };

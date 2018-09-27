@@ -24,7 +24,6 @@
    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/async/2.6.1/async.min.js"></script>
 
   <script type="text/javascript" src="js/app.js"></script>
-  <!-- <script type="text/javascript" src="js/util.js"></script> -->
   
   <link href="css/vis-network.min.css" rel="stylesheet" type="text/css" />
   <link href="css/style.css" rel="stylesheet" type="text/css" />
@@ -42,6 +41,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.qrcode/1.0/jquery.qrcode.min.js"></script> 
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+ 
  
 <script>
   window.fbAsyncInit = function() {
@@ -120,14 +120,22 @@
 		</button>
 	</div>	
 
+	<div id="logout-button" style="display: none;">
+		<button class="" onclick="App.logout()">
+							<span class="glyphicon glyphicon-log-out" style="font-size: 20px;margin-right: 10px"></span> 
+									
+		</button>
+	</div>	
+	
 			
 					<div class="col-md-12 col-lg-12 col-xl-12 text-center header-write-book"> 
     						
 						<div class="input-group stylish-input-group" >
-							<input type="text" class="form-control" id="search" placeholder="Search" >
+							<input type="text" class="form-control" id="search" placeholder="Buscar" >
 							<span class="input-group-addon">
 								<button type="submit" onclick="App.search()">
-									<span class="glyphicon glyphicon-search"></span>
+								
+								<span class="glyphicon glyphicon-search"></span>
 								</button>  
 								
 							</span>
@@ -306,13 +314,13 @@
 		  </div> -->
 
 		  <div class="modal-body">
-			<input type="text" class="form-control" id="title" placeholder="Title" style="width:300px;margin-bottom: 10px;" >
+			<input type="text" class="form-control" id="title" placeholder="Título" style="width:300px;margin-bottom: 10px;" >
 		    <textarea id="summernote-root" name="editordata"></textarea>
 
 		  </div>
  		  <div class="modal-footer">
 
-		  		<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="$('#newStory').modal('hide')">Cancelar</button>
+		  		<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="$('#newStory').modal('hide'); $('.modal-backdrop').css('display','none'); ">Cancelar</button>
 				<button type="button" id="save-chapter" class="btn btn-primary" onclick="App.write()" >Guardar</button>
 
 		  
@@ -526,12 +534,24 @@ var URLSERVER = "http://ioio.cl"
         var token = localStorage.getItem("token")
         if (token !== null && token !== "undefined") {
             $("#profile-button").show();
+			$("#logout-button").show();
 			$("#login-button").hide();
 
         } else {
 			$("#login-button").show();
-            $("#profile-button").hide();
+            $("#logout-button").hide();
+			$("#profile-button").hide();
         }
+	  
+	  
+	  window.addEventListener("orientationchange", function() {
+		if (window.orientation == 90){
+			$( '.modal-body' ).css( "padding-left", "160px" );
+		} else {
+			$( '.modal-body' ).css( "padding-left", "8px" );
+		}
+			
+		}, false);
 	  
 	});
 
