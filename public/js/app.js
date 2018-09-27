@@ -347,13 +347,10 @@ window.App = {
             $("#message-list").empty();
             data.forEach(function(msg) {
                 var newMessage = $("#new-message").clone();
-				
-				//newMessage.find("#new-message").replaceWith("<div id=\"new-message\" class=\"list-group-item list-group-item-action flex-column align-items-start\"  onclick=\"App.goChapter(\'" + msg._id + "\')\"  >")
-                //newMessage.find(".message").replaceWith("<div style=\"cursor: pointer\" class=\"mb-1 message\" onclick=\"App.goChapter(\'" + msg._id + "\')\">" + msg.txt + "</div>");
 				newMessage.find(".message").replaceWith("<div style=\"cursor: pointer\" id=\"" + msg._id + "\"  class=\"mb-1 message\" onclick=\"App.goChapter(\'" + msg._id + "\')\"><img width=\"300\" src=\"" + URLSERVER + "/img/" + msg.image + "\"></div>");				
                 newMessage.find(".title").text(msg.title);
 				newMessage.find(".title").click(function() {App.goChapter(msg._id)})
-				newMessage.find(".author").text(msg.author);
+				newMessage.find(".author").text("Autor : "+ msg.author);
 				newMessage.find(".author").click(function() {App.goChapter(msg._id)})
                 newMessage.find(".date").text(new Date(msg.timestamp));
 				newMessage.find(".date").click(function() {App.goChapter(msg._id)})
@@ -381,11 +378,13 @@ window.App = {
             $("#message-list").empty();
             data.forEach(function(msg) {
                 var newMessage = $("#new-message").clone();
-				newMessage.find(".message").replaceWith("<div style=\"cursor: pointer\" class=\"mb-1 message\" onclick=\"App.goChapter(\'" + msg._id + "\')\"><img width=\"300\" src=\"" + URLSERVER + "/img/" + msg.image + "\"></div>");				
+				newMessage.find(".message").replaceWith("<div style=\"cursor: pointer\" id=\"" + msg._id + "\"  class=\"mb-1 message\" onclick=\"App.goChapter(\'" + msg._id + "\')\"><img width=\"300\" src=\"" + URLSERVER + "/img/" + msg.image + "\"></div>");				
                 newMessage.find(".title").text(msg.title);
-				newMessage.find(".author").text(msg.author);
+				newMessage.find(".title").click(function() {App.goChapter(msg._id)})
+				newMessage.find(".author").text("Autor : "+ msg.author);
+				newMessage.find(".author").click(function() {App.goChapter(msg._id)})
                 newMessage.find(".date").text(new Date(msg.timestamp));
-
+				newMessage.find(".date").click(function() {App.goChapter(msg._id)})
                 $("#message-list").append(newMessage);
 
             });
