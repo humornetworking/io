@@ -355,6 +355,7 @@ window.App = {
                 newMessage.find(".date").text(new Date(msg.timestamp));
 				newMessage.find(".date").click(function() {App.goChapter(msg._id)})
                 $("#message-list").append(newMessage);
+				$("#message-list").append('<br>')
 
             });
 
@@ -386,12 +387,17 @@ window.App = {
                 newMessage.find(".date").text(new Date(msg.timestamp));
 				newMessage.find(".date").click(function() {App.goChapter(msg._id)})
                 $("#message-list").append(newMessage);
+				$("#message-list").append('<br>')
 
             });
 
         })
 
     },
+	   goChapterByUrl: function(idBook) {
+		   window.location.href = "http://ioio.cl/?book="+ idBook;
+	   },
+	
     goChapter: function(idBook) {
 	
 	$('#mainContainer').waitMe({})
@@ -415,9 +421,11 @@ window.App = {
             async: false
         }).done(function(data) {
 		
+		/*
 			if(!data.owner) {
 				$("#savePosition").hide()
 			}
+		*/
 		
             var nodes = data.nodes
             var edges = data.edges
@@ -1075,18 +1083,20 @@ $("#thetext").replaceWith("<div id='thetext' >" + data.label + "</div>");
 						
 						data.forEach(function(msg) {
 							var newMessage = $("#new-message").clone();
-							newMessage.find(".message").replaceWith("<div style=\"cursor: pointer\" class=\"mb-1 message\" onclick=\"App.goChapter(\'" + msg._id + "\')\"><img width=\"300\" src=\"" + URLSERVER + "/img/" + msg.image + "\"></div>");				
+							newMessage.find(".message").replaceWith("<div style=\"cursor: pointer\" class=\"mb-1 message\" onclick=\"App.goChapterByUrl(\'" + msg.rootBook + "\')\"><img width=\"300\" src=\"" + URLSERVER + "/img/" + msg.image + "\"></div>");				
 							newMessage.find(".title").text(msg.title);
-							//newMessage.find(".title").click(function() {App.goChapter(msg._id)})
+							newMessage.find(".title").click(function() {App.goChapterByUrl(msg.rootBook)})
 							newMessage.find(".author").text(msg.author);
-							//newMessage.find(".author").click(function() {App.goChapter(msg._id)})
+							newMessage.find(".author").click(function() {App.goChapterByUrl(msg.rootBook)})
 							newMessage.find(".date").text(new Date(msg.timestamp));
-							//newMessage.find(".date").click(function() {App.goChapter(msg._id)})
+							newMessage.find(".date").click(function() {App.goChapterByUrl(msg.rootBook)})
 							
 							if(msg.root == 1)
 								$("#book-list").append(newMessage);
 							else
 								$("#colab-list").append(newMessage);
+							
+							$("#colab-list").append('<br>')
 
 						});
 					

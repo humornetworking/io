@@ -294,6 +294,7 @@ module.exports = function(app, jwt, MongoClient, util, setup, passport,fs,async,
         var image = req.body.image
         var x = req.body.x
         var y = req.body.y
+		
 
         var img = util.decodeBase64Image(image)
         var buf = new Buffer(img.data, 'base64')
@@ -323,7 +324,8 @@ module.exports = function(app, jwt, MongoClient, util, setup, passport,fs,async,
                         'x': Number(x),
                         'y': Number(y),
                         'root': 0,
-                        'proof': ''
+                        'proof': '',
+						'rootBook' : root
                     };
                     dbo.collection("message").insertOne(newMessage, function(err, res) {
                         if (err) throw err;
