@@ -1,7 +1,63 @@
-module.exports = function(app, jwt, MongoClient, setup, fs, exec, ipfs) {
+module.exports = function(app, jwt, MongoClient, setup, fs, exec, ipfs, nodemailer, ObjectId) {
 	
 return {
 	
+	sendNotification: function(root) {
+
+                    MongoClient.connect(setup.database, function(err, db) {
+                        if (err) throw err;
+                        var dbo = db.db("explguru");
+                        dbo.collection("message").find({
+                            '_id': ObjectId(root)
+                        }).toArray(function(err, messages) {
+                            
+							dbo.collection("user").find({
+							"author": messages[0].author
+							}).toArray(function(err, author) {
+								
+								
+								nodemailer.createTestAccount((err, account) => {
+								// create reusable transporter object using the default SMTP transport
+								let transporter = nodemailer.createTransport({
+									host: 'mail.ioio.cl',
+									port: 465,
+									secure: true, // true for 465, false for other ports
+									auth: {
+										user: "noreply@ioio.cl", // generated ethereal user
+										pass: "@UNOdos34567" // generated ethereal password
+									},
+									tls: {
+									rejectUnauthorized: false
+									}
+								});
+
+								// setup email data with unicode symbols
+								let mailOptions = {
+									from: '"IOIO Colaborative Storytelling" <noreply@ioio.cl>', // sender address
+									to: author[0].email, // list of receivers
+									subject: 'Ha llegado una colaboración a tu historia', // Subject line
+									text: 'Ha llegado una colaboración a tu historia :'+ messages[0].title
+								};
+
+								// send mail with defined transport object
+								transporter.sendMail(mailOptions, (error, info) => {
+									if (error) {
+										return console.log(error);
+									}
+									console.log('Message sent: %s', info.messageId);
+									console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+
+								});
+							});
+								
+								
+							
+							});
+                        });
+                    });
+
+	
+	},
     getAuthor: function(author) {
         var that = this;
         async.parallel([

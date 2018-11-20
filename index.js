@@ -21,11 +21,12 @@ var exec = require('child_process').exec;
 var MongoClient = require('mongodb').MongoClient;
 var ObjectId = require('mongodb').ObjectID;
 var mailgun = require("mailgun-js")({apiKey: 'key-219426aefec7c90432a505766e1888bf', domain: 'sandbox2576ebf851d144449cdb3023f5b14267.mailgun.org'});
+var nodemailer = require('nodemailer');
 var Rest = require('node-rest-client').Client;
 var restClient = new Rest();
 
 var setup = require('./setup'); 
-var util = require('./util')(app, jwt, MongoClient, setup, fs, exec, ipfs)
+var util = require('./util')(app, jwt, MongoClient, setup, fs, exec, ipfs, nodemailer, ObjectId)
 
 //Setup
 bitcore.Networks.defaultNetwork = bitcore.Networks.testnet;

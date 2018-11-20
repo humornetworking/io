@@ -122,7 +122,12 @@ window.App = {
         var data = {};
         data.username = $("#author").val();
 		data.password = $("#password").val();
+		data.email = $("#email").val();
 
+		if( data.username == "" || data.password == "" || data.email == "") {
+			alert("Debe ingresar todos los datos")
+		}
+		
         $.ajax({
                 type: 'POST',
                 data: JSON.stringify(data),
@@ -164,6 +169,11 @@ window.App = {
         data.username = $("#authorIn").val();
 		data.password = $("#passwordIn").val();
 
+		
+		if( data.username == "" || data.password == "") {
+			alert("Debe ingresar todos los datos")
+		}
+		
         $.ajax({
                 type: 'POST',
                 data: JSON.stringify(data),
@@ -203,8 +213,8 @@ window.App = {
 	,
     openWrite: function() {
 
-        //var token = localStorage.getItem("token")
-		var token = "ABC"
+        var token = localStorage.getItem("token")
+		//var token = "ABC"
 			
         if (token !== null && token !== "undefined") {
             $("#summernote-root").summernote("reset");
@@ -430,7 +440,7 @@ window.App = {
             var nodes = data.nodes
             var edges = data.edges
 
-
+			localStorage.setItem('userID', data.userID) 
             var container = document.getElementById('mynetwork');
             var data = {
                 nodes: nodes,
@@ -458,14 +468,15 @@ window.App = {
 
     openChapter: function() {
 		
-		//var token = localStorage.getItem("token")
-		var token = "ABC"
-		if (token !== null && token !== "undefined")
+		var token = localStorage.getItem("token")
+		//var token = "ABC"
 
         if (token !== null && token !== "undefined") {
             $("#summernote").summernote("reset");
             $('#newChapter').modal('show')
             $('.note-image-btn').prop("disabled", false);
+			
+			
 
         } else {
             window.location.href = "login.html";
@@ -517,7 +528,7 @@ window.App = {
         let url = 'http://ioio.cl/?book=' + rootBook
         let title = node.title
         let description = node.txt.replace(/<[^>]*>/g, '')
-        let image = 'http://ioio.cl/img/ioio.png'
+        let image = node.image
 
 
         if (sn == "facebook")
@@ -649,17 +660,17 @@ window.App = {
             },
             nodes: {
                 shape: 'image',
-                borderWidth: 0,
+                borderWidth: 3,
                 size: 30,
                 color: {
-                    border: '#406897',
+                    border: '#A6D5F7',
                     background: '#6AAFFF'
                 },
                 font: {
                     color: '#eeeeee'
                 },
                 shapeProperties: {
-                    useBorderWithImage: false
+                    useBorderWithImage: true
                 }
 
             },
@@ -731,12 +742,34 @@ window.App = {
         })
 
         network.disableEditMode()
-
+/*
+	   network.on("beforeDrawing", function (ctx) {
+		//716 - 962
+		
+		for (var i = 0; i < story.nodes.length; i++) {
+			let obj = story.nodes[i];
+			var nodeId = obj.id;
+			var nodePosition = network.getPositions([nodeId]);
+			var bounding = network.getBoundingBox(nodeId);
+			ctx.strokeStyle = '#A6D5F7';
+			ctx.fillStyle = '#ffffff';
+			//ctx.circle(nodePosition[nodeId].x, nodePosition[nodeId].y,50);
+			//ctx.rect(bounding.top,bounding.left,bounding.right,bounding.bottom);
+			ctx.rect(nodePosition[nodeId].x,nodePosition[nodeId].y,bounding.left,50);
+			//ctx.rect(bounding.right,bounding.left,50,50);
+			ctx.fill();
+			ctx.stroke();
+		}
+		
+	  });*/
+		
         network.on("afterDrawing", function(ctx) {
             document.body.scrollTop = 0; // For Safari
             document.documentElement.scrollTop = 0;
 
         });
+		
+
 
 
         network.on("click", function(params) {
@@ -749,13 +782,22 @@ window.App = {
             if (addChapter) {
                 $("#summernote").summernote("reset");
                 $('#newChapter').modal('show')
+				
+				$( ".note-btn.btn.btn-default.btn-sm" ).click(function() {
+					  $(".in").css("position","absolute");
+					  $(".in").css("left","0px");
+					  $(".in").css("top","0px");
+					  $( ".in > .modal-dialog > .modal-content" ).eq(1).css("left","0px");
+					  
+				});
+				
                 addChapter = false;
             } else {
 
-                //var authorID = localStorage.getItem("authorID")
+                var userID = localStorage.getItem("userID")
 
-                //if (clickedNode.authorID == authorID && clickedNode.proof == '') {
-/*
+                if (clickedNode.authorID == userID && clickedNode.proof == '') {
+
                     toastr.options = {
                         "debug": false,
                         "positionClass": "toast-top-full-width",
@@ -767,8 +809,8 @@ window.App = {
                     }
 
                     toastr.success('<a href="#" onclick="App.pay()">Tokeniza esta historia</a>')
-*/               
-			   //}
+              
+			   }
 
 
             }
@@ -1006,18 +1048,28 @@ $("#thetext").replaceWith("<div id='thetext' >" + data.label + "</div>");
     },
 
     newChapter: function() {
-        toastr.options = {
-            "debug": false,
-            "positionClass": "toast-top-full-width",
-            "onclick": null,
-            "fadeIn": 300,
-            "fadeOut": 1000,
-            "timeOut": 2000,
-            "extendedTimeOut": 1000
-        }
+		
+		var token = localStorage.getItem("token")
 
-        toastr.info('Haga click en algún punto de la pantalla para escribir')
-        addChapter = true;
+        if (token !== null && token !== "undefined") {
+			toastr.options = {
+				"debug": false,
+				"positionClass": "toast-top-full-width",
+				"onclick": null,
+				"fadeIn": 300,
+				"fadeOut": 1000,
+				"timeOut": 2000,
+				"extendedTimeOut": 1000
+			}
+
+			toastr.info('Haga click en algún punto de la pantalla para escribir')
+        addChapter = true;			
+
+        } else {
+            window.location.href = "login.html";
+        }
+		
+
 
     },
 

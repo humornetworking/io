@@ -137,7 +137,7 @@ module.exports = function(app, jwt, MongoClient, util, setup, passport,fs,async,
                     $regex: txt
                 },
                 "root": 1
-            }).toArray(function(err, messages) {
+            }).sort( { timestamp: -1 } ).toArray(function(err, messages) {
                 res.send(messages);
             });
         });
@@ -151,7 +151,7 @@ module.exports = function(app, jwt, MongoClient, util, setup, passport,fs,async,
             var dbo = db.db("explguru");
             dbo.collection("message").find({
                 'root': 1
-            }).toArray(function(err, messages) {
+            }).sort( { timestamp: -1 } ).toArray(function(err, messages) {
                 res.send(messages);
             });
         });
@@ -264,7 +264,8 @@ module.exports = function(app, jwt, MongoClient, util, setup, passport,fs,async,
                     var chapters = {
                         "nodes": nNodes,
                         "edges": nEdges,
-						"owner" : owner
+						"owner" : owner,
+						"userID" : userID
                     }
 
                     res.send(chapters);
@@ -279,7 +280,7 @@ module.exports = function(app, jwt, MongoClient, util, setup, passport,fs,async,
 
     app.post('/write-chap',  function(req, res) {
 
-
+        
         var obj = {};
 		var token = req.body.token;
 		console.log("TOKEN :"+ token)
@@ -295,7 +296,12 @@ module.exports = function(app, jwt, MongoClient, util, setup, passport,fs,async,
         var x = req.body.x
         var y = req.body.y
 		
+		
+		//Search the root author by write-chap and send a email
+		//Busco por el id , obtengo el author y ese lo busco en la tabla users de donde saco el email y le envio un correo
 
+		util.sendNotification(root)
+		
         var img = util.decodeBase64Image(image)
         var buf = new Buffer(img.data, 'base64')
         var imgName = Math.floor((Math.random() * 1000000000000000) + 1) + ".png"
@@ -658,6 +664,7 @@ module.exports = function(app, jwt, MongoClient, util, setup, passport,fs,async,
         
 		var username = req.body.username
         var password = req.body.password
+		var email = req.body.email
 
         MongoClient.connect(setup.database, function(err, db) {
             if (err) throw err;
@@ -677,10 +684,26 @@ module.exports = function(app, jwt, MongoClient, util, setup, passport,fs,async,
                         expiresIn: '24h'
                     });
 
+					var randomText = util.getRandomText();
+					var value = Buffer.from(randomText);
+					var hash = bitcore.crypto.Hash.sha256(value);
+					var bn = bitcore.crypto.BN.fromBuffer(hash);
+					var privateKey = new bitcore.PrivateKey(bn).toString();
+					var address = new bitcore.PrivateKey(bn).toAddress().toString();
+
+					
+					
 					var newUser = {
 						'author': username,
 						'id': id,
-						'password' : password
+						'password' : password,
+						'email': email,
+						'keys': {
+							"btc": {
+								"private": privateKey,
+								"address": address
+							}
+						}
 					};
 					MongoClient.connect(setup.database, function(err, db) {
 						if (err) throw err;
