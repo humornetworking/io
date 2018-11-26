@@ -2,7 +2,7 @@ module.exports = function(app, jwt, MongoClient, setup, fs, exec, ipfs, nodemail
 	
 return {
 	
-	sendNotification: function(root) {
+	sendNotification: function(root,user) {
 
                     MongoClient.connect(setup.database, function(err, db) {
                         if (err) throw err;
@@ -11,10 +11,13 @@ return {
                             '_id': ObjectId(root)
                         }).toArray(function(err, messages) {
                             
+							
+							if(messages[0].authorID == user.id)
+								return  //No mandar email si el que continuoi la historia es el autor del libro
+							
 							dbo.collection("user").find({
 							"author": messages[0].author
 							}).toArray(function(err, author) {
-								
 								
 								nodemailer.createTestAccount((err, account) => {
 								// create reusable transporter object using the default SMTP transport

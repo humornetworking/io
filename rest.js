@@ -300,7 +300,7 @@ module.exports = function(app, jwt, MongoClient, util, setup, passport,fs,async,
 		//Search the root author by write-chap and send a email
 		//Busco por el id , obtengo el author y ese lo busco en la tabla users de donde saco el email y le envio un correo
 
-		util.sendNotification(root)
+		util.sendNotification(root,user)
 		
         var img = util.decodeBase64Image(image)
         var buf = new Buffer(img.data, 'base64')
@@ -512,13 +512,15 @@ module.exports = function(app, jwt, MongoClient, util, setup, passport,fs,async,
     });
 
 
-    app.post('/checkPayment', util.ensureAuthorized, function(req, res) {
+    app.post('/tokenizeStory', util.ensureAuthorized, function(req, res) {
 
         var idnode = req.body.idNode
         var idimage = req.body.idImage
         var user = util.getUserFromToken(req)
 
-
+		util.tokenizeStory(user.author, user.address, idnode, idimage)
+		
+/*
         var apiUrl = "https://api.blockcypher.com/v1/btc/test3/addrs/" + user.address;
         restClient.get(apiUrl, function(data, response) {
             console.log("BALANCE :" + JSON.stringify(data))
@@ -530,6 +532,8 @@ module.exports = function(app, jwt, MongoClient, util, setup, passport,fs,async,
                 'id': user.id,
                 'balance': data.balance
             };
+			
+			
             MongoClient.connect(setup.database, function(err, db) {
                 if (err) throw err;
                 var dbo = db.db("explguru");
@@ -542,9 +546,10 @@ module.exports = function(app, jwt, MongoClient, util, setup, passport,fs,async,
                 });
             });
 
-
         });
-
+*/
+		
+		
 		res.send("OK")
 		
     })

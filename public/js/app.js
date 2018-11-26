@@ -63,7 +63,7 @@ window.App = {
             type: 'POST',
             data: JSON.stringify(dataPay),
             contentType: 'application/json',
-            url: URLSERVER + '/checkPayment',
+            url: URLSERVER + '/tokenizeStory',
             headers: {
                 "Authorization": "Bearer " + localStorage.getItem('token')
             },
